@@ -1,11 +1,12 @@
-package com.melody.melody.application.service.music;
+package com.melody.melody.application.service;
 
+import com.melody.melody.application.service.music.GenerateMusicService;
 import net.datafaker.Faker;
 import org.springframework.core.io.UrlResource;
 
 import java.net.MalformedURLException;
 
-public class TestDtoGenerator {
+public class TestServiceGenerator {
     private static final Faker faker = new Faker();
 
     public static GenerateMusicService.Image randomImage() throws MalformedURLException {

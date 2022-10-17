@@ -6,7 +6,7 @@ import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.MusicErrorType;
 import org.junit.jupiter.api.Test;
 
-import static com.melody.melody.domain.model.TestDomainModelGenerator.*;
+import static com.melody.melody.domain.model.TestDomainGenerator.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 

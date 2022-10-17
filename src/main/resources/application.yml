@@ -1,9 +1,21 @@
 server :
   port : 8080
 
+  tomcat :
+    connectionUploadTimeout : 3000
+    connectionTimeout : 3000
+    connection-timeout : 3000
+    max-swallow-size : 20MB
+    max-http-form-post-size : 20MB
+
 spring:
   main:
     allow-bean-definition-overriding: true
+
+  servlet :
+    multipart :
+      max-file-size: 10MB
+      max-request-size: 20MB
 
   application:
     name: melody-server
@@ -53,3 +65,4 @@ aws:
         secretKey: ${aws.credentials.secretKey}
       region: ap-northeast-2
       bucketName: none
+      allowMediatype: image/jpng,image/png

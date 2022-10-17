@@ -1,0 +1,34 @@
+= Melody API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectnums:
+:sectlinks:
+:sectanchors:
+
+[[api]]
+= 작곡 API
+Post /musics
+
+TIP: Multipart 요청입니다. +
+Content-Type: multipart/form-data;charset=UTF-8;
+
+== 요청
+=== 요청 예시
+include::{snippets}/generate-music/http-request.adoc[]
+=== 파트 구성
+include::{snippets}/generate-music/request-parts.adoc[]
+=== body 파트 필드
+include::{snippets}/generate-music/request-part-body-body.adoc[]
+include::{snippets}/generate-music/request-part-body-fields.adoc[]
+
+== 응답
+=== 응답 예시
+include::{snippets}/generate-music/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/generate-music/response-fields.adoc[]
+
+== curl 예시
+include::{snippets}/generate-music/curl-request.adoc[]

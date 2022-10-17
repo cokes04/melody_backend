@@ -1,5 +1,6 @@
 package com.melody.melody.application.service.music;
 
+import com.melody.melody.application.service.TestServiceGenerator;
 import com.melody.melody.application.port.out.*;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
@@ -11,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.net.MalformedURLException;
 
-import static com.melody.melody.domain.model.TestDomainModelGenerator.*;
+import static com.melody.melody.domain.model.TestDomainGenerator.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +32,7 @@ class GenerateMusicServiceTest {
 
     @Test
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
-        GenerateMusicService.Image image = TestDtoGenerator.randomImage();
+        GenerateMusicService.Image image = TestServiceGenerator.randomImage();
         int musicLength = 50;
         int noise = 3;
         GenerateMusicService.Command command = new GenerateMusicService.Command(image, musicLength, noise);
