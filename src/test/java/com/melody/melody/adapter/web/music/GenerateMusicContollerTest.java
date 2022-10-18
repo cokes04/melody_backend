@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.request.MusicRequest;
 import com.melody.melody.adapter.web.response.MusicResponse;
 import com.melody.melody.application.port.in.UseCase;
+import com.melody.melody.application.service.TestServiceGenerator;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,11 +25,13 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.melody.melody.adapter.web.TestWebGenerator.randomMusicResponse;
 import static com.melody.melody.domain.model.TestDomainGenerator.randomMusic;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -61,12 +64,6 @@ class GenerateMusicContollerTest {
                 .apply(documentationConfiguration(restDocumentation))
                 .addFilter(new CharacterEncodingFilter("UTF-8", false, true))
                 .build();
-
-        when(this.commendMapper.of(any(MusicRequest.class), any(MultipartFile.class)))
-                .thenCallRealMethod();
-
-        when(this.resultMapper.to(any(GenerateMusicService.Result.class)))
-                .thenCallRealMethod();
     }
 
     @Test
@@ -84,8 +81,17 @@ class GenerateMusicContollerTest {
                 "body", "json-data", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(musicRequest)
         );
 
-        when(service.execute(any(GenerateMusicService.Command.class)))
-                .thenReturn(new GenerateMusicService.Result(randomMusic()));
+        GenerateMusicService.Command command = TestServiceGenerator.randomGenerateMusicCommand();
+        GenerateMusicService.Result result = TestServiceGenerator.randomGenerateMusicResult();
+
+        when(this.commendMapper.of(eq(musicRequest), eq(image)))
+                .thenReturn(command);
+
+        when(service.execute(eq(command)))
+                .thenReturn(result);
+
+        when(this.resultMapper.to(eq(result)))
+                .thenReturn(randomMusicResponse());
 
         mockMvc.perform(
                 multipart("/musics")

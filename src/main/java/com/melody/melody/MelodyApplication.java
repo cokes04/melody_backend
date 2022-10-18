@@ -2,11 +2,13 @@ package com.melody.melody;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @SpringBootApplication(scanBasePackages = {"com.melody.melody"})
+@EntityScan(basePackages = {"com.melody.melody.adapter.persistence.entity"})
 public class MelodyApplication {
 
 	@PostConstruct

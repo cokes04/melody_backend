@@ -7,7 +7,7 @@ public class TestDomainGenerator {
 
     public static Music.MusicId randomMusicId(){
         return new Music.MusicId(
-                faker.number().randomNumber()
+                faker.number().numberBetween(1L, Long.MAX_VALUE)
         );
     }
 

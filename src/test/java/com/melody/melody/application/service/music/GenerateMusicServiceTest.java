@@ -32,10 +32,7 @@ class GenerateMusicServiceTest {
 
     @Test
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
-        GenerateMusicService.Image image = TestServiceGenerator.randomImage();
-        int musicLength = 50;
-        int noise = 3;
-        GenerateMusicService.Command command = new GenerateMusicService.Command(image, musicLength, noise);
+        GenerateMusicService.Command command = TestServiceGenerator.randomGenerateMusicCommand();
 
         Music.MusicId musicId = randomMusicId();
         Music.ImageUrl imageUrl = randomImageUrl();
@@ -44,7 +41,7 @@ class GenerateMusicServiceTest {
         Music expectedMusic = Music.generate(emotion, explanation, imageUrl);
         expectedMusic = insertMusicId(expectedMusic, musicId);
 
-        when(imageFileStorage.save(eq(image)))
+        when(imageFileStorage.save(eq(command.getImage())))
                 .thenReturn(imageUrl);
 
         when(imageCaptioner.execute(eq(imageUrl)))
@@ -63,7 +60,7 @@ class GenerateMusicServiceTest {
         assertNotNull((actualMusic = result.getMusic()));
         assertEquals(expectedMusic, actualMusic);
 
-        verify(imageFileStorage, times(1)).save(image);
+        verify(imageFileStorage, times(1)).save(command.getImage());
         verify(imageCaptioner, times(1)).execute(imageUrl);
         verify(emotionClassifier, times(1)).execute(explanation);
         verify(musicRepository, times(1)).save(any(Music.class));
