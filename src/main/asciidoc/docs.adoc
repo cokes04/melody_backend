@@ -8,9 +8,9 @@
 :sectlinks:
 :sectanchors:
 
-[[api]]
+[[overview-http-verbs]]
 = 작곡 API
-Post /musics
+Post /music
 
 TIP: Multipart 요청입니다. +
 Content-Type: multipart/form-data;charset=UTF-8;
@@ -32,3 +32,21 @@ include::{snippets}/generate-music/response-fields.adoc[]
 
 == curl 예시
 include::{snippets}/generate-music/curl-request.adoc[]
+
+= 음악 API
+Get /music/{id}
+
+== 요청
+=== 요청 예시
+include::{snippets}/get-music/http-request.adoc[]
+=== 파라미터
+include::{snippets}/get-music/path-parameters.adoc[]
+
+== 응답
+=== 응답 예시
+include::{snippets}/get-music/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/get-music/response-fields.adoc[]
+
+== curl 예시
+include::{snippets}/get-music/curl-request.adoc[]

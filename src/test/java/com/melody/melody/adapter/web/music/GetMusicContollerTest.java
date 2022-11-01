@@ -2,9 +2,11 @@ package com.melody.melody.adapter.web.music;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.request.MusicRequest;
-import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.service.TestServiceGenerator;
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.application.service.music.GetMusicService;
+import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.TestDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +25,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.melody.melody.adapter.web.TestWebGenerator.randomMusicResponse;
-
-
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -36,24 +38,21 @@ import static org.springframework.restdocs.request.RequestDocumentation.partWith
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.mockito.Mockito.when;
-
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = GenerateMusicContoller.class)
-class GenerateMusicContollerTest {
+@WebMvcTest(value = GetMusicContoller.class)
+class GetMusicContollerTest {
 
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean private GenerateMusicService service;
-    @MockBean private GenerateMusicCommendMapper commendMapper;
+    @MockBean private GetMusicService service;
     @MockBean private MusicResponseMapper responseMapper;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
-                      RestDocumentationContextProvider restDocumentation) {
+                           RestDocumentationContextProvider restDocumentation) {
 
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .apply(documentationConfiguration(restDocumentation))
@@ -62,25 +61,12 @@ class GenerateMusicContollerTest {
     }
 
     @Test
-    void generateMusic_Ok() throws Exception {
-        MusicRequest musicRequest = MusicRequest.builder()
-                .noise(1)
-                .musicLength(213)
-                .build();
+    void get_Ok() throws Exception {
+        Music.MusicId musicId = TestDomainGenerator.randomMusicId();
+        Music music = TestDomainGenerator.randomMusic();
 
-        MockMultipartFile image = new MockMultipartFile(
-                "image", "test_image.jpng", MediaType.IMAGE_JPEG_VALUE, "jpng".getBytes()
-        );
-
-        MockMultipartFile body = new MockMultipartFile(
-                "body", "json-data", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(musicRequest)
-        );
-
-        GenerateMusicService.Command command = TestServiceGenerator.randomGenerateMusicCommand();
-        GenerateMusicService.Result result = TestServiceGenerator.randomGenerateMusicResult();
-
-        when(this.commendMapper.of(eq(musicRequest), eq(image)))
-                .thenReturn(command);
+        GetMusicService.Command command = new GetMusicService.Command(musicId);
+        GetMusicService.Result result =  new GetMusicService.Result(music);
 
         when(service.execute(eq(command)))
                 .thenReturn(result);
@@ -89,23 +75,14 @@ class GenerateMusicContollerTest {
                 .thenReturn(randomMusicResponse());
 
         mockMvc.perform(
-                multipart("/music")
-                .file(image)
-                .file(body)
+                get("/music/{id}", musicId.getValue())
         )
                 .andExpect(status().isOk())
                 .andDo(
                         document(
-                                "generate-music",
-                                requestParts(
-                                        partWithName("image").description("이미지 파일"),
-                                        partWithName("body").description("요청 본문")
-                                ),
-                                requestPartBody("body"),
-                                requestPartFields(
-                                        "body",
-                                        fieldWithPath("musicLength").description("음악 길이").type(JsonFieldType.NUMBER),
-                                        fieldWithPath("noise").description("잡음 크기").type(JsonFieldType.NUMBER)
+                                "get-music",
+                                pathParameters(
+                                        parameterWithName("id").description("음악 아이디")
                                 ),
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),

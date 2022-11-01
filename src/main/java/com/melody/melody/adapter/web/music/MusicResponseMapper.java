@@ -6,10 +6,9 @@ import com.melody.melody.domain.model.Music;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GenerateMusicResultMapper{
+public class MusicResponseMapper {
 
-    public MusicResponse to(GenerateMusicService.Result result){
-        Music music = result.getMusic();
+    public MusicResponse to(Music music){
         return MusicResponse.builder()
                 .musicId(music.getId().orElse(new Music.MusicId(-1L)).getValue())
                 .imageUrl(music.getImageUrl().getValue())
@@ -18,5 +17,4 @@ public class GenerateMusicResultMapper{
                 .status(music.getStatus().name().toLowerCase())
                 .build();
     }
-
 }

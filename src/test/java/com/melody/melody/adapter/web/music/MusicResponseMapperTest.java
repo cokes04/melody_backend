@@ -9,22 +9,21 @@ import org.junit.jupiter.api.Test;
 import static com.melody.melody.domain.model.TestDomainGenerator.randomMusic;
 import static org.junit.jupiter.api.Assertions.*;
 
-class GenerateMusicResultMapperTest {
+class MusicResponseMapperTest {
 
-    private static GenerateMusicResultMapper mapper;
+    private static MusicResponseMapper mapper;
 
 
     @BeforeAll
     static void beforeAll() {
-        mapper = new GenerateMusicResultMapper();
+        mapper = new MusicResponseMapper();
     }
 
     @Test
     void returnCreatedMusicResonse() {
         Music music = randomMusic();
-        GenerateMusicService.Result result = new GenerateMusicService.Result(music);
 
-        MusicResponse musicResponse = mapper.to(result);
+        MusicResponse musicResponse = mapper.to(music);
 
         assertEquals(music.getEmotion().name().toLowerCase(), musicResponse.getEmotion());
         assertEquals(music.getExplanation().getValue(), musicResponse.getExplanation());
