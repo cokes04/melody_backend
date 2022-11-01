@@ -52,17 +52,23 @@ spring:
         default_batch_fetch_size: 100
         use_sql_comments: true
 
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
 
 aws:
-  credentials:
-    accessKey: none
-    secretKey: none
-
   s3:
     image:
       credentials:
-        accessKey: ${aws.credentials.accessKey}
-        secretKey: ${aws.credentials.secretKey}
+        accessKey: ENC(EodsFXWhMnY1vZc5XkY9rFmLKpgFz4h8gmHvsZrwQOw=)
+        secretKey: ENC(AqnKcxmzs3lGMGMTypBODOS/vqiJN26DY1kD54yMbVIY/AWSwycnVoN8Yb+gPmlQPy5iiEQktkw=)
       region: ap-northeast-2
-      bucketName: none
-      allowMediatype: image/jpng,image/png
+      bucketName: melody-image-bucket
+      allowMediaType: image/jpng,image/jpg,image/png
+
+  lambda:
+    generateMusic:
+      uri: ENC(9LAe9lSFdHVaOIp5iAAYHtD44zs6wIYJslqX5G8bVhFFZ76VgyAiimn2KCOuns+jBVKSzn4jNhKJSnBsdSCaG0ceatRSufT8o1w8Y8nh0wk=)
+
+    emotionClassification:
+      uri: ENC(4gFc/D7Ao7Q2s3jq2N5Oak4u8nxwSo77/+j2spO7SpOOyAWvceqHOKCUwS3bOrt50gL7JGZwcuyJ4AVJolmXCjn24UTbrRvj/jDg4Jma8IjmqxSltM+Mgw==)

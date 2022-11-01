@@ -11,12 +11,16 @@ import lombok.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.function.Function;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CompleteGenerationMusicService implements UseCase<CompleteGenerationMusicService.Command, CompleteGenerationMusicService.Result > {
-    private final MusicRepository repository;
 
+    private final MusicRepository repository;
+    
     @Override
     public Result execute(Command input) {
         Music music = repository.getById(input.getId())

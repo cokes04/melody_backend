@@ -1,3 +1,6 @@
+src/test/java/com/melody/melody/config/*.java
+src/main/java/com/melody/melody/config/JasyptKey.java
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

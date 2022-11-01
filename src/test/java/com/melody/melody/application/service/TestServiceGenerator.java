@@ -20,11 +20,19 @@ public class TestServiceGenerator {
     }
 
     public static GenerateMusicService.Command randomGenerateMusicCommand() throws MalformedURLException {
-        return new GenerateMusicService.Command(randomImage(), randomNumber(80, 100), randomNumber(0, 10));
+        return new GenerateMusicService.Command(randomImage(), randomMusicLength(), randomNoise());
     }
 
     public static GenerateMusicService.Result randomGenerateMusicResult(){
         return new GenerateMusicService.Result(randomMusic());
+    }
+
+    public static int randomMusicLength() {
+        return randomNumber(60, 100);
+    }
+
+    public static int randomNoise(){
+        return randomNumber(0, 10);
     }
 
     private static int randomNumber(int min, int max){

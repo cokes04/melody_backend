@@ -4,6 +4,7 @@ import lombok.Value;
 
 @Value
 public class DomainError {
+
     private final DomainErrorType domainErrorType;
     private final Object[] arg;
     private final String message;
