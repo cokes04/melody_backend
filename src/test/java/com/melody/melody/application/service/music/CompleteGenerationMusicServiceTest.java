@@ -3,7 +3,7 @@ package com.melody.melody.application.service.music;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
-import com.melody.melody.domain.exception.MusicErrorType;
+import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.model.Music;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static com.melody.melody.domain.model.TestDomainGenerator.*;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;

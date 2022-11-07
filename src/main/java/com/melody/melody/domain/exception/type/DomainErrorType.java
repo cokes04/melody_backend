@@ -1,4 +1,4 @@
-package com.melody.melody.domain.exception;
+package com.melody.melody.domain.exception.type;
 
 public interface DomainErrorType {
     String getCode();

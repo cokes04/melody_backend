@@ -3,10 +3,10 @@ package com.melody.melody.domain.model;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.InvalidStatusException;
-import com.melody.melody.domain.exception.MusicErrorType;
+import com.melody.melody.domain.exception.type.MusicErrorType;
 import org.junit.jupiter.api.Test;
 
-import static com.melody.melody.domain.model.TestDomainGenerator.*;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 

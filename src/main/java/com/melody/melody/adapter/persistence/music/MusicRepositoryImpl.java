@@ -1,6 +1,9 @@
-package com.melody.melody.adapter.persistence;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.entity.MusicEntity;
+import com.melody.melody.adapter.persistence.PersistenceAdapter;
+import com.melody.melody.adapter.persistence.music.MusicEntity;
+import com.melody.melody.adapter.persistence.music.MusicJpaRepository;
+import com.melody.melody.adapter.persistence.music.MusicMapper;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;

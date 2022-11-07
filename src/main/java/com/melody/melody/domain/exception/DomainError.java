@@ -1,5 +1,6 @@
 package com.melody.melody.domain.exception;
 
+import com.melody.melody.domain.exception.type.DomainErrorType;
 import lombok.Value;
 
 @Value

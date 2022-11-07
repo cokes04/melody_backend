@@ -1,6 +1,5 @@
-package com.melody.melody.adapter.persistence;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.entity.MusicEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-import java.util.HashSet;
 import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,23 +27,24 @@ class MusicJpaRepositoryTest {
 
     @Configuration
     @AutoConfigurationPackage
-    @EntityScan("com.melody.melody.adapter.persistence.entity")
+    @EntityScan("com.melody.melody.adapter.persistence.music")
     static class Config {
     }
 
     @Test
     void save() {
-        MusicEntity musicEntity = TestEntityGenerator.randomMusicEntity();
+        MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
         musicEntity.setId(null);
 
         MusicEntity actual = repository.save(musicEntity);
 
-        assertThat(actual.getId()).isNotNull();
+        assertNotNull(actual.getId());
+        assertTrue(actual.getId() > 0);
     }
 
     @Test
     void findByIdReturnMusic() {
-        MusicEntity expected = TestEntityGenerator.randomMusicEntity();
+        MusicEntity expected = TestMusicEntityGenerator.randomMusicEntity();
         expected.setId(null);
         expected = entityManager.persistAndFlush(expected);
 

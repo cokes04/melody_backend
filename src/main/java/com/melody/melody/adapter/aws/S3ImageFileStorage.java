@@ -50,7 +50,7 @@ public class S3ImageFileStorage implements ImageFileStorage {
         return new Music.ImageUrl(
                 amazonS3.getUrl(bucketName, fileName).toString()
         );
-    };
+    }
 
     private void validate(GenerateMusicService.Image image){
         if (!allowMediaType.contains(image.getMediaType()))

@@ -3,16 +3,13 @@ package com.melody.melody.application.service.music;
 import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.MusicErrorType;
+import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.function.Function;
 
 @Service
 @Transactional

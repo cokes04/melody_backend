@@ -1,20 +1,15 @@
 package com.melody.melody.adapter.web.music;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.request.MusicRequest;
-import com.melody.melody.application.service.TestServiceGenerator;
-import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.application.service.music.GetMusicService;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestDomainGenerator;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -25,7 +20,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.melody.melody.adapter.web.TestWebGenerator.randomMusicResponse;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -34,7 +28,6 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,8 +55,8 @@ class GetMusicContollerTest {
 
     @Test
     void get_Ok() throws Exception {
-        Music.MusicId musicId = TestDomainGenerator.randomMusicId();
-        Music music = TestDomainGenerator.randomMusic();
+        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+        Music music = TestMusicDomainGenerator.randomMusic();
 
         GetMusicService.Command command = new GetMusicService.Command(musicId);
         GetMusicService.Result result =  new GetMusicService.Result(music);

@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
 @SpringBootApplication(scanBasePackages = {"com.melody.melody"})
-@EntityScan(basePackages = {"com.melody.melody.adapter.persistence.entity"})
+@EntityScan(basePackages = {"com.melody.melody.adapter.persistence"})
 public class MelodyApplication {
 
 	@PostConstruct

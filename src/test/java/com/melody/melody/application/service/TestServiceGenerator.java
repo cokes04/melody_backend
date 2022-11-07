@@ -6,7 +6,7 @@ import org.springframework.core.io.UrlResource;
 
 import java.net.MalformedURLException;
 
-import static com.melody.melody.domain.model.TestDomainGenerator.randomMusic;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusic;
 
 public class TestServiceGenerator {
     private static final Faker faker = new Faker();

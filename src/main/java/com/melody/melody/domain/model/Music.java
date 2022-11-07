@@ -2,7 +2,7 @@ package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidStatusException;
-import com.melody.melody.domain.exception.MusicErrorType;
+import com.melody.melody.domain.exception.type.MusicErrorType;
 import lombok.*;
 
 import java.util.Optional;
@@ -16,11 +16,11 @@ public class Music {
 
     private MusicId id;
 
-    private final Emotion emotion;
+    private Emotion emotion;
 
-    private final Explanation explanation;
+    private Explanation explanation;
 
-    private final ImageUrl imageUrl;
+    private ImageUrl imageUrl;
 
     private Status status;
 

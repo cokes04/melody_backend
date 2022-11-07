@@ -1,6 +1,6 @@
 package com.melody.melody.adapter.aws;
 
-import com.melody.melody.domain.exception.DomainErrorType;
+import com.melody.melody.domain.exception.type.DomainErrorType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

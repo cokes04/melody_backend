@@ -1,7 +1,7 @@
 package com.melody.melody.adapter.web;
 
 import com.melody.melody.adapter.web.response.MusicResponse;
-import com.melody.melody.domain.model.TestDomainGenerator;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import net.datafaker.Faker;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -22,11 +22,11 @@ public class TestWebGenerator {
 
     public static MusicResponse randomMusicResponse(){
         return MusicResponse.builder()
-                .musicId(TestDomainGenerator.randomMusicId().getValue())
-                .imageUrl(TestDomainGenerator.randomImageUrl().getValue())
-                .explanation(TestDomainGenerator.randomExplanation().getValue())
-                .emotion(TestDomainGenerator.randomEmotion().name().toLowerCase())
-                .status(TestDomainGenerator.randomStatus().name().toLowerCase())
+                .musicId(TestMusicDomainGenerator.randomMusicId().getValue())
+                .imageUrl(TestMusicDomainGenerator.randomImageUrl().getValue())
+                .explanation(TestMusicDomainGenerator.randomExplanation().getValue())
+                .emotion(TestMusicDomainGenerator.randomEmotion().name().toLowerCase())
+                .status(TestMusicDomainGenerator.randomStatus().name().toLowerCase())
                 .build();
     }
 }

@@ -2,7 +2,6 @@ package com.melody.melody.adapter.web.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.DomainErrorType;
 import lombok.Builder;
 import lombok.Getter;
 

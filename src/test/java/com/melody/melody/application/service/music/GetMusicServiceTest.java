@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static com.melody.melody.domain.model.TestDomainGenerator.*;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 
 @ExtendWith(SpringExtension.class)
 class GetMusicServiceTest {

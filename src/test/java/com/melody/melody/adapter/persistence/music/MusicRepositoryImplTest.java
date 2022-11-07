@@ -1,8 +1,7 @@
-package com.melody.melody.adapter.persistence;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.entity.MusicEntity;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestDomainGenerator;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,8 +26,8 @@ class MusicRepositoryImplTest {
 
     @Test
     public void getByIdReturnMusic() {
-        Music expected = TestDomainGenerator.randomMusic();
-        MusicEntity entity = TestEntityGenerator.randomMusicEntity();
+        Music expected = TestMusicDomainGenerator.randomMusic();
+        MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
         assertTrue(expected.getId().isPresent());
         Music.MusicId musicId = expected.getId().get();
 
@@ -49,7 +48,7 @@ class MusicRepositoryImplTest {
 
     @Test
     void getByIdReturnEmpty() {
-        Music.MusicId musicId = TestDomainGenerator.randomMusicId();
+        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(jpaRepository.findById(eq(musicId.getValue())))
                 .thenReturn(Optional.empty());
@@ -64,8 +63,8 @@ class MusicRepositoryImplTest {
 
     @Test
     void saveReturnMusic() {
-        Music expected = TestDomainGenerator.randomMusic();
-        MusicEntity entity = TestEntityGenerator.randomMusicEntity();
+        Music expected = TestMusicDomainGenerator.randomMusic();
+        MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 
         when(mapper.toEntity(eq(expected)))
                 .thenReturn(entity);

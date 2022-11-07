@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.persistence.entity;
+package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;

@@ -1,8 +1,7 @@
-package com.melody.melody.adapter.persistence;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.entity.MusicEntity;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestDomainGenerator;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +17,11 @@ class MusicMapperTest {
 
     @Test
     void toEntityReturnEntity() {
-        Music music = TestDomainGenerator.randomMusic();
-        assertTrue(music.getId().isPresent());
+        Music music = TestMusicDomainGenerator.randomMusic();
 
         MusicEntity actual = mapper.toEntity(music);
 
+        assertTrue(music.getId().isPresent());
         assertEquals(music.getId().get().getValue(), actual.getId());
         assertEquals(music.getEmotion(), actual.getEmotion());
         assertEquals(music.getImageUrl().getValue(), actual.getImageUrl());
@@ -32,7 +31,7 @@ class MusicMapperTest {
 
     @Test
     void toModelReturnModel() {
-        MusicEntity entity = TestEntityGenerator.randomMusicEntity();
+        MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 
         Music actual = mapper.toModel(entity);
 

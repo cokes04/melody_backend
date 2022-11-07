@@ -1,12 +1,12 @@
-package com.melody.melody.adapter.persistence;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.entity.MusicEntity;
+import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestDomainGenerator;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import net.datafaker.Faker;
 
-public class TestEntityGenerator {
+public class TestMusicEntityGenerator {
     private static final Faker faker = new Faker();
 
     public static MusicEntity randomMusicEntity(){
@@ -20,22 +20,22 @@ public class TestEntityGenerator {
     }
 
     public static Long randomId(){
-        return TestDomainGenerator.randomMusicId().getValue();
+        return TestMusicDomainGenerator.randomMusicId().getValue();
     }
 
     public static Emotion randomEmotion(){
-        return TestDomainGenerator.randomEmotion();
+        return TestMusicDomainGenerator.randomEmotion();
     }
 
     public static String randomExplanation(){
-        return TestDomainGenerator.randomExplanation().getValue();
+        return TestMusicDomainGenerator.randomExplanation().getValue();
     }
 
     public static String randomImageUrl(){
-        return TestDomainGenerator.randomImageUrl().getValue();
+        return TestMusicDomainGenerator.randomImageUrl().getValue();
     }
 
     public static Music.Status randomStatus(){
-        return TestDomainGenerator.randomStatus();
+        return TestMusicDomainGenerator.randomStatus();
     }
 }

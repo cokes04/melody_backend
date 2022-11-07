@@ -1,6 +1,5 @@
 package com.melody.melody.adapter.aws;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import okhttp3.mockwebserver.Dispatcher;
@@ -16,12 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.function.Function;
-
 import static com.melody.melody.application.service.TestServiceGenerator.*;
-import static com.melody.melody.domain.model.TestDomainGenerator.*;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 
 @ExtendWith(MockitoExtension.class)
 class LambdaMusicGeneratorTest {

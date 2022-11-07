@@ -1,12 +1,11 @@
 package com.melody.melody.adapter.web.music;
 
 import com.melody.melody.adapter.web.response.MusicResponse;
-import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.domain.model.Music;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static com.melody.melody.domain.model.TestDomainGenerator.randomMusic;
+import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusic;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MusicResponseMapperTest {

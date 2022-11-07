@@ -1,4 +1,4 @@
-package com.melody.melody.domain.exception;
+package com.melody.melody.domain.exception.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

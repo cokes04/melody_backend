@@ -2,7 +2,7 @@ package com.melody.melody.domain.model;
 
 import net.datafaker.Faker;
 
-public class TestDomainGenerator {
+public class TestMusicDomainGenerator {
     private static final Faker faker = new Faker();
 
     public static Music.MusicId randomMusicId(){
