@@ -25,7 +25,7 @@ class MusicRepositoryImplTest {
     @Mock private MusicMapper mapper;
 
     @Test
-    public void getByIdReturnMusic() {
+    public void getById_ShouldReturnMusic() {
         Music expected = TestMusicDomainGenerator.randomMusic();
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
         assertTrue(expected.getId().isPresent());
@@ -47,7 +47,7 @@ class MusicRepositoryImplTest {
     }
 
     @Test
-    void getByIdReturnEmpty() {
+    void getById_ShouldReturnEmpty() {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(jpaRepository.findById(eq(musicId.getValue())))
@@ -62,7 +62,7 @@ class MusicRepositoryImplTest {
     }
 
     @Test
-    void saveReturnMusic() {
+    void save_ShouldReturnMusic() {
         Music expected = TestMusicDomainGenerator.randomMusic();
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 

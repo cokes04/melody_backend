@@ -59,7 +59,7 @@ class LambdaEmotionClassifierTest {
         ReflectionTestUtils.setField(classifier, "uri", mockServerUrl);
     }
     @Test
-    void execute_returnEmotion() {
+    void execute_ShouldReturnEmotion() {
         Music.Explanation caption = new Music.Explanation("안녕하다 행복하다");
 
         Emotion emotion = classifier.execute(caption);

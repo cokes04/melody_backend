@@ -23,7 +23,7 @@ class GetMusicServiceTest {
     private MusicRepository repository;
 
     @Test
-    void execute_returnMusic() {
+    void execute_ShouldReturnMusic() {
         Music.MusicId id = randomMusicId();
         Music music = randomMusic();
         music = insertMusicId(music, id);

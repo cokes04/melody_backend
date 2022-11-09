@@ -32,7 +32,7 @@ class MusicJpaRepositoryTest {
     }
 
     @Test
-    void save() {
+    void save_ShouldReturnEntityWithId() {
         MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
         musicEntity.setId(null);
 
@@ -43,7 +43,7 @@ class MusicJpaRepositoryTest {
     }
 
     @Test
-    void findByIdReturnMusic() {
+    void findById_ShouldReturnMusic() {
         MusicEntity expected = TestMusicEntityGenerator.randomMusicEntity();
         expected.setId(null);
         expected = entityManager.persistAndFlush(expected);
@@ -55,7 +55,7 @@ class MusicJpaRepositoryTest {
     }
 
     @Test
-    void findByIdReturnEmpty() {
+    void findById_ShouldReturnEmpty() {
         Optional<MusicEntity> actual = repository.findById(0L);
 
         assertTrue(actual.isEmpty());

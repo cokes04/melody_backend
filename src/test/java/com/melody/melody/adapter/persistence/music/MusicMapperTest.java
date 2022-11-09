@@ -16,7 +16,7 @@ class MusicMapperTest {
     }
 
     @Test
-    void toEntityReturnEntity() {
+    void toEntity_ShouldReturnEntity() {
         Music music = TestMusicDomainGenerator.randomMusic();
 
         MusicEntity actual = mapper.toEntity(music);
@@ -30,7 +30,7 @@ class MusicMapperTest {
     }
 
     @Test
-    void toModelReturnModel() {
+    void toModel_ShouldReturnModel() {
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 
         Music actual = mapper.toModel(entity);

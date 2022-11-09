@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static com.melody.melody.application.service.TestServiceGenerator.*;
+import static com.melody.melody.application.service.music.TestMusicServiceGenerator.*;
 import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,7 +50,7 @@ class LambdaMusicGeneratorTest {
     }
 
     @Test
-    void executeAsync_clientSuccess() {
+    void executeAsync(){
 
         Music.MusicId musicId = randomMusicId();
         Emotion emotion = randomEmotion();

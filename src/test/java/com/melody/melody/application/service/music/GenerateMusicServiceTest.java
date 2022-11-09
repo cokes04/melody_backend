@@ -1,6 +1,5 @@
 package com.melody.melody.application.service.music;
 
-import com.melody.melody.application.service.TestServiceGenerator;
 import com.melody.melody.application.port.out.*;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
@@ -32,7 +31,7 @@ class GenerateMusicServiceTest {
 
     @Test
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
-        GenerateMusicService.Command command = TestServiceGenerator.randomGenerateMusicCommand();
+        GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand();
 
         Music.MusicId musicId = randomMusicId();
         Music.ImageUrl imageUrl = randomImageUrl();
@@ -51,7 +50,8 @@ class GenerateMusicServiceTest {
                 .thenReturn(emotion);
 
         when(musicRepository.save(any(Music.class)))
-                .thenAnswer(ans -> insertMusicId(ans.getArgument(0, Music.class), musicId)
+                .thenAnswer(
+                        ans -> insertMusicId(ans.getArgument(0, Music.class), musicId)
                 );
 
         GenerateMusicService.Result result = service.execute(command);
