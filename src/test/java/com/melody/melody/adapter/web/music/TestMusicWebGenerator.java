@@ -1,6 +1,6 @@
-package com.melody.melody.adapter.web;
+package com.melody.melody.adapter.web.music;
 
-import com.melody.melody.adapter.web.response.MusicResponse;
+import com.melody.melody.adapter.web.music.response.MusicResponse;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import net.datafaker.Faker;
 import org.springframework.http.MediaType;
@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
 
-public class TestWebGenerator {
+public class TestMusicWebGenerator {
     private static final Faker faker = new Faker();
 
     public static MultipartFile randomMultipartFile(){

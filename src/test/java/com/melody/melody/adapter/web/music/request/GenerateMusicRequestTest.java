@@ -1,32 +1,22 @@
-package com.melody.melody.adapter.web.music;
+package com.melody.melody.adapter.web.music.request;
 
-import com.melody.melody.adapter.web.request.MusicRequest;
 import com.melody.melody.application.service.music.GenerateMusicService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.melody.melody.adapter.web.TestWebGenerator.*;
+import static com.melody.melody.adapter.web.music.TestMusicWebGenerator.randomMultipartFile;
 import static org.junit.jupiter.api.Assertions.*;
 
-class GenerateMusicCommendMapperTest {
-
-
-    private static GenerateMusicCommendMapper mapper;
-
-    @BeforeAll
-    static void beforeAll() {
-        mapper = new GenerateMusicCommendMapper();
-    }
+class GenerateMusicRequestTest {
 
     @Test
-    void returnCreatedCommand() {
+    void toCommand_returnCreatedCommand() {
         int musicLength = 50;
         int noise = 33;
-        MusicRequest musicRequest = MusicRequest.builder().musicLength(musicLength).noise(noise).build();
+        GenerateMusicRequest generateMusicRequest = GenerateMusicRequest.builder().musicLength(musicLength).noise(noise).build();
         MultipartFile image = randomMultipartFile();
 
-        GenerateMusicService.Command actual = mapper.of(musicRequest, image);
+        GenerateMusicService.Command actual = generateMusicRequest.toCommand(image);
 
         assertEquals(image.getContentType(), actual.getImage().getMediaType());
         assertEquals(image.getResource(), actual.getImage().getResource());

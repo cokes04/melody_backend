@@ -1,32 +1,23 @@
-package com.melody.melody.adapter.web.music;
+package com.melody.melody.adapter.web.music.response;
 
-import com.melody.melody.adapter.web.response.MusicResponse;
 import com.melody.melody.domain.model.Music;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusic;
 import static org.junit.jupiter.api.Assertions.*;
 
-class MusicResponseMapperTest {
-
-    private static MusicResponseMapper mapper;
-
-
-    @BeforeAll
-    static void beforeAll() {
-        mapper = new MusicResponseMapper();
-    }
+class MusicResponseTest {
 
     @Test
-    void returnCreatedMusicResonse() {
+    void to_returnCreatedMusicResonse() {
         Music music = randomMusic();
 
-        MusicResponse musicResponse = mapper.to(music);
+        MusicResponse musicResponse = MusicResponse.to(music);
 
         assertEquals(music.getEmotion().name().toLowerCase(), musicResponse.getEmotion());
         assertEquals(music.getExplanation().getValue(), musicResponse.getExplanation());
         assertEquals(music.getImageUrl().getValue(), musicResponse.getImageUrl());
+        assertTrue(music.getId().isPresent());
         assertEquals(music.getId().get().getValue(), musicResponse.getMusicId());
         assertEquals(music.getStatus().name().toLowerCase(), musicResponse.getStatus());
     }

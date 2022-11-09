@@ -1,7 +1,7 @@
 package com.melody.melody.adapter.web.music;
 
-import com.melody.melody.adapter.web.request.MusicRequest;
-import com.melody.melody.adapter.web.response.MusicResponse;
+import com.melody.melody.adapter.web.music.request.GenerateMusicRequest;
+import com.melody.melody.adapter.web.music.response.MusicResponse;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -17,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 public class GenerateMusicContoller {
     private final GenerateMusicService service;
-    private final GenerateMusicCommendMapper commendMapper;
-    private final MusicResponseMapper resultMapper;
 
     @PostMapping(
             value = "/music",
@@ -29,11 +27,12 @@ public class GenerateMusicContoller {
     )
     public ResponseEntity<MusicResponse> generate(
             @RequestPart(name = "image") MultipartFile image,
-            @RequestPart(name = "body") MusicRequest request ) {
+            @RequestPart(name = "body") GenerateMusicRequest request ) {
 
-        GenerateMusicService.Command command = commendMapper.of(request, image);
+        request.toCommand(image);
+        GenerateMusicService.Command command = request.toCommand(image);
         GenerateMusicService.Result result = service.execute(command);
-        MusicResponse musicResponse = resultMapper.to(result.getMusic());
+        MusicResponse musicResponse = MusicResponse.to(result.getMusic());
 
         return ResponseEntity.ok()
                 .body(musicResponse);

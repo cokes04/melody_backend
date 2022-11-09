@@ -1,14 +1,23 @@
-package com.melody.melody.adapter.web.music;
+package com.melody.melody.adapter.web.music.response;
 
-import com.melody.melody.adapter.web.response.MusicResponse;
-import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.domain.model.Music;
-import org.springframework.stereotype.Component;
+import lombok.Builder;
+import lombok.Value;
 
-@Component
-public class MusicResponseMapper {
+@Value
+@Builder
+public class MusicResponse {
+    private final Long musicId;
 
-    public MusicResponse to(Music music){
+    private final String emotion;
+
+    private final String explanation;
+
+    private final String imageUrl;
+
+    private final String status;
+
+    public static MusicResponse to(Music music){
         return MusicResponse.builder()
                 .musicId(music.getId().orElse(new Music.MusicId(-1L)).getValue())
                 .imageUrl(music.getImageUrl().getValue())
