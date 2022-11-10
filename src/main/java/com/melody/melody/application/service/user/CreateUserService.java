@@ -6,6 +6,7 @@ import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.model.Password;
 import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.rule.BusinessRuleChecker;
 import com.melody.melody.domain.rule.EmailIsUnique;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -15,14 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CreateUserService implements UseCase<CreateUserService.Command, CreateUserService.Result> {
+public class CreateUserService implements UseCase<CreateUserService.Command, CreateUserService.Result>, BusinessRuleChecker {
     private final UserRepository repository;
     private final PasswordEncrypter passwordEncrypter;
 
     @Override
     public Result execute(Command command) {
 
-        new EmailIsUnique(repository, command.getEmail()).isComplied();
+        this.checkRule(
+                new EmailIsUnique(repository, command.getEmail())
+        );
+
         Password password = passwordEncrypter.encrypt(command.getPassword());
 
         User user = User.create(

@@ -4,10 +4,10 @@ import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
-import com.melody.melody.domain.exception.EmailAlreadyUsedException;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.rule.BreakBusinessRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -62,7 +62,7 @@ class CreateUserServiceTest {
 
         assertException(
                 () -> createUserService.execute(command),
-                EmailAlreadyUsedException.class,
+                BreakBusinessRuleException.class,
                 DomainError.of(UserErrorType.Email_Already_Used)
         );
 
