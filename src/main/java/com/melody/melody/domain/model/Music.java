@@ -22,6 +22,8 @@ public class Music {
 
     private ImageUrl imageUrl;
 
+    private MusicUrl musicUrl;
+
     private Status status;
 
     public static Music generate(Emotion emotion, Explanation explanation, ImageUrl imageUrl){
@@ -30,20 +32,26 @@ public class Music {
                 emotion,
                 explanation,
                 imageUrl,
+                null,
                 Status.PROGRESS
                 );
     }
 
-    public void completeGeneration(){
+    public void completeGeneration(MusicUrl musicUrl){
         if (!this.status.equals(Status.PROGRESS))
             throw new InvalidStatusException(DomainError.of(MusicErrorType.Should_Be_Progress_State_For_Complete_Generation));
 
+        this.musicUrl = musicUrl;
         this.status = Status.COMPLETION;
 
     }
 
     public Optional<MusicId> getId(){
         return Optional.ofNullable(this.id);
+    }
+
+    public Optional<MusicUrl> getMusicUrl(){
+        return Optional.ofNullable(this.musicUrl);
     }
 
     @Value
@@ -59,7 +67,11 @@ public class Music {
     @Value
     public static class ImageUrl{
         private final String value;
+    }
 
+    @Value
+    public static class MusicUrl{
+        private final String value;
     }
 
     public enum Status {

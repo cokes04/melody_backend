@@ -19,11 +19,11 @@ public class CompleteGenerationMusicService implements UseCase<CompleteGeneratio
     private final MusicRepository repository;
     
     @Override
-    public Result execute(Command input) {
-        Music music = repository.getById(input.getId())
+    public Result execute(Command command) {
+        Music music = repository.getById(command.getId())
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
 
-        music.completeGeneration();
+        music.completeGeneration(command.getMusicUrl());
 
         return new Result(music);
     }
@@ -31,6 +31,7 @@ public class CompleteGenerationMusicService implements UseCase<CompleteGeneratio
     @Value
     public static class Command implements UseCase.Command {
         private final Music.MusicId id;
+        private final Music.MusicUrl musicUrl;
 
     }
 

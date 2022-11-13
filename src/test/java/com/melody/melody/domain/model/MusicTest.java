@@ -22,6 +22,7 @@ class MusicTest {
 
         assertTrue(actual.getId().isEmpty());
         assertEquals(Music.Status.PROGRESS, actual.getStatus());
+        assertTrue(actual.getMusicUrl().isEmpty());
         assertEquals(emotion, actual.getEmotion());
         assertEquals(explanation, actual.getExplanation());
         assertEquals(imageUrl, actual.getImageUrl());
@@ -30,23 +31,30 @@ class MusicTest {
     @Test
     void completeGeneration() {
         Music music = generatedMusic();
+        Music.MusicUrl musicUrl = randomMusicUrl();
+
         assertEquals(Music.Status.PROGRESS, music.getStatus());
 
-        music.completeGeneration();
+        music.completeGeneration(musicUrl);
 
         assertEquals(Music.Status.COMPLETION, music.getStatus());
+        assertTrue(music.getMusicUrl().isPresent());
+        assertEquals(musicUrl, music.getMusicUrl().get());
 
     }
 
     @Test
     void completeGeneration_ThrowException_WhenStatusIsNotPROGRESS() {
         Music music = generatedMusic();
-        music.completeGeneration();
+        Music.MusicUrl musicUrl = randomMusicUrl();
+        Music.MusicUrl newMusicUrl = randomMusicUrl();
+
+        music.completeGeneration(musicUrl);
 
         assertNotEquals(Music.Status.PROGRESS, music.getStatus());
         assertEquals(Music.Status.COMPLETION, music.getStatus());
 
-        assertException(music::completeGeneration,
+        assertException(() -> music.completeGeneration(newMusicUrl),
                 InvalidStatusException.class,
                 DomainError.of(MusicErrorType.Should_Be_Progress_State_For_Complete_Generation));
     }

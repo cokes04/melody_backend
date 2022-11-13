@@ -29,15 +29,15 @@ class CompleteGenerationMusicServiceTest {
 
     @Test
     void execute_ShouldCompletionMusic() {
-
         Music music = generatedMusic();
         Music.MusicId id = randomMusicId();
         music = insertMusicId(music, id);
+        Music.MusicUrl musicUrl = randomMusicUrl();
 
         Music expectedMusic = cloneMusic(music);
-        expectedMusic.completeGeneration();
+        expectedMusic.completeGeneration(musicUrl);
 
-        CompleteGenerationMusicService.Command command = new CompleteGenerationMusicService.Command(id);
+        CompleteGenerationMusicService.Command command = new CompleteGenerationMusicService.Command(id, musicUrl);
 
         when(repository.getById(id))
                 .thenReturn(Optional.of(music));
@@ -54,7 +54,9 @@ class CompleteGenerationMusicServiceTest {
     @Test
     void execute_ThrowException_WhenNonexistentMusic() {
         Music.MusicId id = randomMusicId();
-        CompleteGenerationMusicService.Command command = new CompleteGenerationMusicService.Command(id);
+        Music.MusicUrl musicUrl = randomMusicUrl();
+
+        CompleteGenerationMusicService.Command command = new CompleteGenerationMusicService.Command(id, musicUrl);
 
         when(repository.getById(id))
                 .thenReturn(Optional.empty());

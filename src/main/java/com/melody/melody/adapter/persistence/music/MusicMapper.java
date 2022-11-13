@@ -12,6 +12,7 @@ public class MusicMapper {
                 .id(new Music.MusicId(entity.getId()))
                 .emotion(entity.getEmotion())
                 .status(entity.getStatus())
+                .musicUrl(new Music.MusicUrl(entity.getMusicUrl()))
                 .imageUrl(new Music.ImageUrl(entity.getImageUrl()))
                 .explanation(new Music.Explanation(entity.getExplanation()))
                 .build();
@@ -23,6 +24,7 @@ public class MusicMapper {
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation().getValue())
                 .imageUrl(music.getImageUrl().getValue())
+                .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
                 .status(music.getStatus())
                 .build();
     }

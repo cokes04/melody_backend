@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.music.request.GenerateMusicRequest;
 import com.melody.melody.application.service.music.TestMusicServiceGenerator;
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,11 +73,11 @@ class GenerateMusicContollerTest {
                 "body", "json-data", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(generateMusicRequest)
         );
 
-        GenerateMusicService.Result result = TestMusicServiceGenerator.randomGenerateMusicResult();
+        Music music = TestMusicDomainGenerator.generatedMusic();
+        GenerateMusicService.Result result = new GenerateMusicService.Result(music);
 
         when(service.execute(eq(generateMusicRequest.toCommand(image))))
                 .thenReturn(result);
-
 
         mockMvc.perform(
                 multipart("/music")

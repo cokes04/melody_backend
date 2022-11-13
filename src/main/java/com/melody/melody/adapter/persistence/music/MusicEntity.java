@@ -30,6 +30,9 @@ public class MusicEntity {
     @Column(nullable = false, unique = true)
     private String imageUrl;
 
+    @Column(nullable = true, unique = true)
+    private String musicUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Music.Status status;

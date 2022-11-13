@@ -42,7 +42,7 @@ public class LoginUserContoller {
         return ResponseCookie
                 .from(jwtConfig.getRefreshToken().getName(), refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path(null)
                 .domain(null)
                 .maxAge(jwtConfig.getRefreshToken().getValidMilliSecond() / 1000)

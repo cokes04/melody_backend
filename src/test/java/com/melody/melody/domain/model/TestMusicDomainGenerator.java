@@ -27,6 +27,11 @@ public class TestMusicDomainGenerator {
         );
     }
 
+    public static Music.MusicUrl randomMusicUrl(){
+        return new Music.MusicUrl(
+                faker.internet().url()
+        );
+    }
 
     public static Music.Status randomStatus(){
         return faker.options().option(Music.Status.class);
@@ -47,6 +52,7 @@ public class TestMusicDomainGenerator {
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
                 .status(randomStatus())
+                .musicUrl(randomMusicUrl())
                 .build();
     }
 
@@ -57,6 +63,7 @@ public class TestMusicDomainGenerator {
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())
                 .status(music.getStatus())
+                .musicUrl(music.getMusicUrl().orElse(null))
                 .build();
     }
 
@@ -67,6 +74,7 @@ public class TestMusicDomainGenerator {
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())
                 .status(music.getStatus())
+                .musicUrl(music.getMusicUrl().orElse(null))
                 .build();
     }
 }
