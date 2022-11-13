@@ -5,6 +5,8 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
@@ -16,6 +18,12 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity entity = userMapper.toEntity(user);
         entity = jpaRepository.save(entity);
         return userMapper.toModel(entity);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return jpaRepository.findByEmail(email)
+                .map(userMapper::toModel);
     }
 
     @Override

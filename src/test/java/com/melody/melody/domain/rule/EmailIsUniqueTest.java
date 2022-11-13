@@ -23,7 +23,7 @@ class EmailIsUniqueTest {
     }
 
     @Test
-    void email() {
+    void check() {
         String email = randomEmail();
 
         when(repository.existsByEmail(email))
@@ -36,7 +36,7 @@ class EmailIsUniqueTest {
     }
 
     @Test
-    void completeGeneration_ThrowException_WhenNotUniqueEmail() {
+    void check_ShouldThrowException_WhenNotUniqueEmail() {
         String email = randomEmail();
 
         when(repository.existsByEmail(email))

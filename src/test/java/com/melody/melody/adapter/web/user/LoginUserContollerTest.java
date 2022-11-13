@@ -1,9 +1,13 @@
 package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.user.request.CreateUserRequest;
+import com.melody.melody.adapter.web.security.TokenProvider;
+import com.melody.melody.adapter.web.user.request.LoginRequest;
+import com.melody.melody.application.service.authentication.AuthenticationService;
 import com.melody.melody.application.service.user.CreateUserService;
-import com.melody.melody.application.service.user.TestUserServiceGenerator;
+import com.melody.melody.config.JwtConfig;
+import com.melody.melody.domain.model.TestUserDomainGenerator;
+import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,25 +24,30 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static com.melody.melody.adapter.web.user.TestUserWebGenerator.randomCreateUserRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = CreateUserContoller.class)
-class CreateUserContollerTest {
+@WebMvcTest(value = LoginUserContoller.class)
+class LoginUserContollerTest {
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @MockBean
-    private CreateUserService service;
+    private AuthenticationService authenticationService;
+    @MockBean
+    private TokenProvider tokenProvider;
+    @MockBean
+    private JwtConfig jwtConfig;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
@@ -50,33 +59,51 @@ class CreateUserContollerTest {
                 .build();
     }
 
+
     @Test
-    void createUser_Ok() throws Exception{
-        CreateUserRequest request = randomCreateUserRequest();
-        CreateUserService.Command command = request.toCommand();
-        CreateUserService.Result result = TestUserServiceGenerator.randomCreateUserResult();
+    void login_Ok() throws Exception{
+        LoginRequest request = LoginRequest.builder()
+                .email(TestUserWebGenerator.randomEmail())
+                .password(TestUserWebGenerator.randomPassword())
+                .build();
 
-        when(service.execute(eq(command)))
-                .thenReturn(result);
+        User user = TestUserDomainGenerator.randomUser();
+        User.UserId id = user.getId().get();
 
+        when(authenticationService.execute( any(AuthenticationService.Command.class) ))
+                .thenReturn( new AuthenticationService.Result(user) );
+
+        when(tokenProvider.createAccessToken(id))
+                .thenReturn("header.accessTokenClaim.signature");
+
+        when(tokenProvider.createRefreshToken(id))
+                .thenReturn("header.refreshTokenClaim.signature");
+
+        when(jwtConfig.getRefreshToken())
+                .thenReturn(new JwtConfig.Token(100000, "key","rt"));
 
         mockMvc.perform(
-                post("/users")
+                post("/login")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+
         )
-                .andExpect(status().isNoContent())
+                .andExpect(status().isOk())
                 .andDo(
                         document(
-                                "create-user",
+                                "login-user",
                                 requestFields(
-                                        fieldWithPath("lastName").description("성").type(JsonFieldType.STRING),
-                                        fieldWithPath("firstName").description("이름").type(JsonFieldType.STRING),
                                         fieldWithPath("email").description("이메일").type(JsonFieldType.STRING),
                                         fieldWithPath("password").description("비밀번호").type(JsonFieldType.STRING)
+                                ),
+                                responseHeaders(
+                                        headerWithName("Set-Cookie").description(jwtConfig.getRefreshToken().getName() + " : 리프레쉬 토큰")
+                                ),
+                                responseFields(
+                                        fieldWithPath("token").description("엑세스 토큰").type(JsonFieldType.STRING).attributes()
                                 )
+
                         )
                 );
-
     }
 }

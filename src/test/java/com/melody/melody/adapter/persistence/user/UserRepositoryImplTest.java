@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -62,5 +64,35 @@ class UserRepositoryImplTest {
 
         boolean actual = userRepository.existsByEmail(email);
         assertTrue(actual);
+    }
+
+    @Test
+    void findByEmail_ShoudReturnEmpty_WhenUnSavedUserEmail() {
+        String email = TestUserDomainGenerator.randomEmail();
+
+        when(jpaRepository.findByEmail(eq(email)))
+                .thenReturn(Optional.empty());
+
+        Optional<User> actual = userRepository.findByEmail(email);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void findByEmail_ShoudReturnUser_WhenSavedUserEmail() {
+        UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
+        User user = TestUserDomainGenerator.randomUser();
+        String email = user.getEmail();
+
+        when(jpaRepository.findByEmail(eq(email)))
+                .thenReturn(Optional.of(userEntity));
+
+        when(mapper.toModel(eq(userEntity)))
+                .thenReturn(user);
+
+        Optional<User> actual = userRepository.findByEmail(email);
+
+        assertTrue(actual.isPresent());
+        assertEquals(user, actual.get());
     }
 }

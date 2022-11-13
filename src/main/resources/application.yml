@@ -56,6 +56,22 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
+app:
+  jwt:
+    accessToken:
+      validMilliSecond: 1800000 # 30 * 60 * 1000 # 30분
+      secretKey: ENC(9wDOYRXVuhWEhzL7c/yfybEbvhQdsVe1kyn6wIiWUahcleRTM5jm3ulomvreRw1FlbGq+OMIbWA=)
+      name: Authorization
+
+    refreshToken:
+      validMilliSecond: 1036800000 # 12 * 24 * 60 * 60 * 1000 # 12일
+      secretKey: ENC(ZIFmw2pQ8F06AjNOW2XH98hJ0DwQkf7+9VfXCflEsyBZEXCZEYjszZh/J3RgEV96WpGhEEwdWf4=)
+      name: rt
+
+
+
+
+
 aws:
   s3:
     image:

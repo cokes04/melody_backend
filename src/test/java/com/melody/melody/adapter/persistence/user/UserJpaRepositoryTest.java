@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -51,5 +53,26 @@ class UserJpaRepositoryTest {
 
         boolean actual = repository.existsByEmail(userEntity.getEmail());
         assertTrue(actual);
+    }
+
+    @Test
+    void findByEmail_ShouldReturnEmpty_WhenUnsavedUserEmail() {
+        String email = TestUserEntityGenerator.randomEmail();
+
+        Optional<UserEntity> actual = repository.findByEmail(email);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void findByEmail_ShouldReturnEntity_WhenSavedUserEmail() {
+        UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
+        userEntity = entityManager.merge(userEntity);
+        String email = userEntity.getEmail();
+
+        Optional<UserEntity> actual = repository.findByEmail(email);
+
+        assertTrue(actual.isPresent());
+        assertEquals(userEntity, actual.get());
     }
 }
