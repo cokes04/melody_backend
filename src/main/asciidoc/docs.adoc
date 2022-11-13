@@ -3,50 +3,78 @@
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 4
-:sectnums:
+:toclevels: 1
 :sectlinks:
 :sectanchors:
 
-[[overview-http-verbs]]
-= 작곡 API
+== [POST] 음악 작곡
 Post /music
 
 TIP: Multipart 요청입니다. +
 Content-Type: multipart/form-data;charset=UTF-8;
 
-== 요청
-=== 요청 예시
+=== 요청
 include::{snippets}/generate-music/http-request.adoc[]
-=== 파트 구성
+==== 요청 파트
 include::{snippets}/generate-music/request-parts.adoc[]
-=== body 파트 필드
+==== body 파트 필드
 include::{snippets}/generate-music/request-part-body-body.adoc[]
 include::{snippets}/generate-music/request-part-body-fields.adoc[]
 
-== 응답
-=== 응답 예시
+=== 응답
 include::{snippets}/generate-music/http-response.adoc[]
-=== 응답 필드
+==== 응답 필드
 include::{snippets}/generate-music/response-fields.adoc[]
 
-== curl 예시
+=== curl
 include::{snippets}/generate-music/curl-request.adoc[]
 
-= 음악 API
+== [Get] 음악 정보
 Get /music/{id}
 
-== 요청
-=== 요청 예시
+=== 요청
 include::{snippets}/get-music/http-request.adoc[]
-=== 파라미터
+==== 요청 파라미터
 include::{snippets}/get-music/path-parameters.adoc[]
 
-== 응답
-=== 응답 예시
+=== 응답
 include::{snippets}/get-music/http-response.adoc[]
-=== 응답 필드
+==== 응답 필드
 include::{snippets}/get-music/response-fields.adoc[]
 
-== curl 예시
+=== curl
 include::{snippets}/get-music/curl-request.adoc[]
+
+
+== [Post] 회원 가입
+Post /users
+
+=== 요청
+include::{snippets}/create-user/http-request.adoc[]
+==== 요청 필드
+include::{snippets}/create-user/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/create-user/http-response.adoc[]
+
+=== curl
+include::{snippets}/create-user/curl-request.adoc[]
+
+
+== [Post] 로그인
+Post /login
+
+=== 요청
+include::{snippets}/login-user/http-request.adoc[]
+==== 요청 필드
+include::{snippets}/login-user/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/login-user/http-response.adoc[]
+=== 응답 헤더
+include::{snippets}/login-user/response-headers.adoc[]
+=== 응답 필드
+include::{snippets}/login-user/response-fields.adoc[]
+
+=== curl
+include::{snippets}/login-user/curl-request.adoc[]
