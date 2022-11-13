@@ -21,6 +21,31 @@ class JwtTokenProviderTest {
     }
 
     @Test
+    void getIdToAcessToken_ShouldReturnId() {
+        when(jwtConfig.getAccessToken())
+                .thenReturn(getAccessTokenConfig());
+
+        User.UserId userId = new User.UserId(50L);
+        String accessToken = provider.createAccessToken(userId);
+
+        long id = provider.getIdToAcessToken(accessToken);
+        assertEquals(userId.getValue().longValue(), id);
+    }
+
+
+    @Test
+    void getIdToRefreshTsoken_ShouldReturnId() {
+        when(jwtConfig.getRefreshToken())
+                .thenReturn(getRefreshTokenConfig());
+
+        User.UserId userId = new User.UserId(50L);
+        String accessToken = provider.createRefreshToken(userId);
+
+        long id = provider.getIdToRefreshToken(accessToken);
+        assertEquals(userId.getValue().longValue(), id);
+    }
+
+    @Test
     void createAccessToken_ShuoldReturnAccessToken() {
         JwtConfig.Token token = getAccessTokenConfig();
         when(jwtConfig.getAccessToken())

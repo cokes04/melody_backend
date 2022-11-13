@@ -11,6 +11,6 @@ public class LambdaImageCaptioner implements ImageCaptioner {
 
     @Override
     public Music.Explanation execute(Music.ImageUrl imageUrl) {
-        return null;
+        return new Music.Explanation("미구현 미구현 미구현");
     }
 }

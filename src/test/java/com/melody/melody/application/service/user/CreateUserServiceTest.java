@@ -69,7 +69,7 @@ class CreateUserServiceTest {
         verify(repository, times(0)).save(any(User.class));
     }
 
-    void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){
+    private void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){
         assertThatThrownBy(runnable::run)
                 .isInstanceOf(exceptionClass)
                 .hasFieldOrPropertyWithValue("domainErrors", domainErrors);

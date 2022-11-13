@@ -27,6 +27,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findById(User.UserId id) {
+        return jpaRepository.findById(id.getValue())
+                .map(userMapper::toModel);
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return jpaRepository.existsByEmail(email);
     }

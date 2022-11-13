@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.persistence.user;
 
+import com.amazonaws.services.apigateway.model.Op;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
@@ -94,5 +95,24 @@ class UserRepositoryImplTest {
 
         assertTrue(actual.isPresent());
         assertEquals(user, actual.get());
+    }
+
+    @Test
+    void findById_ShouldReturnUser() {
+        UserEntity entity = TestUserEntityGenerator.randomUserEntity();
+        User user = TestUserDomainGenerator.randomUser();
+        User.UserId userId = user.getId().get();
+
+        when(jpaRepository.findById(eq(userId.getValue())))
+                .thenReturn(Optional.of(entity));
+
+        when(mapper.toModel(eq(entity)))
+                .thenReturn(user);
+
+        Optional<User> actual = userRepository.findById(userId);
+
+        assertTrue(actual.isPresent());
+        assertEquals(user, actual.get());
+
     }
 }

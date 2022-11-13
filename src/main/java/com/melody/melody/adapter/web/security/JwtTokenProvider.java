@@ -1,12 +1,14 @@
 package com.melody.melody.adapter.web.security;
 
 import com.melody.melody.config.JwtConfig;
+import com.melody.melody.domain.exception.DomainError;
+import com.melody.melody.domain.exception.FailedAuthenticationException;
+import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.User;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
@@ -16,12 +18,12 @@ public class JwtTokenProvider implements TokenProvider {
 
     @Override
     public long getIdToAcessToken(String accessToken) {
-        return 0;
+        return getId(accessToken, jwtConfig.getAccessToken().getSecretKey());
     }
 
     @Override
     public long getIdToRefreshToken(String refreshToken) {
-        return 0;
+        return getId(refreshToken, jwtConfig.getRefreshToken().getSecretKey());
     }
 
     @Override
@@ -80,5 +82,20 @@ public class JwtTokenProvider implements TokenProvider {
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+    }
+
+    private long getId(String token, String secretKey){
+        try {
+            String subject = Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+
+            return Long.parseLong(subject);
+
+        }catch (Exception e){
+            throw new FailedAuthenticationException(DomainError.of(UserErrorType.Authentication_Failed));
+        }
     }
 }

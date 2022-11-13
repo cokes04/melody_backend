@@ -59,7 +59,7 @@ jasypt:
 app:
   jwt:
     accessToken:
-      validMilliSecond: 1800000 # 30 * 60 * 1000 # 30분
+      validMilliSecond: 600000 # 10 * 60 * 1000 # 10분
       secretKey: ENC(9wDOYRXVuhWEhzL7c/yfybEbvhQdsVe1kyn6wIiWUahcleRTM5jm3ulomvreRw1FlbGq+OMIbWA=)
       name: Authorization
 
