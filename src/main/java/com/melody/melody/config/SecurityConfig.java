@@ -53,6 +53,7 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers("/test").permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers("/music/**").hasRole("USER")
                 .anyRequest().authenticated()

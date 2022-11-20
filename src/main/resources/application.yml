@@ -52,6 +52,42 @@ spring:
         default_batch_fetch_size: 100
         use_sql_comments: true
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    dynamic: true
+
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2s
+          max-attempts: 3
+          max-interval: 5s
+          multiplier: 2
+
+rabbit:
+  exchange:
+    compose-music :
+      name: "x.compose-music"
+      durable : false
+      autoDelete : true
+
+  queue:
+    complete-music:
+      name: "q.complete-music"
+      durable : false
+      exclusive : true
+      autoDelete : true
+
+  binding:
+    - exchange: ${rabbit.exchange.compose-music.name}
+      queue: ${rabbit.queue.complete-music.name}
+      key: "#"
+
+
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
@@ -67,10 +103,6 @@ app:
       validMilliSecond: 1036800000 # 12 * 24 * 60 * 60 * 1000 # 12일
       secretKey: ENC(ZIFmw2pQ8F06AjNOW2XH98hJ0DwQkf7+9VfXCflEsyBZEXCZEYjszZh/J3RgEV96WpGhEEwdWf4=)
       name: rt
-
-
-
-
 
 aws:
   s3:
