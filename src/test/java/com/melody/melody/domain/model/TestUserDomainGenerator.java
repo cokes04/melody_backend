@@ -38,6 +38,7 @@ public class TestUserDomainGenerator {
                 .firstName(randomFirstName())
                 .email(randomEmail())
                 .password(randomPassword())
+                .withdrawn(false)
                 .build();
     }
 

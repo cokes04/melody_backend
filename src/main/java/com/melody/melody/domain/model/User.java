@@ -1,5 +1,8 @@
 package com.melody.melody.domain.model;
 
+import com.melody.melody.domain.exception.DomainError;
+import com.melody.melody.domain.exception.InvalidStatusException;
+import com.melody.melody.domain.exception.type.UserErrorType;
 import lombok.*;
 
 import java.util.Optional;
@@ -20,6 +23,8 @@ public class User {
 
     private Password password;
 
+    private boolean withdrawn;
+
     public static User create(String lastName, String firstName, String email, Password password){
         return User.builder()
                 .id(null)
@@ -27,7 +32,15 @@ public class User {
                 .firstName(firstName)
                 .email(email)
                 .password(password)
+                .withdrawn(false)
                 .build();
+    }
+
+    public void withdraw(){
+        if (isWithdrawn())
+            throw new InvalidStatusException(DomainError.of(UserErrorType.User_Aready_Withdawn_Status));
+
+        this.withdrawn = true;
     }
 
     public Optional<User.UserId> getId(){

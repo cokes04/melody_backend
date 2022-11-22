@@ -16,6 +16,7 @@ public class UserMapper {
                 .firstName(entity.getFirstName())
                 .email(entity.getEmail())
                 .password(new Password(entity.getPassword()))
+                .withdrawn(entity.isWithdrawn())
                 .build();
     }
 
@@ -26,6 +27,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .email(user.getEmail())
                 .password(user.getPassword().getEncryptedString())
+                .withdrawn(user.isWithdrawn())
                 .build();
     }
 }

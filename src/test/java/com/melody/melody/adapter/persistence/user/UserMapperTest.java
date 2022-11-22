@@ -5,8 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static com.melody.melody.domain.model.TestUserDomainGenerator.randomUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class UserMapperTest {
@@ -29,6 +28,7 @@ class UserMapperTest {
         assertEquals(user.getFirstName(), actual.getFirstName());
         assertEquals(user.getEmail(), actual.getEmail());
         assertEquals(user.getPassword().getEncryptedString(), actual.getPassword());
+        assertEquals(user.isWithdrawn(), actual.isWithdrawn());
     }
 
     @Test
@@ -43,6 +43,7 @@ class UserMapperTest {
         assertEquals(entity.getFirstName(), actual.getFirstName());
         assertEquals(entity.getEmail(), actual.getEmail());
         assertEquals(entity.getPassword(), actual.getPassword().getEncryptedString());
+        assertEquals(entity.isWithdrawn(), actual.isWithdrawn());
 
     }
 }

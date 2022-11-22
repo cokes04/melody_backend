@@ -98,7 +98,21 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    void findById_ShouldReturnUser() {
+    void findByEmail_ShouldReturnEmpty_WhenWithrawnUserEmail() {
+        UserEntity entity = TestUserEntityGenerator.randomUserEntity();
+        String email = entity.getEmail();
+        entity.setWithdrawn(true);
+
+        when(jpaRepository.findByEmail(eq(email)))
+                .thenReturn(Optional.of(entity));
+
+        Optional<User> actual = userRepository.findByEmail(email);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void findById_ShouldReturnUser_WhenSavedId() {
         UserEntity entity = TestUserEntityGenerator.randomUserEntity();
         User user = TestUserDomainGenerator.randomUser();
         User.UserId userId = user.getId().get();
@@ -113,6 +127,32 @@ class UserRepositoryImplTest {
 
         assertTrue(actual.isPresent());
         assertEquals(user, actual.get());
+    }
 
+    @Test
+    void findById_ShouldReturnEmpty_WhenUnSavedId() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+
+        when(jpaRepository.findById(eq(userId.getValue())))
+                .thenReturn(Optional.empty());
+
+        Optional<User> actual = userRepository.findById(userId);
+
+        assertTrue(actual.isEmpty());
+    }
+
+    @Test
+    void findById_ShouldReturnEmpty_WhenWithrawnUserId() {
+        UserEntity entity = TestUserEntityGenerator.randomUserEntity();
+        User user = TestUserDomainGenerator.randomUser();
+        User.UserId userId = user.getId().get();
+        entity.setWithdrawn(true);
+
+        when(jpaRepository.findById(eq(userId.getValue())))
+                .thenReturn(Optional.of(entity));
+
+        Optional<User> actual = userRepository.findById(userId);
+
+        assertTrue(actual.isEmpty());
     }
 }

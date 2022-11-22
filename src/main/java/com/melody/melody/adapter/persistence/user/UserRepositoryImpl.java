@@ -23,12 +23,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByEmail(String email) {
         return jpaRepository.findByEmail(email)
+                .filter(u -> !u.isWithdrawn())
                 .map(userMapper::toModel);
     }
 
     @Override
     public Optional<User> findById(User.UserId id) {
         return jpaRepository.findById(id.getValue())
+                .filter(u -> !u.isWithdrawn())
                 .map(userMapper::toModel);
     }
 
