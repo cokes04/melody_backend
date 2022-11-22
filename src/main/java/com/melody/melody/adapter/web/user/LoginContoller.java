@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Validated
-public class LoginUserContoller {
+public class LoginContoller {
     private final AuthenticationService authenticationService;
     private final TokenProvider tokenProvider;
     private final JwtConfig jwtConfig;

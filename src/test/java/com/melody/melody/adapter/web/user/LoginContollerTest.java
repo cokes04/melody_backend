@@ -1,10 +1,10 @@
 package com.melody.melody.adapter.web.user;
 
+import com.amazonaws.services.waf.model.HTTPHeader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.security.TokenProvider;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
 import com.melody.melody.application.service.authentication.AuthenticationService;
-import com.melody.melody.application.service.user.CreateUserService;
 import com.melody.melody.config.JwtConfig;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -24,7 +25,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -35,8 +35,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = LoginUserContoller.class)
-class LoginUserContollerTest {
+@WebMvcTest(value = LoginContoller.class)
+class LoginContollerTest {
     private MockMvc mockMvc;
 
     @Autowired
@@ -97,10 +97,10 @@ class LoginUserContollerTest {
                                         fieldWithPath("password").description("비밀번호").type(JsonFieldType.STRING)
                                 ),
                                 responseHeaders(
-                                        headerWithName("Set-Cookie").description(jwtConfig.getRefreshToken().getName() + " : 리프레쉬 토큰")
+                                        headerWithName(HttpHeaders.SET_COOKIE).description(jwtConfig.getRefreshToken().getName() + " : 리프레쉬 토큰")
                                 ),
                                 responseFields(
-                                        fieldWithPath("token").description("엑세스 토큰").type(JsonFieldType.STRING).attributes()
+                                        fieldWithPath("token").description("엑세스 토큰").type(JsonFieldType.STRING)
                                 )
 
                         )
