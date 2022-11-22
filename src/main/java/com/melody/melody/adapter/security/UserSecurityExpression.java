@@ -16,6 +16,6 @@ public class UserSecurityExpression {
 
     public boolean isMe(User.UserId userId){
         UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
-        return user.getUserId() == user.getUserId();
+        return user.getUserId() == userId.getValue();
     }
 }
