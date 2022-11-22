@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -46,6 +48,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(
                         ErrorResponse.to(DomainError.of(UserErrorType.Authentication_Failed))
+                );
+    }
+
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    ResponseEntity<?> handle(AccessDeniedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(
+                        ErrorResponse.to(DomainError.of(UserErrorType.Not_Permission))
                 );
     }
 

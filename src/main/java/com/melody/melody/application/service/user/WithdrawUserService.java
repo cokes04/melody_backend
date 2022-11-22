@@ -9,6 +9,7 @@ import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BusinessRuleChecker;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class WithdrawUserService implements UseCase<WithdrawUserService.Command, WithdrawUserService.Result>, BusinessRuleChecker {
     private final UserRepository userRepository;
 
+    @PreAuthorize("#user.isMe(#command.id)")
     @Override
     public Result execute(Command command) {
         User user = userRepository.findById(command.getId())

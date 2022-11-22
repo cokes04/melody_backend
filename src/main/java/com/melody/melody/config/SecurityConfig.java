@@ -46,16 +46,20 @@ public class SecurityConfig {
                 .csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
+                .logout().disable()
 
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
 
                 .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/test").permitAll()
+                .antMatchers("/login", "/logout").permitAll()
+
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers("/music/**").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/users").hasRole("USER")
+
+                .antMatchers(HttpMethod.GET, "/music/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
 

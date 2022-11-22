@@ -11,6 +11,7 @@ import com.melody.melody.domain.rule.BusinessRuleChecker;
 import com.melody.melody.domain.rule.PasswordMatches;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
