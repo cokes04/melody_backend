@@ -1,6 +1,7 @@
 package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.adapter.persistence.music.MusicEntity;
+import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
@@ -16,6 +17,7 @@ public class TestMusicEntityGenerator {
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
                 .status(randomStatus())
+                .userEntity(TestUserEntityGenerator.randomUserEntity())
                 .build();
     }
 

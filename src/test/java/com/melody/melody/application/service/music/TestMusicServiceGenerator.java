@@ -1,5 +1,6 @@
 package com.melody.melody.application.service.music;
 
+import com.melody.melody.domain.model.TestUserDomainGenerator;
 import net.datafaker.Faker;
 import org.springframework.core.io.UrlResource;
 
@@ -19,7 +20,12 @@ public class TestMusicServiceGenerator {
     }
 
     public static GenerateMusicService.Command randomGenerateMusicCommand() throws MalformedURLException {
-        return new GenerateMusicService.Command(randomImage(), randomMusicLength(), randomNoise());
+        return new GenerateMusicService.Command(
+                TestUserDomainGenerator.randomUserId(),
+                randomImage(),
+                randomMusicLength(),
+                randomNoise()
+        );
     }
 
     public static GenerateMusicService.Result randomGenerateMusicResult(){

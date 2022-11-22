@@ -14,12 +14,14 @@ class MusicTest {
 
     @Test
     public void generate(){
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
         Emotion emotion = randomEmotion();
         Music.Explanation explanation = randomExplanation();
         Music.ImageUrl imageUrl = randomImageUrl();
 
-        Music actual = Music.generate(emotion, explanation, imageUrl);
+        Music actual = Music.generate(userId, emotion, explanation, imageUrl);
 
+        assertEquals(userId, actual.getUserId());
         assertTrue(actual.getId().isEmpty());
         assertEquals(Music.Status.PROGRESS, actual.getStatus());
         assertTrue(actual.getMusicUrl().isEmpty());

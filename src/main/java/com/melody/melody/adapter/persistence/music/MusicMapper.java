@@ -1,7 +1,9 @@
 package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.adapter.persistence.music.MusicEntity;
+import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +17,7 @@ public class MusicMapper {
                 .musicUrl(new Music.MusicUrl(entity.getMusicUrl()))
                 .imageUrl(new Music.ImageUrl(entity.getImageUrl()))
                 .explanation(new Music.Explanation(entity.getExplanation()))
+                .userId(new User.UserId(entity.getUserEntity().getId()))
                 .build();
     }
 
@@ -26,6 +29,7 @@ public class MusicMapper {
                 .imageUrl(music.getImageUrl().getValue())
                 .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
                 .status(music.getStatus())
+                .userEntity(UserEntity.builder().id(music.getUserId().getValue()).build())
                 .build();
     }
 }

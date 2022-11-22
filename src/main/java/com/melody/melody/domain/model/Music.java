@@ -16,6 +16,8 @@ public class Music {
 
     private MusicId id;
 
+    private User.UserId userId;
+
     private Emotion emotion;
 
     private Explanation explanation;
@@ -26,9 +28,10 @@ public class Music {
 
     private Status status;
 
-    public static Music generate(Emotion emotion, Explanation explanation, ImageUrl imageUrl){
+    public static Music generate(User.UserId userId, Emotion emotion, Explanation explanation, ImageUrl imageUrl){
         return new Music(
                 null,
+                userId,
                 emotion,
                 explanation,
                 imageUrl,

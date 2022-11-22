@@ -39,6 +39,7 @@ public class TestMusicDomainGenerator {
 
     public static Music generatedMusic(){
         return Music.generate(
+                TestUserDomainGenerator.randomUserId(),
                 randomEmotion(),
                 randomExplanation(),
                 randomImageUrl()
@@ -47,6 +48,7 @@ public class TestMusicDomainGenerator {
 
     public static Music randomMusic(){
         return Music.builder()
+                .userId(TestUserDomainGenerator.randomUserId())
                 .id(randomMusicId())
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
@@ -58,6 +60,7 @@ public class TestMusicDomainGenerator {
 
     public static Music cloneMusic(Music music){
         return Music.builder()
+                .userId(music.getUserId())
                 .id(music.getId().orElse(null))
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation())
@@ -70,6 +73,7 @@ public class TestMusicDomainGenerator {
     public static Music insertMusicId(Music music, Music.MusicId musicId){
         return Music.builder()
                 .id(musicId)
+                .userId(music.getUserId())
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())

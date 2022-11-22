@@ -3,6 +3,8 @@ package com.melody.melody.application.service.music;
 import com.melody.melody.application.port.out.*;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.TestUserDomainGenerator;
+import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,11 +35,12 @@ class GenerateMusicServiceTest {
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
         GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand();
 
+        User.UserId userId = command.getUserId();
         Music.MusicId musicId = randomMusicId();
         Music.ImageUrl imageUrl = randomImageUrl();
         Music.Explanation explanation = randomExplanation();
         Emotion emotion = randomEmotion();
-        Music expectedMusic = Music.generate(emotion, explanation, imageUrl);
+        Music expectedMusic = Music.generate(userId, emotion, explanation, imageUrl);
         expectedMusic = insertMusicId(expectedMusic, musicId);
 
         when(imageFileStorage.save(eq(command.getImage())))
