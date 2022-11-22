@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.web.user;
 
+import com.melody.melody.adapter.web.WebAdapter;
 import com.melody.melody.application.service.user.WithdrawUserService;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-@RestController
+@WebAdapter
 @RequiredArgsConstructor
 @Validated
 public class WithdrawUserController {

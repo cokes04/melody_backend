@@ -1,11 +1,15 @@
 package com.melody.melody.adapter.web.music;
 
+import com.melody.melody.adapter.web.WebAdapter;
 import com.melody.melody.adapter.web.music.request.GenerateMusicRequest;
 import com.melody.melody.adapter.web.music.response.MusicResponse;
+import com.melody.melody.adapter.web.security.Requester;
+import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -13,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RestController
+@WebAdapter
 @Validated
 public class GenerateMusicContoller {
     private final GenerateMusicService service;
@@ -26,11 +30,12 @@ public class GenerateMusicContoller {
             }
     )
     public ResponseEntity<MusicResponse> generate(
+            @Requester UserDetailsImpl requester,
             @RequestPart(name = "image") MultipartFile image,
-            @RequestPart(name = "body") GenerateMusicRequest request ) {
+            @RequestPart(name = "body") GenerateMusicRequest request ){
 
-        request.toCommand(image);
-        GenerateMusicService.Command command = request.toCommand(image);
+
+        GenerateMusicService.Command command = request.toCommand(image, requester.getUserId());
         GenerateMusicService.Result result = service.execute(command);
         MusicResponse musicResponse = MusicResponse.to(result.getMusic());
 

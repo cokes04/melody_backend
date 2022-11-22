@@ -2,10 +2,13 @@ package com.melody.melody.adapter.web.music;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.music.request.GenerateMusicRequest;
+import com.melody.melody.adapter.web.security.WithMockRequester;
 import com.melody.melody.application.service.music.TestMusicServiceGenerator;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
+import com.melody.melody.domain.model.TestUserDomainGenerator;
+import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +21,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithSecurityContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,6 +47,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(value = GenerateMusicContoller.class)
+@ContextConfiguration
 class GenerateMusicContollerTest {
 
     private MockMvc mockMvc;
@@ -50,6 +56,8 @@ class GenerateMusicContollerTest {
     private ObjectMapper objectMapper;
 
     @MockBean private GenerateMusicService service;
+
+    private final long requesterUserId = 10;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
@@ -62,6 +70,7 @@ class GenerateMusicContollerTest {
     }
 
     @Test
+    @WithMockRequester(userId = requesterUserId)
     void generateMusic_Ok() throws Exception {
         GenerateMusicRequest generateMusicRequest = GenerateMusicRequest.builder()
                 .noise(1)
@@ -79,7 +88,7 @@ class GenerateMusicContollerTest {
         Music music = TestMusicDomainGenerator.generatedMusic();
         GenerateMusicService.Result result = new GenerateMusicService.Result(music);
 
-        when(service.execute(eq(generateMusicRequest.toCommand(image))))
+        when(service.execute(eq(generateMusicRequest.toCommand(image, requesterUserId))))
                 .thenReturn(result);
 
         mockMvc.perform(
@@ -104,6 +113,7 @@ class GenerateMusicContollerTest {
                                 ),
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),
+                                        fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
                                         fieldWithPath("emotion").description("감정(delighted, tense, gloomy, relaxed)").type(JsonFieldType.STRING),
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),

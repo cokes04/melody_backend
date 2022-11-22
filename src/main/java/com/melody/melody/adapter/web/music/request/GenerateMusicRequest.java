@@ -1,6 +1,7 @@
 package com.melody.melody.adapter.web.music.request;
 
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.domain.model.User;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,8 +19,9 @@ public class GenerateMusicRequest {
     @Positive @NotNull
     private int noise;
 
-    public GenerateMusicService.Command toCommand(MultipartFile image){
+    public GenerateMusicService.Command toCommand(MultipartFile image, long userId){
         return new GenerateMusicService.Command(
+                new User.UserId(userId),
                 this.to(image),
                 this.musicLength,
                 this.noise

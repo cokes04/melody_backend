@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.web;
+package com.melody.melody.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

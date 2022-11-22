@@ -18,12 +18,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
+                .filter(u -> !u.isWithdrawn())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }
 
     public UserDetails loadUserById(User.UserId id) throws UsernameNotFoundException {
         return userRepository.findById(id)
+                .filter(u -> !u.isWithdrawn())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }

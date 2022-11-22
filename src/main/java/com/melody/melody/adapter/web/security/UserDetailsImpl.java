@@ -4,6 +4,8 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.FailedAuthenticationException;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,9 +16,9 @@ import java.util.Collection;
 
 @RequiredArgsConstructor
 public class UserDetailsImpl implements UserDetails {
-    private String email;
-    private String password;
-    private long userId;
+    private final String email;
+    private final String password;
+    private final long userId;
 
     private Collection<GrantedAuthority> authorities;
 
@@ -30,6 +32,14 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         authorities.add(authority);
+    }
+
+    @Builder
+    public UserDetailsImpl(String email, String password, long userId, Collection<GrantedAuthority> authorities) {
+        this.email = email;
+        this.password = password;
+        this.userId = userId;
+        this.authorities = authorities;
     }
 
     @Override

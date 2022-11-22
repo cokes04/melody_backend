@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.web.user;
 
+import com.melody.melody.adapter.web.WebAdapter;
 import com.melody.melody.config.JwtConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
-@RestController
+@WebAdapter
 @RequiredArgsConstructor
 @Validated
 public class LogoutContoller {

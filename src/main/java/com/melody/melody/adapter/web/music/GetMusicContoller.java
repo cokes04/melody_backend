@@ -1,6 +1,9 @@
 package com.melody.melody.adapter.web.music;
 
+import com.melody.melody.adapter.web.WebAdapter;
 import com.melody.melody.adapter.web.music.response.MusicResponse;
+import com.melody.melody.adapter.web.security.Requester;
+import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.service.music.GetMusicService;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +17,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @RequiredArgsConstructor
-@RestController
+@WebAdapter
 @Validated
 public class GetMusicContoller {
     private final GetMusicService service;
