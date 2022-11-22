@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -27,6 +28,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +66,7 @@ class GetMusicContollerTest {
 
         mockMvc.perform(
                 get("/music/{id}", musicId.getValue())
+                        .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andExpect(status().isOk())
                 .andDo(
@@ -79,6 +82,9 @@ class GetMusicContollerTest {
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),
                                         fieldWithPath("musicUrl").description("음악 URI").type(JsonFieldType.STRING),
                                         fieldWithPath("status").description("음악 상태(progress, completion)").type(JsonFieldType.STRING)
+                                ),
+                                requestHeaders(
+                                        headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                                 )
                         )
                 );

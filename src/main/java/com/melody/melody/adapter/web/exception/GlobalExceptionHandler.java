@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
-    ResponseEntity<?> handleDomainException(NotFoundException ex) {
+    ResponseEntity<?> handle(NotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(
@@ -23,7 +23,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {InvalidStatusException.class})
-    ResponseEntity<?> handleDomainException(InvalidStatusException ex) {
+    ResponseEntity<?> handle(InvalidStatusException ex) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {FailedAuthenticationException.class})
-    ResponseEntity<?> handleDomainException(FailedAuthenticationException ex) {
+    ResponseEntity<?> handle(FailedAuthenticationException ex) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {UsernameNotFoundException.class})
-    ResponseEntity<?> handleDomainException(UsernameNotFoundException ex) {
+    ResponseEntity<?> handle(UsernameNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(

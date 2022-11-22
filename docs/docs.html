@@ -440,7 +440,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_post_음악_작곡">[POST] 음악 작곡</a></li>
 <li><a href="#_get_음악_정보">[Get] 음악 정보</a></li>
 <li><a href="#_post_회원_가입">[Post] 회원 가입</a></li>
+<li><a href="#_delete_회원_탈퇴">[Delete] 회원 탈퇴</a></li>
 <li><a href="#_post_로그인">[Post] 로그인</a></li>
+<li><a href="#_post_로그아웃">[Post] 로그아웃</a></li>
 </ul>
 </div>
 </div>
@@ -470,6 +472,7 @@ Content-Type: multipart/form-data;charset=UTF-8;
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /music HTTP/1.1
 Content-Type: multipart/form-data;charset=UTF-8; boundary=6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
+Authorization: header.payload.signature
 Host: localhost:8080
 
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
@@ -484,6 +487,27 @@ Content-Type: application/json
 {"musicLength":213,"noise":1}
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm--</code></pre>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더"><a class="anchor" href="#_요청_헤더"></a><a class="link" href="#_요청_헤더">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">엑세스 토큰</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="_요청_파트"><a class="anchor" href="#_요청_파트"></a><a class="link" href="#_요청_파트">요청 파트</a></h4>
@@ -551,9 +575,9 @@ Content-Type: application/json
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 147
+Content-Length: 127
 
-{"musicId":6563327323539215798,"emotion":"tense","explanation":"A Swiftly Tilting Planet","imageUrl":"www.chere-brekke.name","status":"completion"}</code></pre>
+{"musicId":-1,"emotion":"delighted","explanation":"The Lathe of Heaven","imageUrl":"www.randall-zulauf.co","status":"progress"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -607,6 +631,7 @@ Content-Length: 147
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/music' -i -X POST \
     -H 'Content-Type: multipart/form-data;charset=UTF-8' \
+    -H 'Authorization: header.payload.signature' \
     -F 'image=@test_image.jpng;type=image/jpeg' \
     -F 'body=@json-data;type=application/json'</code></pre>
 </div>
@@ -624,7 +649,8 @@ Content-Length: 147
 <h3 id="_요청_2"><a class="anchor" href="#_요청_2"></a><a class="link" href="#_요청_2">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /music/2582129448942334960 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /music/2648676830350435206 HTTP/1.1
+Authorization: header.payload.signature
 Host: localhost:8080</code></pre>
 </div>
 </div>
@@ -650,6 +676,27 @@ Host: localhost:8080</code></pre>
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_요청_헤더_2"><a class="anchor" href="#_요청_헤더_2"></a><a class="link" href="#_요청_헤더_2">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">엑세스 토큰</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_응답_2"><a class="anchor" href="#_응답_2"></a><a class="link" href="#_응답_2">응답</a></h3>
@@ -657,9 +704,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 132
+Content-Length: 196
 
-{"musicId":4529921666099739041,"emotion":"gloomy","explanation":"No Highway","imageUrl":"www.rickey-blick.co","status":"completion"}</code></pre>
+{"musicId":8120865079004223632,"emotion":"gloomy","explanation":"I Sing the Body Electric","imageUrl":"www.charlesetta-reichert.info","musicUrl":"www.kendall-swaniawski.biz","status":"completion"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -699,6 +746,11 @@ Content-Length: 132
 <td class="tableblock halign-left valign-top"><p class="tableblock">이미지 URI</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>musicUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">음악 URI</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>status</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">음악 상태(progress, completion)</p></td>
@@ -711,7 +763,8 @@ Content-Length: 132
 <h3 id="_curl_2"><a class="anchor" href="#_curl_2"></a><a class="link" href="#_curl_2">curl</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/music/2582129448942334960' -i -X GET</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/music/2648676830350435206' -i -X GET \
+    -H 'Authorization: header.payload.signature'</code></pre>
 </div>
 </div>
 </div>
@@ -729,10 +782,10 @@ Content-Length: 132
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 111
+Content-Length: 107
 Host: localhost:8080
 
-{"lastName":"Vandervort","firstName":"Laverne","email":"cassaundra.paucek@hotmail.com","password":"@82EzK2pM7"}</code></pre>
+{"lastName":"Brakus","firstName":"Willow","email":"clayton.pfeffer@gmail.com","password":"^@V%$u54Wy97bk$"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -789,7 +842,85 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/users' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -d '{"lastName":"Vandervort","firstName":"Laverne","email":"cassaundra.paucek@hotmail.com","password":"@82EzK2pM7"}'</code></pre>
+    -d '{"lastName":"Brakus","firstName":"Willow","email":"clayton.pfeffer@gmail.com","password":"^@V%$u54Wy97bk$"}'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_delete_회원_탈퇴"><a class="anchor" href="#_delete_회원_탈퇴"></a><a class="link" href="#_delete_회원_탈퇴">[Delete] 회원 탈퇴</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delete /users/{userId}</p>
+</div>
+<div class="sect2">
+<h3 id="_요청_4"><a class="anchor" href="#_요청_4"></a><a class="link" href="#_요청_4">요청</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /users/23495 HTTP/1.1
+Authorization: header.payload.signature
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_파라미터_2"><a class="anchor" href="#_요청_파라미터_2"></a><a class="link" href="#_요청_파라미터_2">요청 파라미터</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. /users/{userId}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">탈퇴할 유저 아이디</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_3"><a class="anchor" href="#_요청_헤더_3"></a><a class="link" href="#_요청_헤더_3">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authorization</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">엑세스 토큰</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답_4"><a class="anchor" href="#_응답_4"></a><a class="link" href="#_응답_4">응답</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_curl_4"><a class="anchor" href="#_curl_4"></a><a class="link" href="#_curl_4">curl</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/users/23495' -i -X DELETE \
+    -H 'Authorization: header.payload.signature'</code></pre>
 </div>
 </div>
 </div>
@@ -802,15 +933,15 @@ Host: localhost:8080
 <p>Post /login</p>
 </div>
 <div class="sect2">
-<h3 id="_요청_4"><a class="anchor" href="#_요청_4"></a><a class="link" href="#_요청_4">요청</a></h3>
+<h3 id="_요청_5"><a class="anchor" href="#_요청_5"></a><a class="link" href="#_요청_5">요청</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /login HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 57
+Content-Length: 66
 Host: localhost:8080
 
-{"email":"ettie.abshire@yahoo.com","password":"j%#$^a7K"}</code></pre>
+{"email":"nestor.stoltenberg@gmail.com","password":"19%Z2Q^Mr*9j"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -844,11 +975,11 @@ Host: localhost:8080
 </div>
 </div>
 <div class="sect2">
-<h3 id="_응답_4"><a class="anchor" href="#_응답_4"></a><a class="link" href="#_응답_4">응답</a></h3>
+<h3 id="_응답_5"><a class="anchor" href="#_응답_5"></a><a class="link" href="#_응답_5">응답</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: rt=header.refreshTokenClaim.signature; Max-Age=100; Expires=Sun, 13 Nov 2022 08:44:12 GMT; HttpOnly
+Set-Cookie: rt=header.refreshTokenClaim.signature; Max-Age=100; Expires=Tue, 22 Nov 2022 04:03:12 GMT; HttpOnly
 Content-Type: application/json;charset=UTF-8
 Content-Length: 45
 
@@ -902,12 +1033,95 @@ Content-Length: 45
 </table>
 </div>
 <div class="sect2">
-<h3 id="_curl_4"><a class="anchor" href="#_curl_4"></a><a class="link" href="#_curl_4">curl</a></h3>
+<h3 id="_curl_5"><a class="anchor" href="#_curl_5"></a><a class="link" href="#_curl_5">curl</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/login' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -d '{"email":"ettie.abshire@yahoo.com","password":"j%#$^a7K"}'</code></pre>
+    -d '{"email":"nestor.stoltenberg@gmail.com","password":"19%Z2Q^Mr*9j"}'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_post_로그아웃"><a class="anchor" href="#_post_로그아웃"></a><a class="link" href="#_post_로그아웃">[Post] 로그아웃</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Post /logout</p>
+</div>
+<div class="sect2">
+<h3 id="_요청_6"><a class="anchor" href="#_요청_6"></a><a class="link" href="#_요청_6">요청</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /logout HTTP/1.1
+Cookie: rt=header.payload.signature
+Host: localhost:8080</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_요청_헤더_4"><a class="anchor" href="#_요청_헤더_4"></a><a class="link" href="#_요청_헤더_4">요청 헤더</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Cookie</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rt : 리프레쉬 토큰</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답_6"><a class="anchor" href="#_응답_6"></a><a class="link" href="#_응답_6">응답</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 301 Moved Permanently
+Set-Cookie: rt=; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; HttpOnly
+Location: http://localhost:3000</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답_헤더_2"><a class="anchor" href="#_응답_헤더_2"></a><a class="link" href="#_응답_헤더_2">응답 헤더</a></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Location</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리다이렉트 URI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Set-Cookie</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rt : 리프레쉬 토큰 제거</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_curl_6"><a class="anchor" href="#_curl_6"></a><a class="link" href="#_curl_6">curl</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/logout' -i -X POST \
+    -H 'Cookie: rt=header.payload.signature'</code></pre>
 </div>
 </div>
 </div>
@@ -916,7 +1130,7 @@ Content-Length: 45
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-11-13 17:22:02 +0900
+Last updated 2022-11-22 12:37:42 +0900
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css">

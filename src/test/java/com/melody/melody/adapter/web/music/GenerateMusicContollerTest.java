@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -26,6 +27,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -81,8 +84,9 @@ class GenerateMusicContollerTest {
 
         mockMvc.perform(
                 multipart("/music")
-                .file(image)
-                .file(body)
+                        .file(image)
+                        .file(body)
+                        .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andExpect(status().isOk())
                 .andDo(
@@ -104,6 +108,9 @@ class GenerateMusicContollerTest {
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),
                                         fieldWithPath("status").description("음악 상태(progress, completion)").type(JsonFieldType.STRING)
+                                ),
+                                requestHeaders(
+                                        headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                                 )
                         )
                 );

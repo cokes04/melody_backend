@@ -15,6 +15,8 @@ Content-Type: multipart/form-data;charset=UTF-8;
 
 === 요청
 include::{snippets}/generate-music/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/generate-music/request-headers.adoc[]
 ==== 요청 파트
 include::{snippets}/generate-music/request-parts.adoc[]
 ==== body 파트 필드
@@ -36,6 +38,8 @@ Get /music/{id}
 include::{snippets}/get-music/http-request.adoc[]
 ==== 요청 파라미터
 include::{snippets}/get-music/path-parameters.adoc[]
+==== 요청 헤더
+include::{snippets}/get-music/request-headers.adoc[]
 
 === 응답
 include::{snippets}/get-music/http-response.adoc[]
@@ -61,6 +65,25 @@ include::{snippets}/create-user/http-response.adoc[]
 include::{snippets}/create-user/curl-request.adoc[]
 
 
+== [Delete] 회원 탈퇴
+Delete /users/{userId}
+
+=== 요청
+include::{snippets}/withdarw-user/http-request.adoc[]
+==== 요청 파라미터
+include::{snippets}/withdarw-user/path-parameters.adoc[]
+==== 요청 헤더
+include::{snippets}/withdarw-user/request-headers.adoc[]
+
+
+=== 응답
+include::{snippets}/withdarw-user/http-response.adoc[]
+
+=== curl
+include::{snippets}/withdarw-user/curl-request.adoc[]
+
+
+
 == [Post] 로그인
 Post /login
 
@@ -78,3 +101,19 @@ include::{snippets}/login-user/response-fields.adoc[]
 
 === curl
 include::{snippets}/login-user/curl-request.adoc[]
+
+== [Post] 로그아웃
+Post /logout
+
+=== 요청
+include::{snippets}/logout-user/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/logout-user/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/logout-user/http-response.adoc[]
+=== 응답 헤더
+include::{snippets}/logout-user/response-headers.adoc[]
+
+=== curl
+include::{snippets}/logout-user/curl-request.adoc[]
