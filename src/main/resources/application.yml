@@ -93,6 +93,10 @@ jasypt:
     bean: jasyptStringEncryptor
 
 app:
+  rest:
+    logout:
+      redirectUri: http://localhost:3000
+
   jwt:
     accessToken:
       validMilliSecond: 600000 # 10 * 60 * 1000 # 10분
