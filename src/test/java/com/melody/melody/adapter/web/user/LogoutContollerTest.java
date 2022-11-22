@@ -72,14 +72,14 @@ class LogoutContollerTest {
 
 
     @Test
-    void logout_301() throws Exception {
+    void logout_200() throws Exception {
         String refreshCookie = refreshTokenName + "=" + "header.payload.signature";
 
         mockMvc.perform(
                 post("/logout")
                         .header(HttpHeaders.COOKIE, refreshCookie)
         )
-                .andExpect(status().is3xxRedirection())
+                .andExpect(status().isOk())
                 .andDo(
                         document(
                                 "logout-user",
@@ -87,7 +87,6 @@ class LogoutContollerTest {
                                         headerWithName(HttpHeaders.COOKIE).description(refreshTokenName + " : 리프레쉬 토큰")
                                 ),
                                 responseHeaders(
-                                        headerWithName(HttpHeaders.LOCATION).description("리다이렉트 URI"),
                                         headerWithName(HttpHeaders.SET_COOKIE).description(refreshTokenName + " : 리프레쉬 토큰 제거")
                                 )
                         )

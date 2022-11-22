@@ -575,9 +575,9 @@ Content-Type: application/json
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 127
+Content-Length: 148
 
-{"musicId":-1,"emotion":"delighted","explanation":"The Lathe of Heaven","imageUrl":"www.randall-zulauf.co","status":"progress"}</code></pre>
+{"musicId":-1,"userId":22412,"emotion":"delighted","explanation":"From Here to Eternity","imageUrl":"www.krystal-considine.net","status":"progress"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -600,6 +600,11 @@ Content-Length: 127
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>musicId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">음악 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>emotion</code></p></td>
@@ -649,7 +654,7 @@ Content-Length: 127
 <h3 id="_요청_2"><a class="anchor" href="#_요청_2"></a><a class="link" href="#_요청_2">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /music/2648676830350435206 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /music/3206800793344611097 HTTP/1.1
 Authorization: header.payload.signature
 Host: localhost:8080</code></pre>
 </div>
@@ -704,9 +709,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 196
+Content-Length: 190
 
-{"musicId":8120865079004223632,"emotion":"gloomy","explanation":"I Sing the Body Electric","imageUrl":"www.charlesetta-reichert.info","musicUrl":"www.kendall-swaniawski.biz","status":"completion"}</code></pre>
+{"musicId":441430854833056091,"userId":23443,"emotion":"gloomy","explanation":"For a Breath I Tarry","imageUrl":"www.renay-lehner.biz","musicUrl":"www.lakesha-rohan.org","status":"progress"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -729,6 +734,11 @@ Content-Length: 196
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>musicId</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">음악 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>userId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">유저 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>emotion</code></p></td>
@@ -763,7 +773,7 @@ Content-Length: 196
 <h3 id="_curl_2"><a class="anchor" href="#_curl_2"></a><a class="link" href="#_curl_2">curl</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/music/2648676830350435206' -i -X GET \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/music/3206800793344611097' -i -X GET \
     -H 'Authorization: header.payload.signature'</code></pre>
 </div>
 </div>
@@ -782,10 +792,10 @@ Content-Length: 196
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /users HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 107
+Content-Length: 100
 Host: localhost:8080
 
-{"lastName":"Brakus","firstName":"Willow","email":"clayton.pfeffer@gmail.com","password":"^@V%$u54Wy97bk$"}</code></pre>
+{"lastName":"Hoeger","firstName":"Hilario","email":"johnnie.olson@yahoo.com","password":"*K3J3r7Rr"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -842,7 +852,7 @@ Host: localhost:8080
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/users' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -d '{"lastName":"Brakus","firstName":"Willow","email":"clayton.pfeffer@gmail.com","password":"^@V%$u54Wy97bk$"}'</code></pre>
+    -d '{"lastName":"Hoeger","firstName":"Hilario","email":"johnnie.olson@yahoo.com","password":"*K3J3r7Rr"}'</code></pre>
 </div>
 </div>
 </div>
@@ -858,7 +868,7 @@ Host: localhost:8080
 <h3 id="_요청_4"><a class="anchor" href="#_요청_4"></a><a class="link" href="#_요청_4">요청</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /users/23495 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">DELETE /users/6816 HTTP/1.1
 Authorization: header.payload.signature
 Host: localhost:8080</code></pre>
 </div>
@@ -919,7 +929,7 @@ Host: localhost:8080</code></pre>
 <h3 id="_curl_4"><a class="anchor" href="#_curl_4"></a><a class="link" href="#_curl_4">curl</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/users/23495' -i -X DELETE \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/users/6816' -i -X DELETE \
     -H 'Authorization: header.payload.signature'</code></pre>
 </div>
 </div>
@@ -938,10 +948,10 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /login HTTP/1.1
 Content-Type: application/json;charset=UTF-8
-Content-Length: 66
+Content-Length: 61
 Host: localhost:8080
 
-{"email":"nestor.stoltenberg@gmail.com","password":"19%Z2Q^Mr*9j"}</code></pre>
+{"email":"shalanda.ward@hotmail.com","password":"P#3Z@p@Fn$"}</code></pre>
 </div>
 </div>
 <div class="sect3">
@@ -979,7 +989,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Set-Cookie: rt=header.refreshTokenClaim.signature; Max-Age=100; Expires=Tue, 22 Nov 2022 04:03:12 GMT; HttpOnly
+Set-Cookie: rt=header.refreshTokenClaim.signature; Max-Age=100; Expires=Tue, 22 Nov 2022 10:03:22 GMT; HttpOnly
 Content-Type: application/json;charset=UTF-8
 Content-Length: 45
 
@@ -1038,7 +1048,7 @@ Content-Length: 45
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/login' -i -X POST \
     -H 'Content-Type: application/json;charset=UTF-8' \
-    -d '{"email":"nestor.stoltenberg@gmail.com","password":"19%Z2Q^Mr*9j"}'</code></pre>
+    -d '{"email":"shalanda.ward@hotmail.com","password":"P#3Z@p@Fn$"}'</code></pre>
 </div>
 </div>
 </div>
@@ -1085,9 +1095,8 @@ Host: localhost:8080</code></pre>
 <h3 id="_응답_6"><a class="anchor" href="#_응답_6"></a><a class="link" href="#_응답_6">응답</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 301 Moved Permanently
-Set-Cookie: rt=; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; HttpOnly
-Location: http://localhost:3000</code></pre>
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Set-Cookie: rt=; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; HttpOnly</code></pre>
 </div>
 </div>
 </div>
@@ -1105,10 +1114,6 @@ Location: http://localhost:3000</code></pre>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Location</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">리다이렉트 URI</p></td>
-</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Set-Cookie</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">rt : 리프레쉬 토큰 제거</p></td>

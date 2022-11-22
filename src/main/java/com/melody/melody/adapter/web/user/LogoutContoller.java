@@ -20,16 +20,12 @@ import java.net.URI;
 public class LogoutContoller {
     private final JwtConfig jwtConfig;
 
-    @Value("${app.rest.logout.redirectUri}")
-    private String logoutRedirectUri;
-
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         String removedRefreshTokenCookie = removeRefreshTokenCookie();
 
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+        return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, removedRefreshTokenCookie)
-                .location(URI.create(logoutRedirectUri))
                 .build();
     }
 

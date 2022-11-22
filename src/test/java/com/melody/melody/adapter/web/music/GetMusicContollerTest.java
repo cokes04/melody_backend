@@ -77,6 +77,7 @@ class GetMusicContollerTest {
                                 ),
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),
+                                        fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
                                         fieldWithPath("emotion").description("감정(delighted, tense, gloomy, relaxed)").type(JsonFieldType.STRING),
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),
