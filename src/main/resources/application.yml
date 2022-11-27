@@ -33,7 +33,6 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:melody-db
-
   h2:
     console:
       enabled: true
@@ -93,10 +92,6 @@ jasypt:
     bean: jasyptStringEncryptor
 
 app:
-  rest:
-    logout:
-      redirectUri: http://localhost:3000
-
   jwt:
     accessToken:
       validMilliSecond: 600000 # 10 * 60 * 1000 # 10분
@@ -124,3 +119,6 @@ aws:
 
     emotionClassification:
       uri: ENC(4gFc/D7Ao7Q2s3jq2N5Oak4u8nxwSo77/+j2spO7SpOOyAWvceqHOKCUwS3bOrt50gL7JGZwcuyJ4AVJolmXCjn24UTbrRvj/jDg4Jma8IjmqxSltM+Mgw==)
+
+    imageCaptioning:
+      uri: ENC(TgTOHT5QVUaJawBnDmLyZoCJUMQjIQ/48VZ1qbjphRAj05ui5sZ/qKnf24eQBNo1QeOAMfz3dFgh5siRQpr6c7wV1WnQK/9XVjsQcGPmQZFvxVhmTxqz8A==)

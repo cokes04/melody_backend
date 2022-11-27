@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Profile(value = "dev")
 public class AppRunner implements ApplicationRunner {
     private final ImageFileStorage imageFileStorage;
+    private final ImageCaptioner imageCaptioner;
     private final EmotionClassifier emotionClassifier;
     private final MusicGenerator musicGenerator;
 
@@ -27,7 +28,7 @@ public class AppRunner implements ApplicationRunner {
         Music.ImageUrl imageUrl = imageFileStorage.save(image);
         System.out.println(imageUrl);
 
-        Music.Explanation explanation = new Music.Explanation("테스트 테스트");
+        Music.Explanation explanation = imageCaptioner.execute(imageUrl);
         System.out.println(explanation);
 
         Emotion emotion = emotionClassifier.execute(explanation);
