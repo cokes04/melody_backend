@@ -8,6 +8,7 @@ import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdatePostService implements UseCase<UpdatePostService.Command, UpdatePostService.Result> {
     private final PostRepository repository;
 
+    @PreAuthorize("#post.isOwner(#command.postId)")
     @Override
     public Result execute(Command command) {
         Post post = repository.findById(command.postId)

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler{
     private final ObjectProvider<MusicSecurityExpression> musicSecurityExpressions;
     private final ObjectProvider<UserSecurityExpression> userSecurityExpressions;
+    private final ObjectProvider<PostSecurityExpression> postSecurityExpressions;
 
     @Override
     public StandardEvaluationContext createEvaluationContextInternal(Authentication auth, MethodInvocation mi) {
@@ -28,9 +29,12 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         musicSecurityExpression.setAuthentication(auth);
         UserSecurityExpression userSecurityExpression = userSecurityExpressions.getObject();
         musicSecurityExpression.setAuthentication(auth);
+        PostSecurityExpression postSecurityExpression = postSecurityExpressions.getObject();
+        postSecurityExpression.setAuthentication(auth);
 
         sec.setVariable("music", musicSecurityExpression);
         sec.setVariable("user", userSecurityExpression);
+        sec.setVariable("post", postSecurityExpression);
 
         return sec;
     }

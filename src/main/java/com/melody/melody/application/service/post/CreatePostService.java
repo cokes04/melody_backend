@@ -7,6 +7,7 @@ import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreatePostService implements UseCase<CreatePostService.Command, CreatePostService.Result> {
     private final PostRepository repository;
 
+    @PreAuthorize("#music.isOwner(#command.musicId)")
     @Override
     public Result execute(Command command) {
         Post post = Post.create(

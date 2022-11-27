@@ -31,7 +31,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnTrue_WhenUsersMusic() {
+    void isOwner_ShouldReturnTrue_WhenMusicOwner() {
         Music music = TestMusicDomainGenerator.randomMusic();
         User.UserId userId = music.getUserId();
         Music.MusicId musicId = music.getId().get();
@@ -46,7 +46,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnFalse_WhenNotUsersMusic() {
+    void isOwner_ShouldReturnFalse_WhenOtherUser() {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();
 
