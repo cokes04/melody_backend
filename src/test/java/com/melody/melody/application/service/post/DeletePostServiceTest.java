@@ -34,7 +34,7 @@ class DeletePostServiceTest {
         Post.PostId postId = post.getId().get();
         DeletePostService.Command command = new DeletePostService.Command(postId);
 
-        Post expect = TestPostDomainGenerator.clone(post);
+        Post expect = TestPostDomainGenerator.clonePost(post);
         expect.delete();
 
         when(repository.findById(postId))

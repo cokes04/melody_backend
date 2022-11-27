@@ -11,11 +11,11 @@ import javax.persistence.*;
 @Setter
 @ToString
 @EqualsAndHashCode
-@Entity(name = "app_user")
-@Table(name = "app_user")
+@Entity(name = "APP_USER")
+@Table(name = "APP_USER")
 public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "USER_ID")
     private Long id;
 
     @Column(nullable = false)

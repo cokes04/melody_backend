@@ -5,6 +5,51 @@ import net.datafaker.Faker;
 public class TestPostDomainGenerator {
     private static final Faker faker = new Faker();
 
+    public static Post randomOpenPost(){
+        return getPostBuilder().open(true).deleted(false).build();
+
+    }
+
+    public static Post randomClosePost(){
+        return getPostBuilder().open(false).deleted(false).build();
+
+    }
+
+    public static Post randomDeletedPost(){
+        return getPostBuilder().open(true).deleted(true).build();
+    }
+
+    public static Post randomNoneIdPost(){
+        return getPostBuilder().id(null).open(true).deleted(false).build();
+    }
+
+    public static Post clonePost(Post post){
+        return Post.builder()
+                .id(post.getId().orElse(null))
+                .userId(post.getUserId())
+                .musicId(post.getMusicId())
+                .deleted(post.isDeleted())
+                .open(post.isOpen())
+                .content(post.getContent())
+                .title(post.getTitle())
+                .likeCount(post.getLikeCount())
+                .build();
+
+    }
+
+    public static Post insertIdPost(Post post, Post.PostId postId){
+        return Post.builder()
+                .id(postId)
+                .userId(post.getUserId())
+                .musicId(post.getMusicId())
+                .deleted(post.isDeleted())
+                .open(post.isOpen())
+                .content(post.getContent())
+                .title(post.getTitle())
+                .likeCount(post.getLikeCount())
+                .build();
+    }
+
     public static Post.PostId randomPostId(){
         return new Post.PostId(faker.number().numberBetween(1, 100000));
     }
@@ -17,56 +62,17 @@ public class TestPostDomainGenerator {
         return Post.Content.from(faker.bossaNova().song());
     }
 
-    public static Post randomOpenPost(){
+    public static int randomLikeCount(){
+        return faker.number().numberBetween(0, 100000);
+    }
+
+    private static Post.PostBuilder getPostBuilder(){
         return Post.builder()
                 .id(randomPostId())
                 .userId(TestUserDomainGenerator.randomUserId())
                 .musicId(TestMusicDomainGenerator.randomMusicId())
-                .deleted(false)
-                .open(true)
                 .content(randomContent())
                 .title(randomTitle())
-                .likeCount(0)
-                .build();
-    }
-
-    public static Post randomClosePost(){
-        return Post.builder()
-                .id(randomPostId())
-                .userId(TestUserDomainGenerator.randomUserId())
-                .musicId(TestMusicDomainGenerator.randomMusicId())
-                .deleted(false)
-                .open(false)
-                .content(randomContent())
-                .title(randomTitle())
-                .likeCount(0)
-                .build();
-    }
-
-    public static Post randomDeletedPost(){
-        return Post.builder()
-                .id(randomPostId())
-                .userId(TestUserDomainGenerator.randomUserId())
-                .musicId(TestMusicDomainGenerator.randomMusicId())
-                .deleted(true)
-                .open(true)
-                .content(randomContent())
-                .title(randomTitle())
-                .likeCount(0)
-                .build();
-    }
-
-    public static Post clone(Post post){
-        return Post.builder()
-                .id(post.getId().orElse(null))
-                .userId(post.getUserId())
-                .musicId(post.getMusicId())
-                .deleted(post.isDeleted())
-                .open(post.isOpen())
-                .content(post.getContent())
-                .title(post.getTitle())
-                .likeCount(post.getLikeCount())
-                .build();
-
+                .likeCount(randomLikeCount());
     }
 }

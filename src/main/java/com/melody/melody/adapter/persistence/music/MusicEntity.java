@@ -14,16 +14,12 @@ import javax.persistence.*;
 @Setter
 @ToString
 @EqualsAndHashCode
-@Entity(name = "music")
-@Table(name = "music")
+@Entity(name = "MUSIC")
+@Table(name = "MUSIC")
 public class MusicEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MUSIC_ID")
     private Long id;
-
-    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false)
-    private UserEntity userEntity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,5 +37,9 @@ public class MusicEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Music.Status status;
+
+    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private UserEntity userEntity;
 
 }
