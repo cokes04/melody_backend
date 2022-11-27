@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,7 +26,17 @@ public class UpdatePostService implements UseCase<UpdatePostService.Command, Upd
         Post post = repository.findById(command.postId)
                 .orElseThrow(() -> new NotFoundException(DomainError.of(PostErrorType.Not_Found_Post)));
 
-        post.update(command.getTitle(), command.getContent());
+        String title = command.getTitle().isPresent() ? command.getTitle().get() : post.getTitle().getValue();
+        String content = command.getContent().isPresent() ? command.getContent().get() : post.getContent().getValue();
+
+        post.update(title, content);
+
+        command.open.ifPresent(
+                o -> {
+                    if (o) post.open();
+                    else post.close();
+                }
+        );
 
         return new Result(post);
     }
@@ -32,8 +44,17 @@ public class UpdatePostService implements UseCase<UpdatePostService.Command, Upd
     @Value
     public static class Command implements UseCase.Command {
         private final Post.PostId postId;
-        private final String title;
-        private final String content;
+
+        private final Optional<String> title;
+        private final Optional<String> content;
+        private final Optional<Boolean> open;
+
+        public Command(Post.PostId postId, String title, String content, Boolean open) {
+            this.postId = postId;
+            this.title = Optional.ofNullable(title);
+            this.content = Optional.ofNullable(content);
+            this.open = Optional.ofNullable(open);
+        }
     }
 
     @Value

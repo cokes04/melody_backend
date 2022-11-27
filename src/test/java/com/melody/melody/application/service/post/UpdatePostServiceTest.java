@@ -34,8 +34,8 @@ class UpdatePostServiceTest {
 
         Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
         Post.Content expectContent = TestPostDomainGenerator.randomContent();
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), expectContent.getValue());
-
+        boolean open = false;
+        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), expectContent.getValue(), open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
@@ -44,6 +44,7 @@ class UpdatePostServiceTest {
 
         assertEquals(expectTitle, actual.getPost().getTitle());
         assertEquals(expectContent, actual.getPost().getContent());
+        assertFalse(actual.getPost().isOpen());
     }
 
     @Test
@@ -52,7 +53,8 @@ class UpdatePostServiceTest {
 
         String title = TestPostDomainGenerator.randomTitle().getValue();
         String content = TestPostDomainGenerator.randomContent().getValue();
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, title, content);
+        boolean open = false;
+        UpdatePostService.Command command = new UpdatePostService.Command(postId, title, content, open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.empty());
@@ -62,6 +64,65 @@ class UpdatePostServiceTest {
                 NotFoundException.class,
                 DomainError.of(PostErrorType.Not_Found_Post)
         );
+    }
+
+    @Test
+    void excute_ShouldNotChangeTitle_WhenEmptyTitle() {
+        Post post = TestPostDomainGenerator.randomOpenPost();
+        Post.PostId postId = post.getId().get();
+
+        Post.Title expectTitle = new Post.Title(post.getTitle().getValue());
+        Post.Content expectContent = TestPostDomainGenerator.randomContent();
+        boolean open = false;
+        UpdatePostService.Command command = new UpdatePostService.Command(postId, null, expectContent.getValue(), open);
+
+        when(repository.findById(postId))
+                .thenReturn(Optional.of(post));
+
+        UpdatePostService.Result actual = service.execute(command);
+
+        assertEquals(expectTitle, actual.getPost().getTitle());
+        assertEquals(expectContent, actual.getPost().getContent());
+        assertFalse(actual.getPost().isOpen());
+    }
+
+    @Test
+    void excute_ShouldNotChangeContent_WhenEmptyContent() {
+        Post post = TestPostDomainGenerator.randomOpenPost();
+        Post.PostId postId = post.getId().get();
+
+        Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
+        Post.Content expectContent = new Post.Content(post.getContent().getValue());
+        boolean open = false;
+        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), null, open);
+
+        when(repository.findById(postId))
+                .thenReturn(Optional.of(post));
+
+        UpdatePostService.Result actual = service.execute(command);
+
+        assertEquals(expectTitle, actual.getPost().getTitle());
+        assertEquals(expectContent, actual.getPost().getContent());
+        assertFalse(actual.getPost().isOpen());
+    }
+
+    @Test
+    void excute_ShouldNotChangeOpen_WhenEmptyOpen() {
+        Post post = TestPostDomainGenerator.randomOpenPost();
+        Post.PostId postId = post.getId().get();
+
+        Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
+        Post.Content expectContent = TestPostDomainGenerator.randomContent();
+        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), expectContent.getValue(), null);
+
+        when(repository.findById(postId))
+                .thenReturn(Optional.of(post));
+
+        UpdatePostService.Result actual = service.execute(command);
+
+        assertEquals(expectTitle, actual.getPost().getTitle());
+        assertEquals(expectContent, actual.getPost().getContent());
+        assertTrue(actual.getPost().isOpen());
     }
 
     void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){
