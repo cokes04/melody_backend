@@ -51,7 +51,7 @@ class UserTest {
         assertException(
                 user::withdraw,
                 InvalidStatusException.class,
-                DomainError.of(UserErrorType.User_Aready_Withdawn_Status)
+                DomainError.of(UserErrorType.User_Already_Withdawn_Status)
         );
     }
 

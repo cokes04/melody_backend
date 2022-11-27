@@ -38,7 +38,7 @@ public class User {
 
     public void withdraw(){
         if (isWithdrawn())
-            throw new InvalidStatusException(DomainError.of(UserErrorType.User_Aready_Withdawn_Status));
+            throw new InvalidStatusException(DomainError.of(UserErrorType.User_Already_Withdawn_Status));
 
         this.withdrawn = true;
     }
