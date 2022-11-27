@@ -5,6 +5,10 @@ import net.datafaker.Faker;
 public class TestPostDomainGenerator {
     private static final Faker faker = new Faker();
 
+    public static Post.PostId randomPostId(){
+        return new Post.PostId(faker.number().numberBetween(1, 100000));
+    }
+
     public static Post.Title randomTitle(){
         return Post.Title.from(faker.book().title());
     }
@@ -14,18 +18,55 @@ public class TestPostDomainGenerator {
     }
 
     public static Post randomOpenPost(){
-        return Post.create(TestUserDomainGenerator.randomUserId(), TestMusicDomainGenerator.randomMusicId(), randomTitle().getValue(), randomContent().getValue(), true);
+        return Post.builder()
+                .id(randomPostId())
+                .userId(TestUserDomainGenerator.randomUserId())
+                .musicId(TestMusicDomainGenerator.randomMusicId())
+                .deleted(false)
+                .open(true)
+                .content(randomContent())
+                .title(randomTitle())
+                .likeCount(0)
+                .build();
     }
 
     public static Post randomClosePost(){
-        Post post = randomOpenPost();
-        post.close();
-        return post;
+        return Post.builder()
+                .id(randomPostId())
+                .userId(TestUserDomainGenerator.randomUserId())
+                .musicId(TestMusicDomainGenerator.randomMusicId())
+                .deleted(false)
+                .open(false)
+                .content(randomContent())
+                .title(randomTitle())
+                .likeCount(0)
+                .build();
     }
 
     public static Post randomDeletedPost(){
-        Post post = randomOpenPost();
-        post.delete();
-        return post;
+        return Post.builder()
+                .id(randomPostId())
+                .userId(TestUserDomainGenerator.randomUserId())
+                .musicId(TestMusicDomainGenerator.randomMusicId())
+                .deleted(true)
+                .open(true)
+                .content(randomContent())
+                .title(randomTitle())
+                .likeCount(0)
+                .build();
+    }
+
+    public static Post clone(Post post){
+        return Post.builder()
+                .id(post.getId().orElse(null))
+                .userId(post.getUserId())
+                .musicId(post.getMusicId())
+                .deleted(post.isDeleted())
+                .open(post.isOpen())
+                .content(post.getContent())
+                .title(post.getTitle())
+                .likeCount(post.getLikeCount())
+                .build();
+
     }
 }
