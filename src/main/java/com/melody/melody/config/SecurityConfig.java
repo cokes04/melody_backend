@@ -43,10 +43,13 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .cors().disable()
-                .csrf().disable()
+                .csrf().ignoringAntMatchers("/h2-console/**").disable()
                 .httpBasic().disable()
                 .formLogin().disable()
                 .logout().disable()
+
+                .headers().frameOptions().disable()
+                .and()
 
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -60,6 +63,12 @@ public class SecurityConfig {
 
                 .antMatchers(HttpMethod.GET, "/music/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")
+
+                .antMatchers(HttpMethod.POST, "/post").hasRole("USER")
+                .antMatchers(HttpMethod.PATCH, "/post/**").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/post/**").hasRole("USER")
+
+                .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
 
