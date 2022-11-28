@@ -23,6 +23,6 @@ public class PostRepositoryImpl implements PostRepository {
     @Override
     public Optional<Post> findById(Post.PostId postId) {
         Optional<PostEntity> entity = jpaRepository.findById(postId.getValue());
-        return entity.map(mapper::toModel);
+        return entity.filter(e -> !e.isDeleted()).map(mapper::toModel);
     }
 }

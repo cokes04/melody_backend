@@ -15,7 +15,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class UpdatePostServiceTest {
     private UpdatePostService service;
@@ -40,11 +41,17 @@ class UpdatePostServiceTest {
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
 
+        when(repository.save(any(Post.class)))
+                .thenAnswer( a -> a.getArgument(0, Post.class));
+
         UpdatePostService.Result actual = service.execute(command);
 
         assertEquals(expectTitle, actual.getPost().getTitle());
         assertEquals(expectContent, actual.getPost().getContent());
         assertFalse(actual.getPost().isOpen());
+
+        verify(repository, times(1)).findById(postId);
+        verify(repository, times(1)).save(any(Post.class));
     }
 
     @Test
@@ -64,6 +71,8 @@ class UpdatePostServiceTest {
                 NotFoundException.class,
                 DomainError.of(PostErrorType.Not_Found_Post)
         );
+
+        verify(repository, times(1)).findById(postId);
     }
 
     @Test
@@ -78,12 +87,17 @@ class UpdatePostServiceTest {
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
+        when(repository.save(any(Post.class)))
+                .thenAnswer( a -> a.getArgument(0, Post.class));
 
         UpdatePostService.Result actual = service.execute(command);
 
         assertEquals(expectTitle, actual.getPost().getTitle());
         assertEquals(expectContent, actual.getPost().getContent());
         assertFalse(actual.getPost().isOpen());
+
+        verify(repository, times(1)).findById(postId);
+        verify(repository, times(1)).save(any(Post.class));
     }
 
     @Test
@@ -98,12 +112,17 @@ class UpdatePostServiceTest {
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
+        when(repository.save(any(Post.class)))
+                .thenAnswer( a -> a.getArgument(0, Post.class));
 
         UpdatePostService.Result actual = service.execute(command);
 
         assertEquals(expectTitle, actual.getPost().getTitle());
         assertEquals(expectContent, actual.getPost().getContent());
         assertFalse(actual.getPost().isOpen());
+
+        verify(repository, times(1)).findById(postId);
+        verify(repository, times(1)).save(any(Post.class));
     }
 
     @Test
@@ -117,12 +136,17 @@ class UpdatePostServiceTest {
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
+        when(repository.save(any(Post.class)))
+                .thenAnswer( a -> a.getArgument(0, Post.class));
 
         UpdatePostService.Result actual = service.execute(command);
 
         assertEquals(expectTitle, actual.getPost().getTitle());
         assertEquals(expectContent, actual.getPost().getContent());
         assertTrue(actual.getPost().isOpen());
+
+        verify(repository, times(1)).findById(postId);
+        verify(repository, times(1)).save(any(Post.class));
     }
 
     void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){

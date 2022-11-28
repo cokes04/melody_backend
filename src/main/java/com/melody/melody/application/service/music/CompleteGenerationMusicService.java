@@ -25,7 +25,7 @@ public class CompleteGenerationMusicService implements UseCase<CompleteGeneratio
 
         music.completeGeneration(command.getMusicUrl());
 
-        return new Result(music);
+        return new Result(repository.save(music));
     }
 
     @Value

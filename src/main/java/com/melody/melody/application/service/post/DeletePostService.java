@@ -26,7 +26,7 @@ public class DeletePostService implements UseCase<DeletePostService.Command, Del
 
         post.delete();
 
-        return new Result(post);
+        return new Result(repository.save(post));
     }
 
     @Value

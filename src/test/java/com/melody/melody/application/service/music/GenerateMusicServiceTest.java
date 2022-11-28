@@ -5,10 +5,12 @@ import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.net.MalformedURLException;
@@ -25,11 +27,22 @@ class GenerateMusicServiceTest {
     @InjectMocks
     private GenerateMusicService service;
 
-    @Mock private ImageFileStorage imageFileStorage;
-    @Mock private ImageCaptioner imageCaptioner;
-    @Mock private EmotionClassifier emotionClassifier;
-    @Mock private MusicGenerator musicGenerator;
-    @Mock private MusicRepository musicRepository;
+    private ImageFileStorage imageFileStorage;
+    private ImageCaptioner imageCaptioner;
+    private EmotionClassifier emotionClassifier;
+    private MusicGenerator musicGenerator;
+    private MusicRepository musicRepository;
+
+    @BeforeEach
+    void setUp() {
+        imageFileStorage = Mockito.mock(ImageFileStorage.class);
+        imageCaptioner = Mockito.mock(ImageCaptioner.class);
+        emotionClassifier = Mockito.mock(EmotionClassifier.class);
+        musicGenerator = Mockito.mock(MusicGenerator.class);
+        musicRepository = Mockito.mock(MusicRepository.class);
+        service = new GenerateMusicService(imageFileStorage, imageCaptioner, emotionClassifier, musicGenerator, musicRepository);
+
+    }
 
     @Test
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {

@@ -39,11 +39,17 @@ class DeletePostServiceTest {
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
+        when(repository.save(any(Post.class)))
+                .thenAnswer( a -> a.getArgument(0, Post.class));
 
         DeletePostService.Result actual  = service.execute(command);
 
         assertEquals(expect, actual.getPost());
+
         verify(repository, times(1)).findById(postId);
+        verify(repository, times(1)).save(any(Post.class));
+
+
     }
 
     @Test

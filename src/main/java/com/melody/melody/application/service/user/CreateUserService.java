@@ -35,9 +35,7 @@ public class CreateUserService implements UseCase<CreateUserService.Command, Cre
                 password
         );
 
-        user = repository.save(user);
-
-        return new Result(user);
+        return new Result(repository.save(user));
     }
 
     @Value

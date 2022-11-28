@@ -6,10 +6,12 @@ import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.model.Music;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -19,13 +21,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
 class CompleteGenerationMusicServiceTest {
 
-    @InjectMocks
     private CompleteGenerationMusicService service;
 
-    @Mock private MusicRepository repository;
+    private MusicRepository repository;
+
+
+    @BeforeEach
+    void setUp() {
+        repository = Mockito.mock(MusicRepository.class);
+        service = new CompleteGenerationMusicService(repository);
+    }
 
     @Test
     void execute_ShouldCompletionMusic() {
@@ -41,6 +48,8 @@ class CompleteGenerationMusicServiceTest {
 
         when(repository.getById(id))
                 .thenReturn(Optional.of(music));
+        when(repository.save(any(Music.class)))
+                .thenAnswer(a -> a.getArgument(0, Music.class));
 
         CompleteGenerationMusicService.Result result = service.execute(command);
 
@@ -49,6 +58,7 @@ class CompleteGenerationMusicServiceTest {
         assertEquals(expectedMusic, actualMusic);
 
         verify(repository, times(1)).getById(id);
+        verify(repository, times(1)).save(any(Music.class));
     }
 
     @Test

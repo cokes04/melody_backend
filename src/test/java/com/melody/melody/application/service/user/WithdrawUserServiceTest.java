@@ -16,8 +16,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class WithdrawUserServiceTest {
     private WithdrawUserService service;
@@ -36,6 +37,8 @@ class WithdrawUserServiceTest {
 
         when(userRepository.findById(eq(id)))
                 .thenReturn(Optional.of(user));
+        when(userRepository.save(any(User.class)))
+                .thenAnswer(a -> a.getArgument(0, User.class));
 
         WithdrawUserService.Command command = new WithdrawUserService.Command(id);
 
@@ -43,6 +46,9 @@ class WithdrawUserServiceTest {
         User actualUser = actual.getUser();
 
         assertEquals(user, actualUser);
+
+        verify(userRepository, times(1)).findById(eq(id));
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test

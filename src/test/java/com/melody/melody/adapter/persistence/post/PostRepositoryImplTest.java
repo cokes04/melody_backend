@@ -64,4 +64,19 @@ class PostRepositoryImplTest {
         assertTrue(actual.isPresent());
         assertEquals(expect, actual.get());
     }
+
+    @Test
+    void findById_ShouldReturnEmpty_WhenDeletedPost() {
+        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+
+        PostEntity entity = TestPostEntityGenerator.randomPostEntity();
+        entity.setDeleted(true);
+
+        when(jpaRepository.findById(postId.getValue()))
+                .thenReturn(Optional.of(entity));
+
+        Optional<Post> actual = repository.findById(postId);
+
+        assertTrue(actual.isEmpty());
+    }
 }

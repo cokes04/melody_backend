@@ -17,17 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @RequiredArgsConstructor
 public class WithdrawUserService implements UseCase<WithdrawUserService.Command, WithdrawUserService.Result>, BusinessRuleChecker {
-    private final UserRepository userRepository;
+    private final UserRepository repository;
 
     @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        User user = userRepository.findById(command.getUserId())
+        User user = repository.findById(command.getUserId())
                 .orElseThrow(() -> new NotFoundException(DomainError.of(UserErrorType.User_Not_Found)));
 
         user.withdraw();
 
-        return new Result(user);
+        return new Result(repository.save(user));
     }
 
     @Value

@@ -2,10 +2,12 @@ package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.model.Music;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
@@ -14,13 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 
-@ExtendWith(SpringExtension.class)
 class GetMusicServiceTest {
-    @InjectMocks
     private GetMusicService service;
-
-    @Mock
     private MusicRepository repository;
+
+    @BeforeEach
+    void setUp() {
+        repository = Mockito.mock(MusicRepository.class);
+        service = new GetMusicService(repository);
+    }
 
     @Test
     void execute_ShouldReturnMusic() {

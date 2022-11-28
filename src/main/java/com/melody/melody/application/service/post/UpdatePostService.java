@@ -38,7 +38,7 @@ public class UpdatePostService implements UseCase<UpdatePostService.Command, Upd
                 }
         );
 
-        return new Result(post);
+        return new Result(repository.save(post));
     }
 
     @Value

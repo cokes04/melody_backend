@@ -28,8 +28,7 @@ public class CreatePostService implements UseCase<CreatePostService.Command, Cre
                 command.open
         );
 
-        post = repository.save(post);
-        return new Result(post);
+        return new Result(repository.save(post));
     }
 
     @Value
