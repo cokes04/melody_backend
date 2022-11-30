@@ -106,7 +106,7 @@ class GetUserPostControllerTest {
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                                 ),
                                 responseFields(
-                                        fieldWithPath("count").type(JsonFieldType.NUMBER).description("리스트 개수"),
+                                        fieldWithPath("count").type(JsonFieldType.NUMBER).description("리스트 요소 개수"),
                                         fieldWithPath("totalCount").type(JsonFieldType.NUMBER).description("전체 요소 개수"),
                                         fieldWithPath("totalPage").type(JsonFieldType.NUMBER).description("전체 페이지"),
 

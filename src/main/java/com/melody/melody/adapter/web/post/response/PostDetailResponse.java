@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.web.post.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.melody.melody.adapter.web.converter.BooleanToYNConverter;
 import com.melody.melody.adapter.web.music.response.MusicResponse;
@@ -26,6 +27,7 @@ public class PostDetailResponse {
     @JsonSerialize(converter = BooleanToYNConverter.class)
     private boolean deleted;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'Т'HH:mm")
     private LocalDateTime createdDate;
 
     private MusicResponse music;

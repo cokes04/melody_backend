@@ -4,16 +4,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.melody.melody.domain.exception.DomainError;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Value
 @Builder
 public class ErrorResponse {
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+
+    @JsonFormat(pattern = "yyyy-MM-dd'Т'HH:mm")
     private final LocalDateTime timestamp;
 
     private final List<Error> errors;
@@ -42,8 +45,8 @@ public class ErrorResponse {
                 )
                 .build();
     }
-    
-    @Getter
+
+    @Value
     @Builder
     public static class Error{
         private final String code;

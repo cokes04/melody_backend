@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class EnumSnippet extends AbstractFieldsSnippet {
+public class CustomFieldSnippet extends AbstractFieldsSnippet {
 
-    public EnumSnippet(String type, PayloadSubsectionExtractor<?> subsectionExtractor,
-                       List<FieldDescriptor> descriptors, Map<String, Object> attributes,
-                       boolean ignoreUndocumentedFields) {
+    public CustomFieldSnippet(String type, PayloadSubsectionExtractor<?> subsectionExtractor,
+                              List<FieldDescriptor> descriptors, Map<String, Object> attributes,
+                              boolean ignoreUndocumentedFields) {
         super(type, descriptors, attributes, ignoreUndocumentedFields,
                 subsectionExtractor);
     }

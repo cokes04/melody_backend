@@ -215,3 +215,10 @@ include::{snippets}/get-users-post/curl-request.adoc[]
 include::{snippets}/enum-docs/code-fields-emotion.adoc[]
 include::{snippets}/enum-docs/code-fields-postSort.adoc[]
 include::{snippets}/enum-docs/code-fields-musicStatus.adoc[]
+
+== 에러 목록
+include::{snippets}/error-docs/error-code-fields-errors.adoc[]
+
+== 에러 응답 포맷
+include::{snippets}/error-response-format/http-response.adoc[]
+include::{snippets}/error-response-format/response-fields.adoc[]

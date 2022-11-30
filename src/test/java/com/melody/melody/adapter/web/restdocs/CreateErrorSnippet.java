@@ -2,7 +2,12 @@ package com.melody.melody.adapter.web.restdocs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.melody.melody.adapter.aws.AwsErrorType;
 import com.melody.melody.application.dto.PostSort;
+import com.melody.melody.domain.exception.type.DomainErrorType;
+import com.melody.melody.domain.exception.type.MusicErrorType;
+import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.SneakyThrows;
@@ -24,10 +29,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
@@ -35,7 +42,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @AutoConfigureRestDocs
-public class CreateEnumSnippet {
+public class CreateErrorSnippet {
 
     private WebTestClient webClient;
 
@@ -53,9 +60,7 @@ public class CreateEnumSnippet {
             @NotNull
             public MockResponse dispatch(@NotNull RecordedRequest request) {
                 Map<String, Map<String, String>> body = new HashMap<>();
-                body.put("postSort", getPostSort());
-                body.put("emotion", getEmotion());
-                body.put("musicStatus", getMusicStatus());
+                body.put("errors", getErrorTypes());
 
                 return new MockResponse()
                         .addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -74,7 +79,7 @@ public class CreateEnumSnippet {
     }
 
     @Test
-    void createEnumSnippet() throws Exception {
+    void createErrorSnippet() throws Exception {
         webClient.get()
                 .uri("/")
                 .exchange().expectStatus().isOk()
@@ -82,23 +87,11 @@ public class CreateEnumSnippet {
                 .consumeWith(System.out::println)
                 .consumeWith(
                         document(
-                                "enum-docs",
-                                new CustomFieldSnippet("code",
-                                        beneathPath("postSort").withSubsectionId("postSort"),
-                                        Arrays.asList(enumConvertFieldDescriptor(getPostSort())),
-                                        attributes(key("title").value("게시물 정렬 기준")),
-                                        true
-                                ),
-                                new CustomFieldSnippet("code",
-                                        beneathPath("emotion").withSubsectionId("emotion"),
-                                        Arrays.asList(enumConvertFieldDescriptor(getEmotion())),
-                                        attributes(key("title").value("감정 종류")),
-                                        true
-                                ),
-                                new CustomFieldSnippet("code",
-                                        beneathPath("musicStatus").withSubsectionId("musicStatus"),
-                                        Arrays.asList(enumConvertFieldDescriptor(getMusicStatus())),
-                                        attributes(key("title").value("음악 상태")),
+                                "error-docs",
+                                new CustomFieldSnippet("error-code",
+                                        beneathPath("errors").withSubsectionId("errors"),
+                                        Arrays.asList(enumConvertFieldDescriptor(getErrorTypes())),
+                                        attributes(key("title").value("에러 목록")),
                                         true
                                 )
                         )
@@ -106,35 +99,26 @@ public class CreateEnumSnippet {
 
     }
 
-    private Map<String, String> getMusicStatus() {
+    private Map<String, String> getErrorTypes() {
         Map<String,String> map = new HashMap<>();
-        map.put(Music.Status.PROGRESS.name().toLowerCase(), "작곡 진행중");
-        map.put(Music.Status.COMPLETION.name().toLowerCase(), "작곡 완료됨");
-        map.put(Music.Status.DELETED.name().toLowerCase(), "음악 제거됨");
+        put(map, MusicErrorType.values());
+        put(map, PostErrorType.values());
+        put(map, UserErrorType.values());
+        put(map, AwsErrorType.values());
+        map.put("400001", String.format(AwsErrorType.Not_Supported_Media_Type.getMessageFormat(), "image/bmp"));
 
         return map;
     }
 
-    private Map<String, String> getEmotion() {
-        Map<String,String> map = new HashMap<>();
-        map.put(Emotion.RELAXED.name().toLowerCase(), "편안한");
-        map.put(Emotion.DELIGHTED.name().toLowerCase(), "기쁜");
-        map.put(Emotion.GLOOMY.name().toLowerCase(), "슬픈");
-        map.put(Emotion.TENSE.name().toLowerCase(), "긴장된");
-
-        return map;
-    }
-
-    private Map<String, String> getPostSort() {
-        Map<String,String> map = new HashMap<>();
-        map.put(PostSort.newest.name().toLowerCase(), "게시물 최신순");
-        map.put(PostSort.oldest.name().toLowerCase(), "게시물 오래된순");
-
-        return map;
+    private void put(Map<String, String> map, DomainErrorType[] errorTypes){
+        for (DomainErrorType errorType : errorTypes){
+            map.put(errorType.getCode(), errorType.getMessageFormat());
+        }
     }
 
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
         return enumValues.entrySet().stream()
+                .sorted(Comparator.comparing(Map.Entry::getKey))
                 .map(x -> fieldWithPath(x.getKey()).description(x.getValue()))
                 .toArray(FieldDescriptor[]::new);
     }
