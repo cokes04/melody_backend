@@ -36,7 +36,7 @@ Get /music/{id}
 
 === 요청
 include::{snippets}/get-music/http-request.adoc[]
-==== 요청 파라미터
+==== 패치 파라미터
 include::{snippets}/get-music/path-parameters.adoc[]
 ==== 요청 헤더
 include::{snippets}/get-music/request-headers.adoc[]
@@ -70,7 +70,7 @@ Delete /users/{userId}
 
 === 요청
 include::{snippets}/withdarw-user/http-request.adoc[]
-==== 요청 파라미터
+==== 패치 파라미터
 include::{snippets}/withdarw-user/path-parameters.adoc[]
 ==== 요청 헤더
 include::{snippets}/withdarw-user/request-headers.adoc[]
@@ -117,3 +117,101 @@ include::{snippets}/logout-user/response-headers.adoc[]
 
 === curl
 include::{snippets}/logout-user/curl-request.adoc[]
+
+== [Post] 게시물 생성
+Post /posts
+
+=== 요청
+include::{snippets}/create-post/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/create-post/request-headers.adoc[]
+==== 요청 필드
+include::{snippets}/create-post/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/create-post/http-response.adoc[]
+=== 응답 헤더
+include::{snippets}/create-post/response-headers.adoc[]
+
+=== curl
+include::{snippets}/create-post/curl-request.adoc[]
+
+
+== [PATCH] 게시물 수정
+Patch /posts/{postId}
+
+=== 요청
+include::{snippets}/update-post/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/update-post/request-headers.adoc[]
+==== 패치 파라미터
+include::{snippets}/update-post/path-parameters.adoc[]
+==== 요청 필드
+include::{snippets}/update-post/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/update-post/http-response.adoc[]
+
+=== curl
+include::{snippets}/update-post/curl-request.adoc[]
+
+== [DELETE] 게시물 삭제
+Delete /posts/{postId}
+
+=== 요청
+include::{snippets}/delete-post/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/delete-post/request-headers.adoc[]
+==== 패치 파라미터
+include::{snippets}/delete-post/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/delete-post/http-response.adoc[]
+
+=== curl
+include::{snippets}/delete-post/curl-request.adoc[]
+
+== [GET] 게시물
+get /posts/{postId}
+
+=== 요청
+include::{snippets}/get-post/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/get-post/request-headers.adoc[]
+==== 패치 파라미터
+include::{snippets}/get-post/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/get-post/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/get-post/response-fields.adoc[]
+
+=== curl
+include::{snippets}/get-post/curl-request.adoc[]
+
+
+== [GET] 유저의 게시물
+get /users/{userId}/posts
+
+=== 요청
+include::{snippets}/get-users-post/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/get-users-post/request-headers.adoc[]
+==== 패치 파라미터
+include::{snippets}/get-users-post/path-parameters.adoc[]
+==== 요청 파라미터
+include::{snippets}/get-users-post/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/get-users-post/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/get-users-post/response-fields.adoc[]
+
+=== curl
+include::{snippets}/get-users-post/curl-request.adoc[]
+
+
+== 코드 목록
+include::{snippets}/enum-docs/code-fields-emotion.adoc[]
+include::{snippets}/enum-docs/code-fields-postSort.adoc[]
+include::{snippets}/enum-docs/code-fields-musicStatus.adoc[]
