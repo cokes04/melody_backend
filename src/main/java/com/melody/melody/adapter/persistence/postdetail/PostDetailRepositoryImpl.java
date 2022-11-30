@@ -89,7 +89,8 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
                         musicEntity.emotion,
                         musicEntity.explanation,
                         musicEntity.imageUrl,
-                        musicEntity.musicUrl
+                        musicEntity.musicUrl,
+                        musicEntity.status
                 )
         )
                 .from(postEntity)

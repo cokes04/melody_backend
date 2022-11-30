@@ -47,9 +47,17 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomMusic(){
+        return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId());
+    }
+
+    public static Music randomMusic(User.UserId userId){
+        return randomMusic(randomMusicId(), userId);
+    }
+
+    public static Music randomMusic(Music.MusicId musicId, User.UserId userId){
         return Music.builder()
-                .userId(TestUserDomainGenerator.randomUserId())
-                .id(randomMusicId())
+                .id(musicId)
+                .userId(userId)
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())

@@ -300,11 +300,14 @@ class PostDetailRepositoryImplTest {
         assertEquals(entity.isOpen(), detail.isOpen());
         assertEquals(entity.isDeleted(), detail.isDeleted());
         assertTime(entity.getCreatedDate(), detail.getCreatedDate());
+
         assertEquals(entity.getMusicEntity().getEmotion(), detail.getEmotion());
         assertEquals(entity.getMusicEntity().getExplanation(), detail.getExplanation());
         assertEquals(entity.getMusicEntity().getImageUrl(), detail.getImageUrl());
         assertEquals(entity.getMusicEntity().getId(), detail.getMusicId());
         assertEquals(entity.getMusicEntity().getMusicUrl(), detail.getMusicUrl());
+        assertEquals(entity.getMusicEntity().getStatus(), detail.getMusicStatus());
+
         assertEquals(entity.getUserEntity().getId(), detail.getUserId());
         assertEquals(entity.getUserEntity().getNickName(), detail.getNickname());
     }

@@ -8,6 +8,6 @@ import java.util.List;
 public class PagingResult<T> {
     private final List<T> list;
     private final int count;
-    private long totalCount;
-    private int totalPage;
+    private final long totalCount;
+    private final int totalPage;
 }

@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.web.security;
+package com.melody.melody.adapter.security;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

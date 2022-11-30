@@ -1,6 +1,7 @@
 package com.melody.melody.application.dto;
 
 import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Music;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -41,5 +42,7 @@ public class PostDetail {
     private String imageUrl;
 
     private String musicUrl;
+
+    private Music.Status musicStatus;
 
 }

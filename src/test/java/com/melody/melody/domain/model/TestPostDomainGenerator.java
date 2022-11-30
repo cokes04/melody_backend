@@ -9,9 +9,18 @@ public class TestPostDomainGenerator {
         return getPostBuilder().open(true).deleted(false).build();
 
     }
+    public static Post randomOpenPost(User.UserId userId){
+        return getPostBuilder().userId(userId).open(true).deleted(false).build();
+
+    }
 
     public static Post randomClosePost(){
         return getPostBuilder().open(false).deleted(false).build();
+
+    }
+
+    public static Post randomClosePost(User.UserId userId){
+        return getPostBuilder().userId(userId).open(false).deleted(false).build();
 
     }
 

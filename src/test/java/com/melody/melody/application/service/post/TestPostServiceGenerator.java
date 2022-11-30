@@ -1,9 +1,7 @@
 package com.melody.melody.application.service.post;
 
 import com.melody.melody.application.service.music.GenerateMusicService;
-import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.TestPostDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
+import com.melody.melody.domain.model.*;
 import net.datafaker.Faker;
 import org.springframework.core.io.UrlResource;
 
@@ -14,11 +12,30 @@ import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusi
 public class TestPostServiceGenerator {
     private static final Faker faker = new Faker();
 
-    public static CreatePostService.Command randomCreatePostCommand(){
-        return new CreatePostService.Command(
-                TestUserDomainGenerator.randomUserId(),
-                TestMusicDomainGenerator.randomMusicId(),
+    public static UpdatePostService.Command randomUpdatePostCommand(){
+        return randomUpdatePostService(TestPostDomainGenerator.randomPostId());
+    }
 
+    public static CreatePostService.Command randomCreatePostCommand(){
+        return randomCreatePostCommand(
+                TestUserDomainGenerator.randomUserId(),
+                TestMusicDomainGenerator.randomMusicId()
+        );
+    }
+
+    public static UpdatePostService.Command randomUpdatePostService(Post.PostId postId){
+        return new UpdatePostService.Command(
+                postId,
+                TestPostDomainGenerator.randomTitle().getValue(),
+                TestPostDomainGenerator.randomContent().getValue(),
+                true
+        );
+    }
+
+    public static CreatePostService.Command randomCreatePostCommand(User.UserId userId, Music.MusicId musicId){
+        return new CreatePostService.Command(
+                userId,
+                musicId,
                 TestPostDomainGenerator.randomTitle().getValue(),
                 TestPostDomainGenerator.randomContent().getValue(),
                 true

@@ -1,6 +1,8 @@
 package com.melody.melody.adapter.security;
 
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
+import com.melody.melody.application.dto.Open;
+import com.melody.melody.application.dto.PostDetail;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.domain.model.Music;
@@ -27,4 +29,19 @@ public class PostSecurityExpression {
         UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
         return postOwnerId.get().equals(user.getUserId());
     }
+
+    public boolean isOwner(PostDetail postDetail){
+        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
+
+        return postDetail.getUserId().equals(user.getUserId());
+    }
+
+    public boolean isOpen(PostDetail postDetail){
+        return postDetail.isOpen();
+    }
+
+    public boolean isOpen(Open open){
+        return Open.OnlyOpen.equals(open);
+    }
+
 }

@@ -28,7 +28,7 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         MusicSecurityExpression musicSecurityExpression = musicSecurityExpressions.getObject();
         musicSecurityExpression.setAuthentication(auth);
         UserSecurityExpression userSecurityExpression = userSecurityExpressions.getObject();
-        musicSecurityExpression.setAuthentication(auth);
+        userSecurityExpression.setAuthentication(auth);
         PostSecurityExpression postSecurityExpression = postSecurityExpressions.getObject();
         postSecurityExpression.setAuthentication(auth);
 

@@ -74,6 +74,31 @@ class MusicSecurityExpressionTest {
 
     }
 
+    @Test
+    void isExist_ShouldReturnTrue_WhenExsistMusic() {
+        Music music = TestMusicDomainGenerator.randomMusic();
+        Music.MusicId musicId = music.getId().get();
+
+        when(repository.getById(musicId))
+                .thenReturn(Optional.of(music));
+
+        boolean actual = expression.isExist(musicId);
+        assertTrue(actual);
+
+    }
+
+    @Test
+    void isExist_ShouldReturnFalse_WhenNotExsistMusic() {
+        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+
+        when(repository.getById(musicId))
+                .thenReturn(Optional.empty());
+
+        boolean actual = expression.isExist(musicId);
+        assertFalse(actual);
+
+    }
+
     void setAuthentication(long userId){
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 UserDetailsImpl.builder().userId(userId).build(),

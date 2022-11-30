@@ -25,4 +25,8 @@ public class MusicSecurityExpression {
         UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
         return musicOwnerId.get().equals(user.getUserId());
     }
+
+    public boolean isExist(Music.MusicId musicId){
+        return repository.getById(musicId).isPresent();
+    }
 }

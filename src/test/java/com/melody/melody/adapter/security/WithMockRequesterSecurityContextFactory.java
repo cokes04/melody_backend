@@ -1,8 +1,8 @@
-package com.melody.melody.adapter.web.security;
+package com.melody.melody.adapter.security;
 
+import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
