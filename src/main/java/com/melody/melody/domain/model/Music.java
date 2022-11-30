@@ -49,6 +49,13 @@ public class Music {
 
     }
 
+    public void delete(){
+        if (this.status.equals(Status.DELETED))
+            throw new InvalidStatusException(DomainError.of(MusicErrorType.Music_Already_Deleted));
+
+        this.status = Status.DELETED;
+    }
+
     public Optional<MusicId> getId(){
         return Optional.ofNullable(this.id);
     }
@@ -78,6 +85,6 @@ public class Music {
     }
 
     public enum Status {
-        PROGRESS, COMPLETION;
+        DELETED, PROGRESS, COMPLETION;
     }
 }

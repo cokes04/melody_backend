@@ -47,21 +47,37 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomMusic(){
-        return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId());
+        return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId(), Music.Status.COMPLETION);
     }
 
-    public static Music randomMusic(User.UserId userId){
-        return randomMusic(randomMusicId(), userId);
+    public static Music randomCompletionMusic(User.UserId userId){
+        return randomMusic(randomMusicId(), userId, Music.Status.COMPLETION);
     }
 
-    public static Music randomMusic(Music.MusicId musicId, User.UserId userId){
+    public static Music randomProgressMusic(){
+        return randomProgressMusic(TestUserDomainGenerator.randomUserId());
+    }
+
+    public static Music randomProgressMusic(User.UserId userId){
+        return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS);
+    }
+
+    public static Music randomDeletedMusic(){
+        return randomDeletedMusic(TestUserDomainGenerator.randomUserId());
+    }
+
+    public static Music randomDeletedMusic(User.UserId userId){
+        return randomMusic(randomMusicId(), userId, Music.Status.DELETED);
+    }
+
+    public static Music randomMusic(Music.MusicId musicId, User.UserId userId, Music.Status status){
         return Music.builder()
                 .id(musicId)
                 .userId(userId)
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
-                .status(randomStatus())
+                .status(status)
                 .musicUrl(randomMusicUrl())
                 .build();
     }

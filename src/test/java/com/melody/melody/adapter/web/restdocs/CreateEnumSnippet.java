@@ -111,6 +111,7 @@ public class CreateEnumSnippet {
         Map<String,String> map = new HashMap<>();
         map.put(Music.Status.PROGRESS.name().toLowerCase(), "작곡 진행중");
         map.put(Music.Status.COMPLETION.name().toLowerCase(), "작곡 완료됨");
+        map.put(Music.Status.DELETED.name().toLowerCase(), "음악 제거됨");
 
         return map;
     }

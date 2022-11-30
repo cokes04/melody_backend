@@ -37,7 +37,7 @@ public class CreatePostServicePermissionCheckTest {
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenMusicExsist_AndMusicOwner_AndReqeusterIsMe() {
         User.UserId userId = new User.UserId(requesterId);
-        Music music = TestMusicDomainGenerator.randomMusic(userId);
+        Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
         Music.MusicId musicId = music.getId().get();
 
         when(musicRepository.getById(musicId))
@@ -71,7 +71,7 @@ public class CreatePostServicePermissionCheckTest {
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotMusicOwner() {
         User.UserId userId = new User.UserId(requesterId);
-        Music music = TestMusicDomainGenerator.randomMusic(new User.UserId((requesterId / 13) * 3));
+        Music music = TestMusicDomainGenerator.randomCompletionMusic(new User.UserId((requesterId / 13) * 3));
         Music.MusicId musicId = music.getId().get();
 
         when(musicRepository.getById(musicId))
@@ -90,7 +90,7 @@ public class CreatePostServicePermissionCheckTest {
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenReqeusterIsNotMe() {
         User.UserId userId = new User.UserId(requesterId);
-        Music music = TestMusicDomainGenerator.randomMusic(userId);
+        Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
         Music.MusicId musicId = music.getId().get();
 
         when(musicRepository.getById(musicId))

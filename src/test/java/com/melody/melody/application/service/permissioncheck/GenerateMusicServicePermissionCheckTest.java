@@ -49,7 +49,7 @@ public class GenerateMusicServicePermissionCheckTest {
         User.UserId userId = new User.UserId(requesterId);
 
         when(musicRepository.save(any(Music.class)))
-                .thenReturn(TestMusicDomainGenerator.randomMusic(userId));
+                .thenReturn(TestMusicDomainGenerator.randomCompletionMusic(userId));
 
         GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand(userId);
         service.execute(command);

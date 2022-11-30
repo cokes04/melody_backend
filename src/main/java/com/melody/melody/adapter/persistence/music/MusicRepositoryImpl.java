@@ -24,12 +24,14 @@ public class MusicRepositoryImpl implements MusicRepository {
     }
 
     @Override
-    public Optional<Music> getById(Music.MusicId id) {
-        Optional<MusicEntity> optional = jpaRepository.findById(id.getValue());
+    public Optional<Music> getById(Music.MusicId musicId) {
+        Optional<MusicEntity> optional = jpaRepository.findById(musicId.getValue());
 
         if (optional.isEmpty())
             return Optional.empty();
 
-        return Optional.of(mapper.toModel(optional.get()));
+        return optional
+                .filter(m -> !Music.Status.DELETED.equals(m.getStatus()))
+                .map(mapper::toModel);
     }
 }

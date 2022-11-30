@@ -25,11 +25,11 @@ class MusicRepositoryImplTest {
     @Mock private MusicMapper mapper;
 
     @Test
-    public void getById_ShouldReturnMusic() {
+    public void getById_ShouldReturnMusic_WhenExistMusic() {
         Music expected = TestMusicDomainGenerator.randomMusic();
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
-        assertTrue(expected.getId().isPresent());
         Music.MusicId musicId = expected.getId().get();
+        entity.setStatus(Music.Status.COMPLETION);
 
         when(jpaRepository.findById(eq(musicId.getValue())))
                 .thenReturn(Optional.of(entity));
@@ -47,11 +47,27 @@ class MusicRepositoryImplTest {
     }
 
     @Test
-    void getById_ShouldReturnEmpty() {
+    void getById_ShouldReturnEmpty_WhenNotExistMusic() {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(jpaRepository.findById(eq(musicId.getValue())))
                 .thenReturn(Optional.empty());
+
+        Optional<Music> actual = musicRepository.getById(musicId);
+
+        assertTrue(actual.isEmpty());
+
+        verify(jpaRepository, times(1)).findById(eq(musicId.getValue()));
+        verify(mapper, times(0)).toModel(any(MusicEntity.class));
+    }
+    @Test
+    void getById_ShouldReturnEmpty_WhenDeletedMusic() {
+        MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
+        Music.MusicId musicId = new Music.MusicId(entity.getId());
+        entity.setStatus(Music.Status.DELETED);
+
+        when(jpaRepository.findById(eq(musicId.getValue())))
+                .thenReturn(Optional.of(entity));
 
         Optional<Music> actual = musicRepository.getById(musicId);
 

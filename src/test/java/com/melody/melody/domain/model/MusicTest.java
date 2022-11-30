@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MusicTest {
 
     @Test
-    public void generate(){
+    public void generate_ReturnCreatedMusic(){
         User.UserId userId = TestUserDomainGenerator.randomUserId();
         Emotion emotion = randomEmotion();
         Music.Explanation explanation = randomExplanation();
@@ -31,7 +31,7 @@ class MusicTest {
     }
 
     @Test
-    void completeGeneration() {
+    void completeGeneration_ShouldChangeCompletion() {
         Music music = generatedMusic();
         Music.MusicUrl musicUrl = randomMusicUrl();
 
@@ -46,7 +46,7 @@ class MusicTest {
     }
 
     @Test
-    void completeGeneration_ThrowException_WhenStatusIsNotPROGRESS() {
+    void completeGeneration_ShouldThrowException_WhenStatusIsNotPROGRESS() {
         Music music = generatedMusic();
         Music.MusicUrl musicUrl = randomMusicUrl();
         Music.MusicUrl newMusicUrl = randomMusicUrl();
@@ -59,6 +59,30 @@ class MusicTest {
         assertException(() -> music.completeGeneration(newMusicUrl),
                 InvalidStatusException.class,
                 DomainError.of(MusicErrorType.Should_Be_Progress_State_For_Complete_Generation));
+    }
+
+    @Test
+    void delete_ShouldChangeDeleted() {
+        Music music = TestMusicDomainGenerator.randomProgressMusic();
+
+        assertNotEquals(Music.Status.DELETED, music.getStatus());
+        music.delete();
+        assertEquals(Music.Status.DELETED, music.getStatus());
+
+    }
+
+    @Test
+    void delete_ShouldhrowException_WhenDeletedMusic() {
+        Music music = TestMusicDomainGenerator.randomDeletedMusic();
+
+        assertEquals(Music.Status.DELETED, music.getStatus());
+
+        assertException(
+                music::delete,
+                InvalidStatusException.class,
+                DomainError.of(MusicErrorType.Music_Already_Deleted)
+        );
+
     }
 
     void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){
