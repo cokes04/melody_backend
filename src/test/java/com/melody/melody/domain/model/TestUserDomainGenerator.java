@@ -28,13 +28,16 @@ public class TestUserDomainGenerator {
     }
 
     public static User randomUser(){
+        return randomUser(randomUserId());
+    }
+
+    public static User randomUser(User.UserId userId){
         return User.builder()
-                .id(randomUserId())
+                .id(userId)
                 .nickName(randomNickName())
                 .email(randomEmail())
                 .password(randomPassword())
                 .withdrawn(false)
                 .build();
     }
-
 }

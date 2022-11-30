@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreatePostService implements UseCase<CreatePostService.Command, CreatePostService.Result> {
     private final PostRepository repository;
 
-    @PreAuthorize("#music.isOwner(#command.musicId)")
+    @PreAuthorize("#music.isExist(#command.musicId) and #music.isOwner(#command.musicId) and #user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
         Post post = Post.create(
