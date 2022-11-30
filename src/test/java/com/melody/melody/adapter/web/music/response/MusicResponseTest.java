@@ -14,13 +14,13 @@ class MusicResponseTest {
 
         MusicResponse musicResponse = MusicResponse.to(music);
 
-        assertEquals(music.getEmotion().name().toLowerCase(), musicResponse.getEmotion());
+        assertEquals(music.getEmotion(), musicResponse.getEmotion());
         assertEquals(music.getExplanation().getValue(), musicResponse.getExplanation());
         assertEquals(music.getImageUrl().getValue(), musicResponse.getImageUrl());
         assertTrue(music.getId().isPresent());
         assertEquals(music.getId().get().getValue(), musicResponse.getMusicId());
         assertEquals(music.getUserId().getValue(), musicResponse.getUserId());
-        assertEquals(music.getStatus().name().toLowerCase(), musicResponse.getStatus());
+        assertEquals(music.getStatus(), musicResponse.getStatus());
         assertTrue(music.getMusicUrl().isPresent());
         assertEquals(music.getMusicUrl().get().getValue(), musicResponse.getMusicUrl());
     }

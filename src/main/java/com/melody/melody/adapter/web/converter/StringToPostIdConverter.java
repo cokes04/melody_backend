@@ -8,6 +8,6 @@ public class StringToPostIdConverter implements Converter<String, Post.PostId> {
 
   @Override
   public Post.PostId convert(String source) {
-    return new Post.PostId(Integer.parseInt(source));
+    return new Post.PostId(Long.parseLong(source));
   }
 }

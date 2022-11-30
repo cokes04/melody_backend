@@ -1,8 +1,6 @@
 package com.melody.melody.config;
 
-import com.melody.melody.adapter.web.converter.BooleanToYNConverter;
-import com.melody.melody.adapter.web.converter.StringToPostIdConverter;
-import com.melody.melody.adapter.web.converter.YNToBooleanConverter;
+import com.melody.melody.adapter.web.converter.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -18,8 +16,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new BooleanToYNConverter());
-        registry.addConverter(new YNToBooleanConverter());
         registry.addConverter(new StringToPostIdConverter());
+        registry.addConverter(new StringToPostSortConverter());
+        registry.addConverter(new StringToUserIdConverter());
+        registry.addConverter(new YNToBooleanConverter());
+        registry.addConverter(new EmotionToStringConverter());
     }
 
     @Bean

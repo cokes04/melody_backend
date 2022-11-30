@@ -86,9 +86,9 @@ rabbit:
       queue: ${rabbit.queue.complete-music.name}
       key: "#"
 
-
 jasypt:
   encryptor:
+    password: ${MELODY_JASYPT_PASSWORD}
     bean: jasyptStringEncryptor
 
 app:

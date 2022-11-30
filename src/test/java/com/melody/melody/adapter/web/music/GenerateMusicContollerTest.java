@@ -2,13 +2,10 @@ package com.melody.melody.adapter.web.music;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.music.request.GenerateMusicRequest;
-import com.melody.melody.adapter.web.security.WithMockRequester;
-import com.melody.melody.application.service.music.TestMusicServiceGenerator;
+import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +18,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -114,10 +110,10 @@ class GenerateMusicContollerTest {
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),
                                         fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
-                                        fieldWithPath("emotion").description("감정(delighted, tense, gloomy, relaxed)").type(JsonFieldType.STRING),
+                                        fieldWithPath("emotion").description("감정(감정 분류 코드)").type(JsonFieldType.STRING),
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),
-                                        fieldWithPath("status").description("음악 상태(progress, completion)").type(JsonFieldType.STRING)
+                                        fieldWithPath("status").description("음악 상태(음악 상태 코드)").type(JsonFieldType.STRING)
                                 ),
                                 requestHeaders(
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")

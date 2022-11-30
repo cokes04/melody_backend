@@ -2,7 +2,7 @@ package com.melody.melody.adapter.web.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.post.request.UpdatePostRequest;
-import com.melody.melody.adapter.web.security.WithMockRequester;
+import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.service.post.UpdatePostService;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;

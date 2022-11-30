@@ -25,8 +25,8 @@ public class TestMusicWebGenerator {
                 .musicId(TestMusicDomainGenerator.randomMusicId().getValue())
                 .imageUrl(TestMusicDomainGenerator.randomImageUrl().getValue())
                 .explanation(TestMusicDomainGenerator.randomExplanation().getValue())
-                .emotion(TestMusicDomainGenerator.randomEmotion().name().toLowerCase())
-                .status(TestMusicDomainGenerator.randomStatus().name().toLowerCase())
+                .emotion(TestMusicDomainGenerator.randomEmotion())
+                .status(TestMusicDomainGenerator.randomStatus())
                 .build();
     }
 }

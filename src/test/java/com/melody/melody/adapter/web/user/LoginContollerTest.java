@@ -102,7 +102,6 @@ class LoginContollerTest {
                                 responseFields(
                                         fieldWithPath("token").description("엑세스 토큰").type(JsonFieldType.STRING)
                                 )
-
                         )
                 );
     }

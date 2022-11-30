@@ -78,11 +78,11 @@ class GetMusicContollerTest {
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),
                                         fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
-                                        fieldWithPath("emotion").description("감정(delighted, tense, gloomy, relaxed)").type(JsonFieldType.STRING),
+                                        fieldWithPath("emotion").description("감정(감정 분류 코드)").type(JsonFieldType.STRING),
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),
                                         fieldWithPath("musicUrl").description("음악 URI").type(JsonFieldType.STRING),
-                                        fieldWithPath("status").description("음악 상태(progress, completion)").type(JsonFieldType.STRING)
+                                        fieldWithPath("status").description("음악 상태(음악 상태 코드)").type(JsonFieldType.STRING)
                                 ),
                                 requestHeaders(
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")

@@ -1,6 +1,10 @@
 package com.melody.melody.adapter.web.music.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.melody.melody.adapter.web.converter.EmotionToStringConverter;
+import com.melody.melody.adapter.web.converter.MusicStatusToStringConverter;
+import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.User;
 import lombok.Builder;
@@ -13,7 +17,8 @@ public class MusicResponse {
 
     private final Long userId;
 
-    private final String emotion;
+    @JsonSerialize(converter = EmotionToStringConverter.class)
+    private final Emotion emotion;
 
     private final String explanation;
 
@@ -22,7 +27,8 @@ public class MusicResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final String musicUrl;
 
-    private final String status;
+    @JsonSerialize(converter = MusicStatusToStringConverter.class)
+    private final Music.Status status;
 
     public static MusicResponse to(Music music){
         return MusicResponse.builder()
@@ -30,9 +36,9 @@ public class MusicResponse {
                 .userId(music.getUserId().getValue())
                 .imageUrl(music.getImageUrl().getValue())
                 .explanation(music.getExplanation().getValue())
-                .emotion(music.getEmotion().name().toLowerCase())
+                .emotion(music.getEmotion())
                 .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
-                .status(music.getStatus().name().toLowerCase())
+                .status(music.getStatus())
                 .build();
     }
 }
