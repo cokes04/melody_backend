@@ -35,7 +35,7 @@ public class PostEntity {
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID", nullable = false)
-    private UserEntity UserEntity;
+    private UserEntity userEntity;
 
     @OneToOne(targetEntity = MusicEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "MUSIC_ID", nullable = false)

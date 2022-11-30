@@ -7,6 +7,8 @@ import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import net.datafaker.Faker;
 
+import java.time.LocalDateTime;
+
 public class TestPostEntityGenerator {
     private static final Faker faker = new Faker();
 
@@ -23,6 +25,7 @@ public class TestPostEntityGenerator {
                 .deleted(false)
                 .musicEntity(musicEntity)
                 .userEntity(userEntity)
+                .createdDate(LocalDateTime.now())
                 .build();
     }
 

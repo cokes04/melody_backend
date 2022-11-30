@@ -34,7 +34,7 @@ public class PostMapper {
                 .open(post.isOpen())
                 .deleted(post.isDeleted())
                 .musicEntity(MusicEntity.builder().id(post.getMusicId().getValue()).build())
-                .UserEntity(UserEntity.builder().id(post.getUserId().getValue()).build())
+                .userEntity(UserEntity.builder().id(post.getUserId().getValue()).build())
                 .build();
     }
 }
