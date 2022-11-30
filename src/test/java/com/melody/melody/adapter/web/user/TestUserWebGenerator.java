@@ -8,19 +8,14 @@ public class TestUserWebGenerator {
 
     public static CreateUserRequest randomCreateUserRequest(){
         return CreateUserRequest.builder()
-                .lastName(randomLastName())
-                .firstName(randomFirstName())
+                .nickName(randomNickName())
                 .email(randomEmail())
                 .password(randomPassword())
                 .build();
     }
 
-    public static String randomLastName(){
+    public static String randomNickName(){
         return faker.name().lastName();
-    }
-
-    public static String randomFirstName(){
-        return faker.name().firstName();
     }
 
     public static String randomEmail(){

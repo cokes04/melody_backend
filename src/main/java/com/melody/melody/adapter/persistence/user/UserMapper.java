@@ -12,8 +12,7 @@ public class UserMapper {
     User toModel(UserEntity entity){
         return User.builder()
                 .id(new User.UserId(entity.getId()))
-                .lastName(entity.getLastName())
-                .firstName(entity.getFirstName())
+                .nickName(entity.getNickName())
                 .email(entity.getEmail())
                 .password(new Password(entity.getPassword()))
                 .withdrawn(entity.isWithdrawn())
@@ -23,8 +22,7 @@ public class UserMapper {
     UserEntity toEntity(User user){
         return UserEntity.builder()
                 .id(user.getId().map(User.UserId::getValue).orElse(null))
-                .lastName(user.getLastName())
-                .firstName(user.getFirstName())
+                .nickName(user.getNickName())
                 .email(user.getEmail())
                 .password(user.getPassword().getEncryptedString())
                 .withdrawn(user.isWithdrawn())

@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.persistence.user;
 
+import com.melody.melody.adapter.persistence.PersistenceTestConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
@@ -7,24 +8,20 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Import(PersistenceTestConfig.class)
 class UserJpaRepositoryTest {
     @Autowired
     private UserJpaRepository repository;
 
     @Autowired
     private TestEntityManager entityManager;
-
-    @Configuration
-    @AutoConfigurationPackage
-    @EntityScan("com.melody.melody.adapter.persistence.user")
-    static class Config {
-    }
 
     @Test
     void save_ShouldReturnEntityWithId() {

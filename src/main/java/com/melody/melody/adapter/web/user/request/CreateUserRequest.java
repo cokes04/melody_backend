@@ -12,11 +12,7 @@ public class CreateUserRequest {
 
     @NotBlank
     @Size(max=50)
-    private final String lastName;
-
-    @NotBlank
-    @Size(max=50)
-    private final String firstName;
+    private final String nickName;
 
     @Email
     private final String email;
@@ -27,8 +23,7 @@ public class CreateUserRequest {
 
     public CreateUserService.Command toCommand(){
         return new CreateUserService.Command(
-                this.lastName,
-                this.firstName,
+                this.nickName,
                 this.email,
                 this.password
         );

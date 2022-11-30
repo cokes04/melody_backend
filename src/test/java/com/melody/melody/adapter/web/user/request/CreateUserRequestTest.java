@@ -13,8 +13,7 @@ class CreateUserRequestTest {
         CreateUserRequest request = TestUserWebGenerator.randomCreateUserRequest();
         CreateUserService.Command command = request.toCommand();
 
-        assertEquals(request.getLastName(), command.getLastName());
-        assertEquals(request.getFirstName(), command.getFirstName());
+        assertEquals(request.getNickName(), command.getNickName());
         assertEquals(request.getEmail(), command.getEmail());
         assertEquals(request.getPassword(), command.getPassword());
     }

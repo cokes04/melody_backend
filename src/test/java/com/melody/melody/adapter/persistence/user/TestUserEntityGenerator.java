@@ -10,8 +10,7 @@ public class TestUserEntityGenerator {
     public static UserEntity randomUserEntity(){
         return UserEntity.builder()
                 .id(randomId())
-                .lastName(randomLastName())
-                .firstName(randomFirstName())
+                .nickName(randomLastName())
                 .email(randomEmail())
                 .password(randomPassword())
                 .build();
@@ -22,11 +21,7 @@ public class TestUserEntityGenerator {
     }
 
     public static String randomLastName(){
-        return TestUserDomainGenerator.randomLastName();
-    }
-
-    public static String randomFirstName(){
-        return TestUserDomainGenerator.randomFirstName();
+        return TestUserDomainGenerator.randomNickName();
     }
 
     public static String randomEmail(){

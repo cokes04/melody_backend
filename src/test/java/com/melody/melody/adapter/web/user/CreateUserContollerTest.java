@@ -70,8 +70,7 @@ class CreateUserContollerTest {
                         document(
                                 "create-user",
                                 requestFields(
-                                        fieldWithPath("lastName").description("성").type(JsonFieldType.STRING),
-                                        fieldWithPath("firstName").description("이름").type(JsonFieldType.STRING),
+                                        fieldWithPath("nickName").description("닉네임").type(JsonFieldType.STRING),
                                         fieldWithPath("email").description("이메일").type(JsonFieldType.STRING),
                                         fieldWithPath("password").description("비밀번호").type(JsonFieldType.STRING)
                                 )

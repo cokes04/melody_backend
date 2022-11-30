@@ -19,10 +19,7 @@ public class UserEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String lastName;
-
-    @Column(nullable = false)
-    private String firstName;
+    private String nickName;
 
     @Column(nullable = false, unique = true)
     private String email;

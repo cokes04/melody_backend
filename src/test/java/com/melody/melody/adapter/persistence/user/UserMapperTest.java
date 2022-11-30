@@ -24,8 +24,7 @@ class UserMapperTest {
 
         assertTrue(user.getId().isPresent());
         assertEquals(user.getId().get().getValue(), actual.getId());
-        assertEquals(user.getLastName(), actual.getLastName());
-        assertEquals(user.getFirstName(), actual.getFirstName());
+        assertEquals(user.getNickName(), actual.getNickName());
         assertEquals(user.getEmail(), actual.getEmail());
         assertEquals(user.getPassword().getEncryptedString(), actual.getPassword());
         assertEquals(user.isWithdrawn(), actual.isWithdrawn());
@@ -39,8 +38,7 @@ class UserMapperTest {
 
         assertTrue(actual.getId().isPresent());
         assertEquals(entity.getId(), actual.getId().get().getValue());
-        assertEquals(entity.getLastName(), actual.getLastName());
-        assertEquals(entity.getFirstName(), actual.getFirstName());
+        assertEquals(entity.getNickName(), actual.getNickName());
         assertEquals(entity.getEmail(), actual.getEmail());
         assertEquals(entity.getPassword(), actual.getPassword().getEncryptedString());
         assertEquals(entity.isWithdrawn(), actual.isWithdrawn());

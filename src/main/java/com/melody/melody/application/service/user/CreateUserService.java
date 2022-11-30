@@ -29,8 +29,7 @@ public class CreateUserService implements UseCase<CreateUserService.Command, Cre
         Password password = passwordEncrypter.encrypt(command.getPassword());
 
         User user = User.create(
-                command.getLastName(),
-                command.getFirstName(),
+                command.getNickName(),
                 command.getEmail(),
                 password
         );
@@ -40,8 +39,7 @@ public class CreateUserService implements UseCase<CreateUserService.Command, Cre
 
     @Value
     public static class Command implements UseCase.Command{
-        private final String lastName;
-        private final String firstName;
+        private final String nickName;
         private final String email;
         private final String password;
     }

@@ -15,9 +15,7 @@ import java.util.Optional;
 public class User {
     private UserId id;
 
-    private String lastName;
-
-    private String firstName;
+    private String nickName;
 
     private String email;
 
@@ -25,11 +23,10 @@ public class User {
 
     private boolean withdrawn;
 
-    public static User create(String lastName, String firstName, String email, Password password){
+    public static User create(String nickName, String email, Password password){
         return User.builder()
                 .id(null)
-                .lastName(lastName)
-                .firstName(firstName)
+                .nickName(nickName)
                 .email(email)
                 .password(password)
                 .withdrawn(false)

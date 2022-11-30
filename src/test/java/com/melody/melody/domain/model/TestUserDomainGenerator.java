@@ -13,11 +13,7 @@ public class TestUserDomainGenerator {
         );
     }
 
-    public static String randomLastName(){
-        return faker.name().lastName();
-    }
-
-    public static String randomFirstName(){
+    public static String randomNickName(){
         return faker.name().firstName();
     }
 
@@ -34,8 +30,7 @@ public class TestUserDomainGenerator {
     public static User randomUser(){
         return User.builder()
                 .id(randomUserId())
-                .lastName(randomLastName())
-                .firstName(randomFirstName())
+                .nickName(randomNickName())
                 .email(randomEmail())
                 .password(randomPassword())
                 .withdrawn(false)

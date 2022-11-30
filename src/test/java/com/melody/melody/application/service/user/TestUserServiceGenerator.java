@@ -15,8 +15,7 @@ public class TestUserServiceGenerator {
 
     public static CreateUserService.Command randomCreateUserCommand() {
         return new CreateUserService.Command(
-                randomLastName(),
-                randomFirstName(),
+                randomNickName(),
                 randomEmail(),
                 randomPassword()
         );
@@ -28,12 +27,8 @@ public class TestUserServiceGenerator {
         );
     }
 
-    public static String randomLastName(){
+    public static String randomNickName(){
         return faker.name().lastName();
-    }
-
-    public static String randomFirstName(){
-        return faker.name().firstName();
     }
 
     public static String randomEmail(){

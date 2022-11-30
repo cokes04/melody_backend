@@ -14,21 +14,18 @@ class UserTest {
 
     @Test
     void create() {
-        String lastName = randomLastName();
-        String firstName =randomFirstName();
+        String nickName = randomNickName();
         String email =randomEmail();
         Password password =randomPassword();
 
         User actual = User.create(
-                lastName,
-                firstName,
+                nickName,
                 email,
                 password
         );
 
         assertTrue(actual.getId().isEmpty());
-        assertEquals(lastName, actual.getLastName());
-        assertEquals(firstName, actual.getFirstName());
+        assertEquals(nickName, actual.getNickName());
         assertEquals(email, actual.getEmail());
         assertEquals(password, actual.getPassword());
     }

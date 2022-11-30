@@ -22,7 +22,7 @@ public class TestPostEntityGenerator {
                 .open(true)
                 .deleted(false)
                 .musicEntity(musicEntity)
-                .UserEntity(userEntity)
+                .userEntity(userEntity)
                 .build();
     }
 

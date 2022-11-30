@@ -16,6 +16,7 @@ public class TestMusicEntityGenerator {
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
+                .musicUrl(randomMusicUrl())
                 .status(randomStatus())
                 .userEntity(TestUserEntityGenerator.randomUserEntity())
                 .build();
@@ -35,6 +36,10 @@ public class TestMusicEntityGenerator {
 
     public static String randomImageUrl(){
         return TestMusicDomainGenerator.randomImageUrl().getValue();
+    }
+
+    public static String randomMusicUrl(){
+        return TestMusicDomainGenerator.randomMusicUrl().getValue();
     }
 
     public static Music.Status randomStatus(){
