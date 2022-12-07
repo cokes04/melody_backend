@@ -8,7 +8,7 @@
 :sectanchors:
 
 == [POST] 음악 작곡
-Post /music
+POST /music
 
 TIP: Multipart 요청입니다. +
 Content-Type: multipart/form-data;charset=UTF-8;
@@ -31,8 +31,8 @@ include::{snippets}/generate-music/response-fields.adoc[]
 === curl
 include::{snippets}/generate-music/curl-request.adoc[]
 
-== [Get] 음악 정보
-Get /music/{id}
+== [GET] 음악 정보
+GET /music/{id}
 
 === 요청
 include::{snippets}/get-music/http-request.adoc[]
@@ -50,8 +50,8 @@ include::{snippets}/get-music/response-fields.adoc[]
 include::{snippets}/get-music/curl-request.adoc[]
 
 
-== [Post] 회원 가입
-Post /users
+== [POST] 회원 가입
+POST /users
 
 === 요청
 include::{snippets}/create-user/http-request.adoc[]
@@ -64,9 +64,27 @@ include::{snippets}/create-user/http-response.adoc[]
 === curl
 include::{snippets}/create-user/curl-request.adoc[]
 
+== [PATCH] 패스워드 변경
+PATCH /users/{userId}/password
 
-== [Delete] 회원 탈퇴
-Delete /users/{userId}
+=== 요청
+include::{snippets}/change-password/http-request.adoc[]
+==== 패치 파라미터
+include::{snippets}/change-password/path-parameters.adoc[]
+==== 요청 헤더
+include::{snippets}/change-password/request-headers.adoc[]
+==== 요청 필드
+include::{snippets}/change-password/request-fields.adoc[]
+
+
+=== 응답
+include::{snippets}/change-password/http-response.adoc[]
+
+=== curl
+include::{snippets}/change-password/curl-request.adoc[]
+
+== [DELETE] 회원 탈퇴
+DELETE /users/{userId}
 
 === 요청
 include::{snippets}/withdarw-user/http-request.adoc[]
@@ -83,9 +101,8 @@ include::{snippets}/withdarw-user/http-response.adoc[]
 include::{snippets}/withdarw-user/curl-request.adoc[]
 
 
-
-== [Post] 로그인
-Post /login
+== [POST] 로그인
+POST /login
 
 === 요청
 include::{snippets}/login-user/http-request.adoc[]
@@ -102,8 +119,8 @@ include::{snippets}/login-user/response-fields.adoc[]
 === curl
 include::{snippets}/login-user/curl-request.adoc[]
 
-== [Post] 로그아웃
-Post /logout
+== [POST] 로그아웃
+POST /logout
 
 === 요청
 include::{snippets}/logout-user/http-request.adoc[]
@@ -118,8 +135,8 @@ include::{snippets}/logout-user/response-headers.adoc[]
 === curl
 include::{snippets}/logout-user/curl-request.adoc[]
 
-== [Post] 게시물 생성
-Post /posts
+== [POST] 게시물 생성
+POST /posts
 
 === 요청
 include::{snippets}/create-post/http-request.adoc[]
@@ -138,7 +155,7 @@ include::{snippets}/create-post/curl-request.adoc[]
 
 
 == [PATCH] 게시물 수정
-Patch /posts/{postId}
+PATCH /posts/{postId}
 
 === 요청
 include::{snippets}/update-post/http-request.adoc[]
@@ -156,7 +173,7 @@ include::{snippets}/update-post/http-response.adoc[]
 include::{snippets}/update-post/curl-request.adoc[]
 
 == [DELETE] 게시물 삭제
-Delete /posts/{postId}
+DELETE /posts/{postId}
 
 === 요청
 include::{snippets}/delete-post/http-request.adoc[]
@@ -172,7 +189,7 @@ include::{snippets}/delete-post/http-response.adoc[]
 include::{snippets}/delete-post/curl-request.adoc[]
 
 == [GET] 게시물
-get /posts/{postId}
+GET /posts/{postId}
 
 === 요청
 include::{snippets}/get-post/http-request.adoc[]
@@ -191,7 +208,7 @@ include::{snippets}/get-post/curl-request.adoc[]
 
 
 == [GET] 유저의 게시물
-get /users/{userId}/posts
+GET /users/{userId}/posts
 
 === 요청
 include::{snippets}/get-users-post/http-request.adoc[]

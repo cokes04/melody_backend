@@ -23,7 +23,7 @@ public class TestUserDomainGenerator {
 
     public static Password randomPassword(){
         return new Password(
-                faker.internet().password(8, 15, true, true, true)
+                faker.internet().password(10, 20, true, true, true)
         );
     }
 
