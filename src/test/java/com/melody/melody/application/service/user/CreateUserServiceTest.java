@@ -31,9 +31,10 @@ class CreateUserServiceTest {
     @Test
     void execute_ShouldCreateAndReturnMusic() {
         CreateUserService.Command command = randomCreateUserCommand();
+        User.Email email = User.Email.from(command.getEmail());
         User user = TestUserDomainGenerator.randomUser();
 
-        when(repository.existsByEmail(eq(command.getEmail())))
+        when(repository.existsByEmail(eq(email)))
                 .thenReturn(false);
 
         when(repository.save(any(User.class)))
@@ -48,16 +49,17 @@ class CreateUserServiceTest {
         assertEquals(user, actualUser);
 
         verify(repository, times(1)).save(any(User.class));
-        verify(repository, times(1)).existsByEmail(eq(command.getEmail()));
+        verify(repository, times(1)).existsByEmail(eq(email));
         verify(passwordEncrypter, times(1)).encrypt(eq(command.getPassword()));
     }
 
     @Test
     void execute_ThrowException_WhenExistEmail() {
         CreateUserService.Command command = randomCreateUserCommand();
+        User.Email email = User.Email.from(command.getEmail());
         User user = TestUserDomainGenerator.randomUser();
 
-        when(repository.existsByEmail(eq(command.getEmail())))
+        when(repository.existsByEmail(eq(email)))
                 .thenReturn(true);
 
         assertException(

@@ -17,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmail(User.Email.from(email))
                 .filter(u -> !u.isWithdrawn())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));

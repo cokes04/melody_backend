@@ -36,7 +36,7 @@ class AuthenticationServiceTest {
 
         AuthenticationService.Command command = new AuthenticationService.Command(email, password);
 
-        when(repository.findByEmail(eq(email)))
+        when(repository.findByEmail(eq(User.Email.from(email))))
                 .thenReturn(Optional.of(user));
 
         when(passwordEncrypter.matches(eq(password), eq(user.getPassword())))
@@ -54,7 +54,7 @@ class AuthenticationServiceTest {
 
         AuthenticationService.Command command = new AuthenticationService.Command(email, password);
 
-        when(repository.findByEmail(eq(email)))
+        when(repository.findByEmail(eq(User.Email.from(email))))
                 .thenReturn(Optional.empty());
 
         assertException(
@@ -72,7 +72,7 @@ class AuthenticationServiceTest {
 
         AuthenticationService.Command command = new AuthenticationService.Command(email, password);
 
-        when(repository.findByEmail(eq(email)))
+        when(repository.findByEmail(eq(User.Email.from(email))))
                 .thenReturn(Optional.of(user));
 
         when(passwordEncrypter.matches(eq(password), eq(user.getPassword())))

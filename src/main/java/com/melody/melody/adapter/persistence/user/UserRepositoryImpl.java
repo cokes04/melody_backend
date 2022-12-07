@@ -21,8 +21,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return jpaRepository.findByEmail(email)
+    public Optional<User> findByEmail(User.Email email) {
+        return jpaRepository.findByEmail(email.getValue())
                 .filter(u -> !u.isWithdrawn())
                 .map(userMapper::toModel);
     }
@@ -35,7 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        return jpaRepository.existsByEmail(email);
+    public boolean existsByEmail(User.Email email) {
+        return jpaRepository.existsByEmail(email.getValue());
     }
 }

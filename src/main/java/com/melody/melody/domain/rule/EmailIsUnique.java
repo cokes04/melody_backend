@@ -3,13 +3,14 @@ package com.melody.melody.domain.rule;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class EmailIsUnique implements BusinessRule{
 
     private final UserRepository repository;
-    private final String email;
+    private final User.Email email;
 
     @Override
     public void check() {

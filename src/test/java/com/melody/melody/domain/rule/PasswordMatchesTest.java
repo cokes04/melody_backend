@@ -41,16 +41,16 @@ class PasswordMatchesTest {
     @Test
     void check_ShouldThrowException_WhenNotMatches() {
         String raw = "randomRawPassword";
-        Password encrypterd = new Password("randomEncrypterdPassword");
+        Password encrypted = new Password("randomEncrypterdPassword");
 
-        when(encrypter.matches(eq(raw), eq(encrypterd)))
+        when(encrypter.matches(eq(raw), eq(encrypted)))
                 .thenReturn(false);
 
         assertException(
                 () -> new PasswordMatches(
                         encrypter,
                         raw,
-                        encrypterd
+                        encrypted
                 ).check()
                 , BreakBusinessRuleException.class,
                 DomainError.of(UserErrorType.Passwod_Not_Matches)

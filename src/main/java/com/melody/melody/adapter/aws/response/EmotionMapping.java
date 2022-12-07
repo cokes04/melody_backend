@@ -26,7 +26,7 @@ public enum EmotionMapping {
         }
 
         throw new InvalidArgumentException(
-                DomainError.of(AwsErrorType.Invalid_emotion)
+                DomainError.of(AwsErrorType.Invalid_Emotion)
         );
     }
 
@@ -37,7 +37,7 @@ public enum EmotionMapping {
         }
 
         throw new InvalidArgumentException(
-                DomainError.of(AwsErrorType.Invalid_emotion)
+                DomainError.of(AwsErrorType.Invalid_Emotion)
         );
     }
 }

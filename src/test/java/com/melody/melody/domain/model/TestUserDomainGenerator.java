@@ -13,12 +13,12 @@ public class TestUserDomainGenerator {
         );
     }
 
-    public static String randomNickName(){
-        return faker.name().firstName();
+    public static User.NickName randomNickName(){
+        return User.NickName.from(faker.name().firstName());
     }
 
-    public static String randomEmail(){
-        return faker.internet().emailAddress();
+    public static User.Email randomEmail(){
+        return User.Email.from(faker.internet().emailAddress());
     }
 
     public static Password randomPassword(){

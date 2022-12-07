@@ -7,9 +7,9 @@ import java.util.Optional;
 public interface UserRepository {
     User save(User user);
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(User.Email email);
 
     Optional<User> findById(User.UserId id);
 
-    boolean existsByEmail(String email);
+    boolean existsByEmail(User.Email email);
 }

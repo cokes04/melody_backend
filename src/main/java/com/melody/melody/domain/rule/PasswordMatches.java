@@ -11,11 +11,11 @@ public class PasswordMatches implements BusinessRule {
 
     private final PasswordEncrypter passwordEncrypter;
     private final String raw;
-    private final Password encrypterd;
+    private final Password encrypted;
 
     @Override
     public void check() throws BreakBusinessRuleException{
-        if (!passwordEncrypter.matches(raw, encrypterd))
+        if (!passwordEncrypter.matches(raw, encrypted))
             throw new BreakBusinessRuleException(
                     DomainError.of(UserErrorType.Passwod_Not_Matches)
             );

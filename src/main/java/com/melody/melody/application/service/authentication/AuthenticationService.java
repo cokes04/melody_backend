@@ -25,7 +25,7 @@ public class AuthenticationService implements UseCase<AuthenticationService.Comm
     @Override
     public Result execute(Command command) {
 
-        User user = repository.findByEmail(command.email)
+        User user = repository.findByEmail(User.Email.from(command.email))
                 .orElseThrow(
                         () -> new FailedAuthenticationException(DomainError.of(UserErrorType.Authentication_Failed))
                 );

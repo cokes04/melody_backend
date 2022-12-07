@@ -34,7 +34,7 @@ public class TestPostDetailServiceGenerator {
                 .musicUrl(music.getMusicUrl().get().getValue())
                 .musicStatus(music.getStatus())
 
-                .nickname(TestUserDomainGenerator.randomNickName())
+                .nickname(TestUserDomainGenerator.randomNickName().getValue())
                 .userId(userId)
                 .build();
     }

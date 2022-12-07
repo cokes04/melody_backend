@@ -4,6 +4,7 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,7 +25,7 @@ class EmailIsUniqueTest {
 
     @Test
     void check() {
-        String email = randomEmail();
+        User.Email email = randomEmail();
 
         when(repository.existsByEmail(email))
                 .thenReturn(false);
@@ -37,7 +38,7 @@ class EmailIsUniqueTest {
 
     @Test
     void check_ShouldThrowException_WhenNotUniqueEmail() {
-        String email = randomEmail();
+        User.Email email = randomEmail();
 
         when(repository.existsByEmail(email))
                 .thenReturn(true);

@@ -21,11 +21,11 @@ public class TestUserEntityGenerator {
     }
 
     public static String randomLastName(){
-        return TestUserDomainGenerator.randomNickName();
+        return TestUserDomainGenerator.randomNickName().getValue();
     }
 
     public static String randomEmail(){
-        return TestUserDomainGenerator.randomEmail();
+        return TestUserDomainGenerator.randomEmail().getValue();
     }
 
     public static String randomPassword(){

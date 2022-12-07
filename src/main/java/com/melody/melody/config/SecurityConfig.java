@@ -64,9 +64,10 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "/music/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")
 
-                .antMatchers(HttpMethod.POST, "/post").hasRole("USER")
-                .antMatchers(HttpMethod.PATCH, "/post/**").hasRole("USER")
-                .antMatchers(HttpMethod.DELETE, "/post/**").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/posts/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/posts").hasRole("USER")
+                .antMatchers(HttpMethod.PATCH, "/posts/**").hasRole("USER")
+                .antMatchers(HttpMethod.DELETE, "/posts/**").hasRole("USER")
 
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()

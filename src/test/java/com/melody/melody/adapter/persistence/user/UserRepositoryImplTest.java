@@ -49,8 +49,8 @@ class UserRepositoryImplTest {
 
     @Test
     void existsByEmail_ShouldReturnFalse_WhenUnsavedEmail() {
-        String email = TestUserDomainGenerator.randomEmail();
-        when(jpaRepository.existsByEmail(eq(email)))
+        User.Email email = TestUserDomainGenerator.randomEmail();
+        when(jpaRepository.existsByEmail(eq(email.getValue())))
                 .thenReturn(false);
 
         boolean actual = userRepository.existsByEmail(email);
@@ -59,8 +59,8 @@ class UserRepositoryImplTest {
 
     @Test
     void existsByEmail_ShouldReturnTrue_WhenSavedEmail() {
-        String email = TestUserDomainGenerator.randomEmail();
-        when(jpaRepository.existsByEmail(eq(email)))
+        User.Email email = TestUserDomainGenerator.randomEmail();
+        when(jpaRepository.existsByEmail(eq(email.getValue())))
                 .thenReturn(true);
 
         boolean actual = userRepository.existsByEmail(email);
@@ -69,9 +69,9 @@ class UserRepositoryImplTest {
 
     @Test
     void findByEmail_ShoudReturnEmpty_WhenUnSavedUserEmail() {
-        String email = TestUserDomainGenerator.randomEmail();
+        User.Email email = TestUserDomainGenerator.randomEmail();
 
-        when(jpaRepository.findByEmail(eq(email)))
+        when(jpaRepository.findByEmail(eq(email.getValue())))
                 .thenReturn(Optional.empty());
 
         Optional<User> actual = userRepository.findByEmail(email);
@@ -83,7 +83,7 @@ class UserRepositoryImplTest {
     void findByEmail_ShoudReturnUser_WhenSavedUserEmail() {
         UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
         User user = TestUserDomainGenerator.randomUser();
-        String email = user.getEmail();
+        String email = user.getEmail().getValue();
 
         when(jpaRepository.findByEmail(eq(email)))
                 .thenReturn(Optional.of(userEntity));
@@ -91,7 +91,7 @@ class UserRepositoryImplTest {
         when(mapper.toModel(eq(userEntity)))
                 .thenReturn(user);
 
-        Optional<User> actual = userRepository.findByEmail(email);
+        Optional<User> actual = userRepository.findByEmail(User.Email.from(email));
 
         assertTrue(actual.isPresent());
         assertEquals(user, actual.get());
@@ -106,7 +106,7 @@ class UserRepositoryImplTest {
         when(jpaRepository.findByEmail(eq(email)))
                 .thenReturn(Optional.of(entity));
 
-        Optional<User> actual = userRepository.findByEmail(email);
+        Optional<User> actual = userRepository.findByEmail(User.Email.from(email));
 
         assertTrue(actual.isEmpty());
     }

@@ -23,7 +23,7 @@ public class UserDetailsImpl implements UserDetails {
     private Collection<GrantedAuthority> authorities;
 
     public UserDetailsImpl(User user){
-        this.email = user.getEmail();
+        this.email = user.getEmail().getValue();
         this.password = user.getPassword().getEncryptedString();
 
         this.userId = user.getId().map(User.UserId::getValue)

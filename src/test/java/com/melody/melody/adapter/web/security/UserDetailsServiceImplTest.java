@@ -37,9 +37,9 @@ class UserDetailsServiceImplTest {
     @Test
     void loadUserByUsername_ShouldReturnUserDetails() {
         User user = TestUserDomainGenerator.randomUser();
-        String email = user.getEmail();
+        String email = user.getEmail().getValue();
 
-        when(userRepository.findByEmail(email))
+        when(userRepository.findByEmail(User.Email.from(email)))
                 .thenReturn(Optional.of(user));
 
         UserDetails actual = userDetailsServiceImpl.loadUserByUsername(email);
@@ -55,9 +55,9 @@ class UserDetailsServiceImplTest {
 
     @Test
     void loadUserByUsername_ShouldThrowException_WhenNotFoundEmail() {
-        String email = TestUserDomainGenerator.randomEmail();
+        String email = TestUserDomainGenerator.randomEmail().getValue();
 
-        when(userRepository.findByEmail(email))
+        when(userRepository.findByEmail(User.Email.from(email)))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy( () -> userDetailsServiceImpl.loadUserByUsername(email))
@@ -75,7 +75,7 @@ class UserDetailsServiceImplTest {
 
         UserDetails actual = userDetailsServiceImpl.loadUserById(id);
 
-        assertEquals(user.getEmail(), actual.getUsername());
+        assertEquals(user.getEmail().getValue(), actual.getUsername());
         assertEquals(user.getPassword().getEncryptedString(), actual.getPassword());
         assertEquals(List.of(new SimpleGrantedAuthority("ROLE_USER")), actual.getAuthorities());
         assertTrue(actual.isAccountNonExpired());
