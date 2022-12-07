@@ -8,20 +8,44 @@ server :
     max-swallow-size : 20MB
     max-http-form-post-size : 20MB
 
+jasypt:
+  encryptor:
+    password: ${MELODY_JASYPT_PASSWORD}
+    bean: jasyptStringEncryptor
+
 spring:
   main:
     allow-bean-definition-overriding: true
 
   servlet :
     multipart :
-      max-file-size: 10MB
-      max-request-size: 20MB
+      max-file-size: 5MB
+      max-request-size: 10MB
 
   application:
     name: melody-server
 
   profiles :
     active : dev
+
+rabbit:
+  exchange:
+    compose-music :
+      name: "x.compose-music"
+      durable : false
+      autoDelete : true
+
+  queue:
+    complete-music:
+      name: "q.complete-music"
+      durable : false
+      exclusive : true
+      autoDelete : true
+
+  binding:
+    - exchange: ${rabbit.exchange.compose-music.name}
+      queue: ${rabbit.queue.complete-music.name}
+      key: "#"
 
 ---
 spring.config.activate.on-profile: dev
@@ -67,34 +91,10 @@ spring:
           max-interval: 5s
           multiplier: 2
 
-rabbit:
-  exchange:
-    compose-music :
-      name: "x.compose-music"
-      durable : false
-      autoDelete : true
-
-  queue:
-    complete-music:
-      name: "q.complete-music"
-      durable : false
-      exclusive : true
-      autoDelete : true
-
-  binding:
-    - exchange: ${rabbit.exchange.compose-music.name}
-      queue: ${rabbit.queue.complete-music.name}
-      key: "#"
-
-jasypt:
-  encryptor:
-    password: ${MELODY_JASYPT_PASSWORD}
-    bean: jasyptStringEncryptor
-
 app:
   jwt:
     accessToken:
-      validMilliSecond: 600000 # 10 * 60 * 1000 # 10분
+      validMilliSecond: 3600000 # 60 * 60 * 1000 # 1시간
       secretKey: ENC(9wDOYRXVuhWEhzL7c/yfybEbvhQdsVe1kyn6wIiWUahcleRTM5jm3ulomvreRw1FlbGq+OMIbWA=)
       name: Authorization
 
@@ -111,7 +111,7 @@ aws:
         secretKey: ENC(AqnKcxmzs3lGMGMTypBODOS/vqiJN26DY1kD54yMbVIY/AWSwycnVoN8Yb+gPmlQPy5iiEQktkw=)
       region: ap-northeast-2
       bucketName: melody-image-bucket
-      allowMediaType: image/jpng,image/jpg,image/png
+      allowMediaType: image/jpeg,image/jpg
 
   lambda:
     generateMusic:
@@ -122,3 +122,74 @@ aws:
 
     imageCaptioning:
       uri: ENC(TgTOHT5QVUaJawBnDmLyZoCJUMQjIQ/48VZ1qbjphRAj05ui5sZ/qKnf24eQBNo1QeOAMfz3dFgh5siRQpr6c7wV1WnQK/9XVjsQcGPmQZFvxVhmTxqz8A==)
+
+---
+spring.config.activate.on-profile: production
+
+logging.level.root: debug
+logging.level.com.melody.melody: debug
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://database:3306/reply_db?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&useLegacyDatetimeCode=false
+    username: root
+    password: ${DATABASE_ROOT_PWD}
+
+  jpa :
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    hibernate:
+      ddl_auto: create
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 500
+        use_sql_comments: true
+
+  rabbitmq:
+    dynamic: true
+
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2s
+          max-attempts: 3
+          max-interval: 5s
+          multiplier: 2
+
+app:
+  jwt:
+    accessToken:
+      validMilliSecond: 1200000 # 20 * 60 * 1000 # 20분
+      secretKey: ENC(5P05DQ9TJNwZLmv1Oq0ZcKuAVUcHqL5V4zXsYR8XrN7ki8F6hZQJbkG9h30kVVqau0q7nB4kAMc=)
+      name: Authorization
+
+    refreshToken:
+      validMilliSecond: 1036800000 # 12 * 24 * 60 * 60 * 1000 # 12일
+      secretKey: ENC(FdL5HqsnhlQr3moxnneFaLUeCDdXyROUMLOPOUIKfVCnN043e9PDZ5CHsQ4u6X/Yq8iNgEiEZeo=)
+      name: rt
+
+aws:
+  s3:
+    image:
+      credentials:
+        accessKey: ENC(oobpEq9E6ZD2BONeQxALsbNDVdPHUiW76ods0+qN/SE=)
+        secretKey: ENC(ZB1Vjxr739ZsWaIfUOSSJlFAj4M1J6Se/MfJH2NSjHCLbYSyAVodHSVpg5ztcpg8h6sJDqtFKY0=)
+      region: ap-northeast-2
+      bucketName: melody-image-bucket
+      allowMediaType: image/jpeg,image/jpg
+
+  lambda:
+    generateMusic:
+      uri: ENC(HKyRxTyNmwYR4Un4lKcfpL2s+SsMahuzfoOMjsS0mQ6XZ3G1DTDN3N02+rxnKUJtjbMIVdPAXmkV5zU5nG1YqiaI2GJrqPa9xUkCg2hLx/0=)
+
+    emotionClassification:
+      uri: ENC(MEgmLp7T2WIhvGZE9iS1dNd3cOvtZVkGlRceRxVgleOxDhjRRsIAAnkD3PVunYIcNx/mapQRJSLQ1pMg7KXeEA/03pz2KL1XT7kj71HSI2KtUb/z4zG5Ug==)
+
+    imageCaptioning:
+      uri: ENC(MOvxhR7AjpU4uFEgsSUvzoQZJJ4pXmoygmDoOpxghv9VWJqSrjixsXE5/6bJIiC8H37VZr4hORpayCVjzAo7ksMQBIb5Jt+4dPJl9uJVu50PzpQQuXZMqw==)

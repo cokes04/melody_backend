@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  melody-service:
+    build: .
+    container_name: melody-service
+    mem_limit: 800m
+    ports:
+      - 8080:8080
+    env_file:
+      - '.env'
+    depends_on:
+      database:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    logging:
+      driver: json-file
+
+  database:
+    image: mysql:5.7
+    container_name: database
+    mem_limit: 500m
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PWD}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mydatavolume:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=${DATABASE_ROOT_PWD} --execute \"SHOW DATABASES;\""
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    mem_limit: 400m
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USR}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PWD}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+volumes:
+  mydatavolume:
+
+networks:
+  default:
+    external:
+      name: my_net

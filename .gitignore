@@ -1,5 +1,6 @@
 src/test/java/com/melody/melody/config/*.java
 src/main/java/com/melody/melody/config/JasyptKey.java
+.env
 
 HELP.md
 target/
