@@ -19,7 +19,7 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @WebAdapter
 @Validated
-public class GetMusicContoller {
+public class GetMusicController {
     private final GetMusicService service;
 
     @GetMapping(value = "/music/{id}")

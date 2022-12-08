@@ -17,7 +17,7 @@ import java.net.URI;
 @WebAdapter
 @RequiredArgsConstructor
 @Validated
-public class LogoutContoller {
+public class LogoutController {
     private final JwtConfig jwtConfig;
 
     @PostMapping("/logout")

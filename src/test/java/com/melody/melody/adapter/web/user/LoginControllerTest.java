@@ -1,6 +1,5 @@
 package com.melody.melody.adapter.web.user;
 
-import com.amazonaws.services.waf.model.HTTPHeader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.security.TokenProvider;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
@@ -35,8 +34,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = LoginContoller.class)
-class LoginContollerTest {
+@WebMvcTest(value = LoginController.class)
+class LoginControllerTest {
     private MockMvc mockMvc;
 
     @Autowired

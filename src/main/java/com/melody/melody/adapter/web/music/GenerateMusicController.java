@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @WebAdapter
 @Validated
-public class GenerateMusicContoller {
+public class GenerateMusicController {
     private final GenerateMusicService service;
 
     @PostMapping(

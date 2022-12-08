@@ -43,6 +43,32 @@ class UserTest {
     }
 
     @Test
+    void update_ShuoldChangeNickName() {
+        User user = randomUser();
+        String nickName = randomNickName().getValue();
+
+        user.update(nickName);
+
+        assertEquals(nickName, user.getNickName().getValue());
+    }
+
+    @Test
+    void update_ShouldException_WhenWithdawn() {
+        User user = randomUser();
+        user.withdraw();
+        String nickName = randomNickName().getValue();
+
+
+        assertTrue(user.isWithdrawn());
+
+        assertException(
+                () -> user.update(nickName),
+                InvalidStatusException.class,
+                DomainError.of(UserErrorType.User_Already_Withdawn_Status)
+        );
+    }
+
+    @Test
     void changePassword_ShouldChangePassword_WhenOldPasswordMatches() {
         User user = randomUser();
         String oldRawPassword =  "abcdefg123EWAS";
@@ -80,6 +106,8 @@ class UserTest {
         String oldRawPassword =  "abcdefg123EWAS";
         Password newPassword = randomPassword();
 
+        assertTrue(user.isWithdrawn());
+
         assertException(
                 () -> user.changePassword(encrypter, oldRawPassword, newPassword),
                 InvalidStatusException.class,
@@ -89,7 +117,7 @@ class UserTest {
 
     @Test
     void withdaw_ShuoldChangeWithdawnStatus() {
-        User user = TestUserDomainGenerator.randomUser();
+        User user = randomUser();
 
         assertFalse(user.isWithdrawn());
         user.withdraw();
@@ -98,7 +126,7 @@ class UserTest {
 
     @Test
     void withdaw_ShouldException_WhenWithdawn() {
-        User user = TestUserDomainGenerator.randomUser();
+        User user = randomUser();
         user.withdraw();
         assertTrue(user.isWithdrawn());
 

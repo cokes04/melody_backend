@@ -2,8 +2,8 @@ package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.security.WithMockRequester;
-import com.melody.melody.adapter.web.user.request.ChangePasswordRequest;
-import com.melody.melody.application.service.user.ChangePasswordService;
+import com.melody.melody.adapter.web.user.request.UpdateUserRequest;
+import com.melody.melody.application.service.user.UpdateUserService;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,27 +25,30 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
-@WebMvcTest(controllers = ChangePasswordController.class)
-class ChangePasswordControllerTest {
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@WebMvcTest(controllers = UpdateUserController.class)
+class UpdateUserControllerTest {
 
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper;
 
     @MockBean
-    private ChangePasswordService service;
+    private UpdateUserService service;
 
     private final long requesterUserId = 104;
 
@@ -59,26 +62,31 @@ class ChangePasswordControllerTest {
                 .build();
     }
 
+
     @Test
     @WithMockRequester(userId = requesterUserId)
-    void changePassword_204() throws Exception {
+    void updateUser_Ok() throws Exception{
         User.UserId userId = new User.UserId(requesterUserId);
-        ChangePasswordRequest request =ChangePasswordRequest.builder()
-                .newPassword(TestUserDomainGenerator.randomPassword().getEncryptedString())
-                .oldPassword(TestUserDomainGenerator.randomPassword().getEncryptedString())
-                .build();
+        User user = TestUserDomainGenerator.randomUser(userId);
+
+        UpdateUserRequest request = TestUserWebGenerator.randomUpdateUserRequest();
+        UpdateUserService.Command command = new UpdateUserService.Command(userId, request.getNickName());
+        UpdateUserService.Result result = new UpdateUserService.Result(user);
+
+        when(service.execute(eq(command)))
+                .thenReturn(result);
 
         mockMvc.perform(
-                patch("/users/{userId}/password", userId.getValue())
-                        .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
+                patch("/users/{userId}", userId.getValue())
+                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request))
+                        .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
-                .andExpect(status().isOk())
                 .andDo(print())
+                .andExpect(status().isOk())
                 .andDo(
                         document(
-                                "change-password",
+                                "update-user",
                                 pathParameters(
                                         parameterWithName("userId").description("유저 아이디")
                                 ),
@@ -86,8 +94,7 @@ class ChangePasswordControllerTest {
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
                                 ),
                                 requestFields(
-                                        fieldWithPath("newPassword").type(JsonFieldType.STRING).description("새로운 비밀번호"),
-                                        fieldWithPath("oldPassword").type(JsonFieldType.STRING).description("기존 비밀번호")
+                                        fieldWithPath("nickName").description("닉네임").type(JsonFieldType.STRING)
                                 )
                         )
                 );

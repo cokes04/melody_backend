@@ -21,7 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import static com.melody.melody.adapter.web.user.TestUserWebGenerator.randomCreateUserRequest;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -30,8 +29,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WebMvcTest(value = CreateUserContoller.class)
-class CreateUserContollerTest {
+@WebMvcTest(value = CreateUserController.class)
+class CreateUserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired

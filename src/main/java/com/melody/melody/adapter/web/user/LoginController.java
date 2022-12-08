@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @WebAdapter
 @RequiredArgsConstructor
 @Validated
-public class LoginContoller {
+public class LoginController {
     private final AuthenticationService authenticationService;
     private final TokenProvider tokenProvider;
     private final JwtConfig jwtConfig;

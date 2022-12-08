@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @WebAdapter
 @RequiredArgsConstructor
 @Validated
-public class CreateUserContoller {
+public class CreateUserController {
     private final CreateUserService service;
 
     @PostMapping("/users")

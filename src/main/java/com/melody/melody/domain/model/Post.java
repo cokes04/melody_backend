@@ -6,9 +6,7 @@ import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import io.netty.util.internal.StringUtil;
 import lombok.*;
-import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 @AllArgsConstructor

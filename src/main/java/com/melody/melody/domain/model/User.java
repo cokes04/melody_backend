@@ -38,6 +38,13 @@ public class User {
                 .build();
     }
 
+    public void update(String nickName){
+        if (isWithdrawn())
+            throw new InvalidStatusException(DomainError.of(UserErrorType.User_Already_Withdawn_Status));
+
+        this.nickName = NickName.from(nickName);
+    }
+
     public void changePassword(PasswordEncrypter encrypter, String oldRawPassword, Password newPassword){
         if (isWithdrawn())
             throw new InvalidStatusException(DomainError.of(UserErrorType.User_Already_Withdawn_Status));
