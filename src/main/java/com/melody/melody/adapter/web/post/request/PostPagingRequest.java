@@ -21,7 +21,7 @@ public class PostPagingRequest {
 
     private PostSort sorting;
 
-    public PagingInfo<PostSort> to(){
+    public PagingInfo<PostSort> toCommand(){
         return new PagingInfo<PostSort>(page, size, sorting);
     }
 }

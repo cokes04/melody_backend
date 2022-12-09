@@ -23,7 +23,7 @@ public class CreatePostController {
     @PostMapping("/posts")
     public ResponseEntity<?> create(@Requester UserDetailsImpl requester,
                                     @RequestBody CreatePostRequest request){
-        CreatePostService.Command command = request.to(requester.getUserId());
+        CreatePostService.Command command = request.toCommand(requester.getUserId());
         CreatePostService.Result result = service.execute(command);
         long postId = result.getPost().getId().map(Post.PostId::getValue).get();
 

@@ -22,13 +22,13 @@ public class GenerateMusicRequest {
     public GenerateMusicService.Command toCommand(MultipartFile image, long userId){
         return new GenerateMusicService.Command(
                 new User.UserId(userId),
-                this.to(image),
+                this.toImage(image),
                 this.musicLength,
                 this.noise
         );
     }
 
-    private GenerateMusicService.Image to(MultipartFile image){
+    private GenerateMusicService.Image toImage(MultipartFile image){
         return new GenerateMusicService.Image(
                 image.getSize(),
                 image.getContentType(),

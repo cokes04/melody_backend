@@ -81,7 +81,7 @@ class GenerateMusicControllerTest {
                 "body", "json-data", MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(generateMusicRequest)
         );
 
-        Music music = TestMusicDomainGenerator.generatedMusic();
+        Music music = TestMusicDomainGenerator.randomProgressMusic();
         GenerateMusicService.Result result = new GenerateMusicService.Result(music);
 
         when(service.execute(eq(generateMusicRequest.toCommand(image, requesterUserId))))

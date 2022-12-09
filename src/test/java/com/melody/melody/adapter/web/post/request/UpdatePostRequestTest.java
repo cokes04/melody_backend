@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class UpdatePostRequestTest {
 
     @Test
-    void to_ShuoldReturnCreatedCommand() {
+    void toCommand_ShuoldReturnCreatedCommand() {
         UpdatePostRequest request = TestPostWebGenerator.randomUpdatePostRequest();
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.to(postId);
+        UpdatePostService.Command command = request.toCommand(postId);
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertEquals(request.getContent(), command.getContent().get());
@@ -23,7 +23,7 @@ class UpdatePostRequestTest {
     }
 
     @Test
-    void to_ShuoldReturnCreatedEmptyTitleCommand_WhenNullTitle() {
+    void toCommand_ShuoldReturnCreatedEmptyTitleCommand_WhenNullTitle() {
         UpdatePostRequest request = UpdatePostRequest.builder()
                 .title(null)
                 .content(TestPostDomainGenerator.randomContent().getValue())
@@ -32,7 +32,7 @@ class UpdatePostRequestTest {
 
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.to(postId);
+        UpdatePostService.Command command = request.toCommand(postId);
 
         assertTrue(command.getTitle().isEmpty());
         assertEquals(request.getContent(), command.getContent().get());
@@ -40,7 +40,7 @@ class UpdatePostRequestTest {
     }
 
     @Test
-    void to_ShuoldReturnCreatedEmptyContentCommand_WhenNullContent() {
+    void toCommand_ShuoldReturnCreatedEmptyContentCommand_WhenNullContent() {
         UpdatePostRequest request = UpdatePostRequest.builder()
                 .title(TestPostDomainGenerator.randomTitle().getValue())
                 .content(null)
@@ -49,7 +49,7 @@ class UpdatePostRequestTest {
 
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.to(postId);
+        UpdatePostService.Command command = request.toCommand(postId);
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertTrue(command.getContent().isEmpty());
@@ -57,7 +57,7 @@ class UpdatePostRequestTest {
     }
 
     @Test
-    void to_ShuoldReturnCreatedEmptyOpenCommand_WhenNullOpen() {
+    void toCommand_ShuoldReturnCreatedEmptyOpenCommand_WhenNullOpen() {
         UpdatePostRequest request = UpdatePostRequest.builder()
                 .title(TestPostDomainGenerator.randomTitle().getValue())
                 .content(TestPostDomainGenerator.randomContent().getValue())
@@ -66,7 +66,7 @@ class UpdatePostRequestTest {
 
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.to(postId);
+        UpdatePostService.Command command = request.toCommand(postId);
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertEquals(request.getContent(), command.getContent().get());

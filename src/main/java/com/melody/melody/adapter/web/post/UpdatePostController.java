@@ -21,7 +21,7 @@ public class UpdatePostController {
     @PatchMapping("/posts/{postId}")
     public ResponseEntity<?> update(@PathParam("postId") Post.PostId postId,
                                     @RequestBody UpdatePostRequest request){
-        UpdatePostService.Command command = request.to(postId);
+        UpdatePostService.Command command = request.toCommand(postId);
         service.execute(command);
 
         return ResponseEntity.ok().build();

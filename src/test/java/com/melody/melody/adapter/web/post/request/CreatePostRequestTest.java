@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class CreatePostRequestTest {
 
     @Test
-    void to_ShouldReturnCreatedCommand() {
+    void toCommand_ShouldReturnCreatedCommand() {
         CreatePostRequest request = TestPostWebGenerator.randomCreatePostRequest();
         long userId = 4301;
 
-        CreatePostService.Command actual = request.to(userId);
+        CreatePostService.Command actual = request.toCommand(userId);
 
         assertEquals(userId, actual.getUserId().getValue());
         assertEquals(request.getMusicId(), actual.getMusicId().getValue());

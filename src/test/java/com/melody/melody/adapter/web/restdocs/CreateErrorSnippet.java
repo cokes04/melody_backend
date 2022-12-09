@@ -3,13 +3,10 @@ package com.melody.melody.adapter.web.restdocs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.aws.AwsErrorType;
-import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.domain.exception.type.DomainErrorType;
 import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.Emotion;
-import com.melody.melody.domain.model.Music;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -20,6 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -42,6 +40,7 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @AutoConfigureRestDocs
+@WebFluxTest(controllers = TestController.class)
 public class CreateErrorSnippet {
 
     private WebTestClient webClient;

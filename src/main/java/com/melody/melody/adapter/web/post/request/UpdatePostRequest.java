@@ -22,7 +22,7 @@ public class UpdatePostRequest {
     @JsonDeserialize(converter = YNToBooleanConverter.class)
     private Boolean open;
 
-    public UpdatePostService.Command to(Post.PostId postId){
+    public UpdatePostService.Command toCommand(Post.PostId postId){
         return new UpdatePostService.Command(
                 postId,
                 title,

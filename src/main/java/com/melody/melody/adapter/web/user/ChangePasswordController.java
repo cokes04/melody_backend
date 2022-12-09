@@ -19,7 +19,7 @@ public class ChangePasswordController {
 
     @PatchMapping("/users/{userId}/password")
     public ResponseEntity<?> changePassword(@Positive @PathVariable("userId") long userId, ChangePasswordRequest request){
-        ChangePasswordService.Command command = request.to(userId);
+        ChangePasswordService.Command command = request.toCommand(userId);
         service.execute(command);
         return ResponseEntity.ok().build();
     }

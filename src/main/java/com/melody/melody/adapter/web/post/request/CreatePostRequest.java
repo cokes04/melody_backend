@@ -27,7 +27,7 @@ public class CreatePostRequest {
     @JsonDeserialize(converter = YNToBooleanConverter.class)
     private Boolean open;
 
-    public CreatePostService.Command to(long userId){
+    public CreatePostService.Command toCommand(long userId){
         return new CreatePostService.Command(
                 new User.UserId(userId),
                 new Music.MusicId(musicId),
