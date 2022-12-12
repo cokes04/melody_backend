@@ -31,7 +31,7 @@ class PostMapperTest {
 
     @Test
     void toEntity_ShouldReturnModel() {
-        PostEntity entity = TestPostEntityGenerator.randomPostEntity();
+        PostEntity entity = TestPostEntityGenerator.randomPostEntity(false, true);
 
         Post actual = postMapper.toModel(entity);
         assertEquals(entity.getId(), actual.getId().get().getValue());

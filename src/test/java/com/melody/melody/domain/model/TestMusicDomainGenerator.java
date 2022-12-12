@@ -47,11 +47,11 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomMusic(){
-        return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId(), Music.Status.COMPLETION);
+        return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId(), Music.Status.COMPLETION, randomMusicUrl());
     }
 
     public static Music randomCompletionMusic(User.UserId userId){
-        return randomMusic(randomMusicId(), userId, Music.Status.COMPLETION);
+        return randomMusic(randomMusicId(), userId, Music.Status.COMPLETION, randomMusicUrl());
     }
 
     public static Music randomProgressMusic(){
@@ -59,7 +59,7 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomProgressMusic(User.UserId userId){
-        return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS);
+        return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS, null);
     }
 
     public static Music randomDeletedMusic(){
@@ -67,10 +67,9 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomDeletedMusic(User.UserId userId){
-        return randomMusic(randomMusicId(), userId, Music.Status.DELETED);
+        return randomMusic(randomMusicId(), userId, Music.Status.DELETED, randomMusicUrl());
     }
-
-    public static Music randomMusic(Music.MusicId musicId, User.UserId userId, Music.Status status){
+    public static Music randomMusic(Music.MusicId musicId, User.UserId userId, Music.Status status, Music.MusicUrl musicUrl){
         return Music.builder()
                 .id(musicId)
                 .userId(userId)
@@ -78,7 +77,7 @@ public class TestMusicDomainGenerator {
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
                 .status(status)
-                .musicUrl(randomMusicUrl())
+                .musicUrl(musicUrl)
                 .build();
     }
 

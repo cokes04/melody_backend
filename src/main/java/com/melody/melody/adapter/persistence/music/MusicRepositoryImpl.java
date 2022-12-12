@@ -1,19 +1,21 @@
 package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.adapter.persistence.music.MusicJpaRepository;
-import com.melody.melody.adapter.persistence.music.MusicMapper;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.User;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+
+import static com.melody.melody.adapter.persistence.music.QMusicEntity.*;
 
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class MusicRepositoryImpl implements MusicRepository {
     private final MusicJpaRepository jpaRepository;
+    private final JPAQueryFactory factory;
     private final MusicMapper mapper;
 
     @Override
@@ -33,5 +35,12 @@ public class MusicRepositoryImpl implements MusicRepository {
         return optional
                 .filter(m -> !Music.Status.DELETED.equals(m.getStatus()))
                 .map(mapper::toModel);
+    }
+
+    public void deleteByUserId(User.UserId userId){
+        factory.update(musicEntity)
+                .set(musicEntity.status, Music.Status.DELETED)
+                .where(musicEntity.userEntity.id.eq(userId.getValue()))
+                .execute();
     }
 }

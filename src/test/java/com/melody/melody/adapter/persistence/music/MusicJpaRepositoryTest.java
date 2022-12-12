@@ -47,9 +47,7 @@ class MusicJpaRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        userEntity = TestUserEntityGenerator.randomUserEntity();
-        userEntity.setId(null);
-        userEntity = entityManager.persistAndFlush(userEntity);
+        userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
     }
 
     @Test
@@ -66,13 +64,14 @@ class MusicJpaRepositoryTest {
     }
 
     @Test
-    void save_ShouldException_WhenUnSavedUserId() {
+    void save_ShouldException_WhenUnSavedUserEntity() {
         MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
         musicEntity.setId(null);
         musicEntity.setUserEntity(UserEntity.builder().id(userEntity.getId()).build());
 
         entityManager.remove(userEntity);
         entityManager.flush();
+        entityManager.clear();
 
         assertThrows(
                 DataIntegrityViolationException.class,

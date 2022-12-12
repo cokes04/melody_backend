@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
 import javax.persistence.EntityManager;
@@ -41,8 +42,7 @@ class PostDetailRepositoryImplTest {
     private JPAQueryFactory jpaQueryFactory;
 
     @Autowired
-    private EntityManager em;
-
+    private TestEntityManager em;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +55,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findById_ShouldReturnPostDetail() {
-        PostEntity savedPostEntity = saveRandomPostEntity();
+        PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
         Post.PostId postId = new Post.PostId(savedPostEntity.getId());
 
         Optional<PostDetail> optional = repository.findById(postId);
@@ -76,7 +76,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findById_ShouldReturnEmpty_WhenDeletedPost() {
-        PostEntity savedPostEntity = saveRandomPostEntity();
+        PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
         Post.PostId postId = new Post.PostId(savedPostEntity.getId());
 
         savedPostEntity.setDeleted(true);
@@ -89,9 +89,9 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnList_WhenEverythingOpen() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> openPostMap = savePosts(userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = savePosts(userEntity, false,false, 3);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
+        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
 
         PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(9, actual.getCount());
@@ -106,9 +106,9 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnOpenList_WhenOnlyOpen() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> openPostMap = savePosts(userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = savePosts(userEntity, false,false, 3);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
+        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
 
         PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyOpen, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(6, actual.getCount());
@@ -118,9 +118,9 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnCloseList_WhenOnlyClose() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> openPostMap = savePosts(userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = savePosts(userEntity, false,false, 3);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
+        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
 
         PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyClose, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(3, actual.getCount());
@@ -131,9 +131,9 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnExcludeDeletedPost_WhenUserHaveDeletedPost() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> postMap = savePosts(userEntity, true,false, 6);
-        Map<Long, PostEntity> deletedPostMap = savePosts(userEntity, true,true, 3);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> postMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
+        Map<Long, PostEntity> deletedPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,true, 3);
 
         PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(6, actual.getCount());
@@ -151,7 +151,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnEmptyList_WhenUserNotHavePost() {
-        UserEntity userEntity = saveUserEntity();
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
         User.UserId userId = new User.UserId(userEntity.getId());
 
         PagingResult<PostDetail> actual = repository.findByUserId(userId, Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
@@ -160,8 +160,8 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnNewestSortedList_WhenNewestSort() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> map = savePosts(userEntity, true,false, 20, 10);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
 
         List<PostEntity> sortedList = map.values().stream()
                 .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? -1 : 1)
@@ -177,8 +177,8 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnOldestSortedList_WhenOldestSort() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> map = savePosts(userEntity, true,false, 20, 10);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
 
         List<PostEntity> sortedList = map.values().stream()
                 .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
@@ -196,8 +196,8 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnSecondList_WhenSecondPage() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> map = savePosts(userEntity, true,false, 20, 10);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
 
         List<PostEntity> sortedList = map.values().stream()
                 .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
@@ -216,8 +216,8 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShuoldReturnLastList_WhenLastPage() {
-        UserEntity userEntity = saveUserEntity();
-        Map<Long, PostEntity> map = savePosts(userEntity, true,false, 20, 10);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
 
         List<PostEntity> sortedList = map.values().stream()
                 .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
@@ -233,64 +233,6 @@ class PostDetailRepositoryImplTest {
             assertEqualsEntityAndDetail(sortedList.get(i), actual.getList().get(i));
         }
     }
-
-    Map<Long, PostEntity> savePosts(UserEntity userEntity, boolean open, boolean deleted, int count) {
-        return savePosts(userEntity, open, deleted, count, 0);
-    }
-
-    Map<Long, PostEntity> savePosts(UserEntity userEntity, boolean open, boolean deleted, int count, int plusMinute){
-        LocalDateTime now = LocalDateTime.now();
-        return IntStream.range(0, count)
-                .mapToObj(i -> saveUsersPostEntity(userEntity.getId(), open, deleted, now.plusMinutes(plusMinute * i)))
-                .peek(e -> e.setUserEntity(userEntity))
-                .collect(Collectors.toMap(
-                        e -> e.getId(),
-                        e -> e
-                ));
-    }
-
-    UserEntity saveUserEntity(){
-        UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
-        userEntity.setId(null);
-        em.persist(userEntity);
-        return userEntity;
-    }
-    PostEntity saveUsersPostEntity(long userId, boolean open, boolean deleted, LocalDateTime createdDate){
-        PostEntity postEntity = TestPostEntityGenerator.randomPostEntity();
-        postEntity.setId(null);
-        postEntity.setOpen(open);
-        postEntity.setDeleted(deleted);
-        postEntity.setCreatedDate(createdDate);
-        MusicEntity musicEntity = postEntity.getMusicEntity();
-        musicEntity.setId(null);
-        postEntity.setUserEntity(UserEntity.builder().id(userId).build());
-        musicEntity.setUserEntity(UserEntity.builder().id(userId).build());
-        em.persist(musicEntity);
-        em.persist(postEntity);
-
-        return postEntity;
-    }
-
-    PostEntity saveRandomPostEntity() {
-        return saveRandomPostEntity(LocalDateTime.now());
-    }
-
-    PostEntity saveRandomPostEntity(LocalDateTime createdDate){
-        PostEntity postEntity = TestPostEntityGenerator.randomPostEntity();
-        postEntity.setId(null);
-        postEntity.setDeleted(false);
-        postEntity.setCreatedDate(createdDate);
-        UserEntity userEntity = postEntity.getUserEntity();
-        userEntity.setId(null);
-        MusicEntity musicEntity = postEntity.getMusicEntity();
-        musicEntity.setId(null);
-        em.persist(userEntity);
-        em.persist(musicEntity);
-        em.persist(postEntity);
-
-        return postEntity;
-    }
-
 
     void assertEqualsEntityAndDetail(PostEntity entity, PostDetail detail){
         assertEquals(entity.getId(), detail.getId());

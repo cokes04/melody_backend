@@ -1,8 +1,13 @@
 package com.melody.melody.adapter.persistence.post;
 
 import com.melody.melody.adapter.persistence.PersistenceTestConfig;
+import com.melody.melody.adapter.persistence.music.MusicEntity;
+import com.melody.melody.adapter.persistence.music.TestMusicEntityGenerator;
+import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.adapter.persistence.user.UserJpaRepository;
+import com.melody.melody.application.dto.PostDetail;
+import com.melody.melody.domain.model.Music;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
@@ -12,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,20 +29,16 @@ class PostJpaRepositoryTest {
     private PostJpaRepository repository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private TestEntityManager em;
 
     @Test
     void save_ShouldReturnPostEntityWithId() {
-        PostEntity postEntity = TestPostEntityGenerator.randomPostEntity();
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        MusicEntity musicEntity = TestMusicEntityGenerator.saveRandomMusicEntity(em, Music.Status.COMPLETION, userEntity);
+        em.flush();
+        em.clear();
 
-        postEntity.getUserEntity().setId(null);
-        postEntity.setUserEntity(entityManager.persistAndFlush(postEntity.getUserEntity()));
-
-        postEntity.getMusicEntity().setId(null);
-        postEntity.setMusicEntity(entityManager.persistAndFlush(postEntity.getMusicEntity()));
-
-        postEntity.setId(null);
-        assertNull(postEntity.getId());
+        PostEntity postEntity = TestPostEntityGenerator.randomPostEntity(null, true, false, LocalDateTime.now(), userEntity, musicEntity);
 
         PostEntity actual = repository.save(postEntity);
 
@@ -49,21 +51,16 @@ class PostJpaRepositoryTest {
 
     @Test
     void findById_ShouldReturnPostEntity_WhenExistPostEntity() {
-        PostEntity expect = TestPostEntityGenerator.randomPostEntity();
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        MusicEntity musicEntity = TestMusicEntityGenerator.saveRandomMusicEntity(em, Music.Status.COMPLETION, userEntity);
+        PostEntity postEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false, LocalDateTime.now(), userEntity, musicEntity);
+        em.flush();
+        em.clear();
 
-        expect.getUserEntity().setId(null);
-        expect.setUserEntity(entityManager.persistAndFlush(expect.getUserEntity()));
-
-        expect.getMusicEntity().setId(null);
-        expect.setMusicEntity(entityManager.persistAndFlush(expect.getMusicEntity()));
-
-        expect.setId(null);
-        expect = entityManager.persistAndFlush(expect);
-
-        Optional<PostEntity> actual = repository.findById(expect.getId());
+        Optional<PostEntity> actual = repository.findById(postEntity.getId());
 
         assertTrue(actual.isPresent());
-        assertEquals(expect, actual.get());
+        assertEquals(postEntity, actual.get());
     }
 
     @Test
