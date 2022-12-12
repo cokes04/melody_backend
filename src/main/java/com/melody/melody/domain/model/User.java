@@ -1,6 +1,8 @@
 package com.melody.melody.domain.model;
 
+import com.melody.melody.application.handler.Events;
 import com.melody.melody.application.port.out.PasswordEncrypter;
+import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.InvalidStatusException;
@@ -59,6 +61,7 @@ public class User {
             throw new InvalidStatusException(DomainError.of(UserErrorType.User_Already_Withdawn_Status));
 
         this.withdrawn = true;
+        Events.raise(new UserWithdrew(this.id.getValue()));
     }
 
     public Optional<User.UserId> getId(){

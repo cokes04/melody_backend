@@ -17,9 +17,9 @@ import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-class MusicComposedHandlerTest {
+class MusicComposedEventHandlerTest {
 
-    private MusicComposedHandler service;
+    private MusicComposedEventHandler service;
 
     private MusicRepository repository;
 
@@ -27,7 +27,7 @@ class MusicComposedHandlerTest {
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(MusicRepository.class);
-        service = new MusicComposedHandler(repository);
+        service = new MusicComposedEventHandler(repository);
     }
 
     @Test

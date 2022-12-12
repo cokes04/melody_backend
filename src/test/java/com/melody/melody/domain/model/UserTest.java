@@ -1,27 +1,41 @@
 package com.melody.melody.domain.model;
 
+import com.melody.melody.application.handler.Events;
 import com.melody.melody.application.port.out.PasswordEncrypter;
+import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.rule.BreakBusinessRuleException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static com.melody.melody.domain.model.TestUserDomainGenerator.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class UserTest {
 
     private PasswordEncrypter encrypter;
+    private MockedStatic<Events> eventsMockedStatic;
+
 
     @BeforeEach
     void setUp() {
         encrypter = Mockito.mock(PasswordEncrypter.class);
+        eventsMockedStatic = Mockito.mockStatic(Events.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventsMockedStatic.close();
     }
 
     @Test
@@ -91,7 +105,6 @@ class UserTest {
         when(encrypter.matches(oldRawPassword, user.getPassword()))
                 .thenReturn(false);
 
-
         assertException(
                 () -> user.changePassword(encrypter, oldRawPassword, newPassword),
                 BreakBusinessRuleException.class,
@@ -122,6 +135,8 @@ class UserTest {
         assertFalse(user.isWithdrawn());
         user.withdraw();
         assertTrue(user.isWithdrawn());
+
+        eventsMockedStatic.verify(() -> Events.raise(eq(new UserWithdrew(user.getId().get().getValue()))), times(1));
     }
 
     @Test

@@ -1,10 +1,7 @@
 package com.melody.melody.application.service.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.aop.PublishEvent;
 import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.port.out.UserRepository;
-import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
