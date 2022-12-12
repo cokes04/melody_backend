@@ -12,18 +12,17 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MusicSecurityExpression {
+public class MusicSecurityExpression extends AbstractSecurityExpression{
     private final MusicRepository repository;
-
-    @Setter
-    private Authentication authentication;
 
     public boolean isOwner(Music.MusicId musicId){
         Optional<Long> musicOwnerId = repository.getById(musicId).map(m -> m.getUserId().getValue());
         if (musicOwnerId.isEmpty()) return true;
 
-        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
-        return musicOwnerId.get().equals(user.getUserId());
+        Optional<UserDetailsImpl> optional = getUserPrincipal();
+        if (optional.isEmpty()) return false;
+
+        return musicOwnerId.get().equals(optional.get().getUserId());
     }
 
     public boolean isExist(Music.MusicId musicId){

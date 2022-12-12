@@ -21,7 +21,7 @@ class UserJpaRepositoryTest {
     private UserJpaRepository repository;
 
     @Autowired
-    private TestEntityManager entityManager;
+    private TestEntityManager em;
 
     @Test
     void save_ShouldReturnEntityWithId() {
@@ -44,7 +44,9 @@ class UserJpaRepositoryTest {
 
     @Test
     void existsByEmail_ShouldReturnTrue_WhenSavedEmail() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        em.flush();
+        em.clear();
 
         boolean actual = repository.existsByEmail(userEntity.getEmail());
         assertTrue(actual);
@@ -61,8 +63,11 @@ class UserJpaRepositoryTest {
 
     @Test
     void findByEmail_ShouldReturnEntity_WhenSavedUserEmail() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
         String email = userEntity.getEmail();
+
+        em.flush();
+        em.clear();
 
         Optional<UserEntity> actual = repository.findByEmail(email);
 

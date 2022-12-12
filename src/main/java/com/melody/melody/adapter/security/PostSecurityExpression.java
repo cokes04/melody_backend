@@ -16,24 +16,24 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class PostSecurityExpression {
+public class PostSecurityExpression extends AbstractSecurityExpression{
     private final PostRepository repository;
-
-    @Setter
-    private Authentication authentication;
 
     public boolean isOwner(Post.PostId postId){
         Optional<Long> postOwnerId = repository.findById(postId).map(m -> m.getUserId().getValue());
         if (postOwnerId.isEmpty()) return true;
 
-        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
-        return postOwnerId.get().equals(user.getUserId());
+        Optional<UserDetailsImpl> optional = getUserPrincipal();
+        if (optional.isEmpty()) return false;
+
+        return postOwnerId.get().equals(optional.get().getUserId());
     }
 
     public boolean isOwner(PostDetail postDetail){
-        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
+        Optional<UserDetailsImpl> optional = getUserPrincipal();
+        if (optional.isEmpty()) return false;
 
-        return postDetail.getUserId().equals(user.getUserId());
+        return postDetail.getUserId().equals(optional.get().getUserId());
     }
 
     public boolean isOpen(PostDetail postDetail){

@@ -64,6 +64,24 @@ include::{snippets}/create-user/http-response.adoc[]
 === curl
 include::{snippets}/create-user/curl-request.adoc[]
 
+== [PATCH] 유저 정보 변경
+PATCH /users/{userId}
+
+=== 요청
+include::{snippets}/update-user/http-request.adoc[]
+==== 패치 파라미터
+include::{snippets}/update-user/path-parameters.adoc[]
+==== 요청 헤더
+include::{snippets}/update-user/request-headers.adoc[]
+==== 요청 필드
+include::{snippets}/update-user/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/update-user/http-response.adoc[]
+
+=== curl
+include::{snippets}/update-user/curl-request.adoc[]
+
 == [PATCH] 패스워드 변경
 PATCH /users/{userId}/password
 
@@ -75,7 +93,6 @@ include::{snippets}/change-password/path-parameters.adoc[]
 include::{snippets}/change-password/request-headers.adoc[]
 ==== 요청 필드
 include::{snippets}/change-password/request-fields.adoc[]
-
 
 === 응답
 include::{snippets}/change-password/http-response.adoc[]
@@ -92,7 +109,6 @@ include::{snippets}/withdarw-user/http-request.adoc[]
 include::{snippets}/withdarw-user/path-parameters.adoc[]
 ==== 요청 헤더
 include::{snippets}/withdarw-user/request-headers.adoc[]
-
 
 === 응답
 include::{snippets}/withdarw-user/http-response.adoc[]

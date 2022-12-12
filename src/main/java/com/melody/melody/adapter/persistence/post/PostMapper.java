@@ -21,6 +21,7 @@ public class PostMapper {
                 .deleted(entity.isDeleted())
                 .musicId(new Music.MusicId(entity.getMusicEntity().getId()))
                 .userId(new User.UserId(entity.getUserEntity().getId()))
+                .likeCount(entity.getLikeCount())
                 .build();
     }
 
@@ -35,6 +36,8 @@ public class PostMapper {
                 .deleted(post.isDeleted())
                 .musicEntity(MusicEntity.builder().id(post.getMusicId().getValue()).build())
                 .userEntity(UserEntity.builder().id(post.getUserId().getValue()).build())
+                .likeCount(post.getLikeCount())
+                .createdDate(LocalDateTime.now())
                 .build();
     }
 }

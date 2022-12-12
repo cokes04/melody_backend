@@ -75,6 +75,21 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
+    void isOwner_ShouldReturnFalse_WhenNullAuthentication() {
+        Music music = TestMusicDomainGenerator.randomMusic();
+        Music.MusicId musicId = music.getId().get();
+
+        when(repository.getById(musicId))
+                .thenReturn(Optional.of(music));
+
+        expression.setAuthentication(null);
+
+        boolean actual = expression.isOwner(musicId);
+        assertFalse(actual);
+    }
+
+
+    @Test
     void isExist_ShouldReturnTrue_WhenExsistMusic() {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();

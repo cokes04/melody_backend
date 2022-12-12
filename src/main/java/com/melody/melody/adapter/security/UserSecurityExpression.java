@@ -5,17 +5,22 @@ import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 
 @Component
 @RequiredArgsConstructor
-public class UserSecurityExpression {
-    @Setter
-    private Authentication authentication;
+public class UserSecurityExpression extends AbstractSecurityExpression {
 
     public boolean isMe(User.UserId userId){
-        UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
-        return user.getUserId() == userId.getValue();
+        Optional<UserDetailsImpl> optional = getUserPrincipal();
+        if (optional.isEmpty()) return false;
+
+        UserDetailsImpl userDetails = optional.get();
+        return userDetails.getUserId() == userId.getValue();
     }
 }

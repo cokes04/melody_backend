@@ -60,11 +60,12 @@ public class SecurityConfig {
 
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/users").hasRole("USER")
+                .antMatchers(HttpMethod.GET, "/users/{userId}/posts").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/music/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")
 
-                .antMatchers(HttpMethod.GET, "/posts/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/posts").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/posts/**").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/posts/**").hasRole("USER")

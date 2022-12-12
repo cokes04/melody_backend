@@ -44,9 +44,6 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
         where.and(postEntity.userEntity.id.eq(userId.getValue()));
 
         List<? extends PostDetail> result = select()
-                .from(postEntity)
-                .leftJoin(postEntity.musicEntity, musicEntity)
-                .leftJoin(postEntity.userEntity, userEntity)
                 .where(where)
                 .orderBy(PostOrderBy.get(postPaging.getSorting()).getOrderSpecifier())
                 .offset(postPaging.getPage() * postPaging.getSize())

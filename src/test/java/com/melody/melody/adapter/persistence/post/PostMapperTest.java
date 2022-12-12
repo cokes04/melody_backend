@@ -27,6 +27,7 @@ class PostMapperTest {
         assertEquals(post.isDeleted(), actual.isDeleted());
         assertEquals(post.getUserId().getValue(), actual.getUserEntity().getId());
         assertEquals(post.getMusicId().getValue(), actual.getMusicEntity().getId());
+        assertEquals(post.getLikeCount(), actual.getLikeCount());
     }
 
     @Test
@@ -39,6 +40,7 @@ class PostMapperTest {
         assertEquals(entity.getContent(), actual.getContent().getValue());
         assertEquals(entity.isOpen(), actual.isOpen());
         assertEquals(entity.isDeleted(), actual.isDeleted());
+        assertEquals(entity.getLikeCount(), actual.getLikeCount());
         assertEquals(entity.getUserEntity().getId(), actual.getUserId().getValue());
         assertEquals(entity.getMusicEntity().getId(), actual.getMusicId().getValue());
     }

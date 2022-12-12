@@ -16,7 +16,7 @@ public class MusicStatusToStringConverter implements
 
     @Override
     public JavaType getInputType(TypeFactory typeFactory) {
-        return typeFactory.constructType(Emotion.class);
+        return typeFactory.constructType(Music.Status.class);
     }
 
     @Override

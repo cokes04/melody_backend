@@ -34,10 +34,19 @@ class UserSecurityExpressionTest {
     }
 
     @Test
-    void isMe_ShouldReturnTrue_WhenNotEqualsUserId() {
+    void isMe_ShouldReturnFalse_WhenNotEqualsUserId() {
         User.UserId userId = new User.UserId(10L);
 
         assertNotEquals(authenticUserId, userId.getValue());
+        boolean actual = expression.isMe(userId);
+        assertFalse(actual);
+    }
+
+    @Test
+    void isMe_ShouldReturnFalse_WhenNullAuthentication() {
+        User.UserId userId = new User.UserId(10L);
+        expression.setAuthentication(null);
+
         boolean actual = expression.isMe(userId);
         assertFalse(actual);
     }

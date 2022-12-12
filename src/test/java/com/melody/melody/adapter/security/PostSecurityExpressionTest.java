@@ -64,6 +64,20 @@ class PostSecurityExpressionTest {
     }
 
     @Test
+    void isOwner_ShouldReturnFalse_WhenNullAuthentication() {
+        Post post = TestPostDomainGenerator.randomOpenPost();
+        Post.PostId postId = post.getId().get();
+
+        when(repository.findById(postId))
+                .thenReturn(Optional.of(post));
+
+        expression.setAuthentication(null);
+
+        boolean actual = expression.isOwner(postId);
+        assertFalse(actual);
+    }
+
+    @Test
     void isOwner_ShouldReturnTrue_WhenNotFoundPost() {
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
 
@@ -76,7 +90,7 @@ class PostSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnTrue_WhenPostDetailOwner() {
+    void isOwner_PostDetail_ShouldReturnTrue_WhenPostDetailOwner() {
         PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail(40, true, false);
 
         setAuthentication(postDetail.getUserId());
@@ -86,7 +100,7 @@ class PostSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnFalse_WhenNotPostDetailOwner() {
+    void isOwner_PostDetail_ShouldReturnFalse_WhenNotPostDetailOwner() {
         PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail(40, true, false);
 
         setAuthentication(postDetail.getUserId() / 3);
@@ -94,8 +108,18 @@ class PostSecurityExpressionTest {
         boolean actual = expression.isOwner(postDetail);
         assertFalse(actual);
     }
+
     @Test
-    void isOpen_ShouldReturnTrue_WhenOpenPostDetail() {
+    void isOwner_PostDetail_ShouldReturnFalse_WhenNullAuthentication() {
+        PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail(40, true, false);
+
+        expression.setAuthentication(null);
+        boolean actual = expression.isOwner(postDetail);
+        assertFalse(actual);
+    }
+
+    @Test
+    void isOpen_PostDetail_ShouldReturnTrue_WhenOpenPostDetail() {
         PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail(40, true, false);
 
         boolean actual = expression.isOpen(postDetail);
@@ -103,7 +127,7 @@ class PostSecurityExpressionTest {
     }
 
     @Test
-    void isOpen_ShouldReturnTrue_WhenClosePostDetail() {
+    void isOpen_PostDetail_ShouldReturnTrue_WhenClosePostDetail() {
         PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail(40, false, false);
 
         boolean actual = expression.isOpen(postDetail);
@@ -111,7 +135,7 @@ class PostSecurityExpressionTest {
     }
     
     @Test
-    void isOpen_ShouldReturnTrue_WhenOnlyOpen() {
+    void isOpen_Open_ShouldReturnTrue_WhenOnlyOpen() {
         Open open = Open.OnlyOpen;
 
         boolean actual = expression.isOpen(open);
@@ -119,7 +143,7 @@ class PostSecurityExpressionTest {
     }
 
     @Test
-    void isOpen_ShouldReturnFalse_WhenEverything() {
+    void isOpen_Open_ShouldReturnFalse_WhenEverything() {
         Open open = Open.Everything;
 
         boolean actual = expression.isOpen(open);
@@ -127,7 +151,7 @@ class PostSecurityExpressionTest {
     }
 
     @Test
-    void isOpen_ShouldReturnFalse_WhenOnlyClose() {
+    void isOpen_Open_ShouldReturnFalse_WhenOnlyClose() {
         Open open = Open.OnlyClose;
 
         boolean actual = expression.isOpen(open);

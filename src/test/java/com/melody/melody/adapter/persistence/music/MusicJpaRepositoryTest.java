@@ -5,6 +5,7 @@ import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
+import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.User;
 import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,22 +37,15 @@ class MusicJpaRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 
-    private UserEntity userEntity;
-
     @Configuration
     @AutoConfigurationPackage
     @EntityScan("com.melody.melody.adapter.persistence")
     static class Config {
     }
 
-
-    @BeforeEach
-    void setUp() {
-        userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
-    }
-
     @Test
     void save_ShouldReturnEntityWithId() {
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
         MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
         musicEntity.setId(null);
         musicEntity.setUserEntity(UserEntity.builder().id(userEntity.getId()).build());
@@ -65,11 +59,12 @@ class MusicJpaRepositoryTest {
 
     @Test
     void save_ShouldException_WhenUnSavedUserEntity() {
+        UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
+
         MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
         musicEntity.setId(null);
-        musicEntity.setUserEntity(UserEntity.builder().id(userEntity.getId()).build());
+        musicEntity.setUserEntity(userEntity);
 
-        entityManager.remove(userEntity);
         entityManager.flush();
         entityManager.clear();
 
@@ -94,10 +89,11 @@ class MusicJpaRepositoryTest {
 
     @Test
     void findById_ShouldReturnMusic() {
-        MusicEntity expected = TestMusicEntityGenerator.randomMusicEntity();
-        expected.setId(null);
-        expected.setUserEntity(userEntity);
-        expected = entityManager.persistAndFlush(expected);
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
+        MusicEntity expected = TestMusicEntityGenerator.saveRandomMusicEntity(entityManager, Music.Status.COMPLETION, userEntity);
+
+        entityManager.flush();
+        entityManager.clear();
 
         Optional<MusicEntity> actual = repository.findById(expected.getId());
 

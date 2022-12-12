@@ -36,6 +36,6 @@ public class GetUserPostController {
     }
 
     private Open getOpen(UserDetailsImpl requester, long userId){
-        return requester.getUserId() == userId ? Open.Everything : Open.OnlyOpen;
+        return requester != null && requester.getUserId() == userId ? Open.Everything : Open.OnlyOpen;
     }
 }

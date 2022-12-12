@@ -1,5 +1,6 @@
 package com.melody.melody.application.service.user;
 
+import com.melody.melody.application.handler.Events;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
@@ -8,8 +9,10 @@ import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Optional;
@@ -23,11 +26,18 @@ import static org.mockito.Mockito.*;
 class WithdrawUserServiceTest {
     private WithdrawUserService service;
     private UserRepository userRepository;
+    private MockedStatic<Events> eventsMockedStatic;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         service = new WithdrawUserService(userRepository);
+        eventsMockedStatic = Mockito.mockStatic(Events.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventsMockedStatic.close();
     }
 
     @Test
