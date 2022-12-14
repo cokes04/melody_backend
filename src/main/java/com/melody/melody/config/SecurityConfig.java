@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/users").hasRole("USER")
                 .antMatchers(HttpMethod.GET, "/users/{userId}/posts").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/search/keyword").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/music/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")

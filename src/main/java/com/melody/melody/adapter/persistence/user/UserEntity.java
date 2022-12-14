@@ -3,6 +3,7 @@ package com.melody.melody.adapter.persistence.user;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,5 +30,11 @@ public class UserEntity {
 
     @Column(nullable = false)
     private boolean withdrawn;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @Column(nullable = false)
+    private LocalDateTime lastActivityDate;
 
 }

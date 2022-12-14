@@ -28,7 +28,7 @@ public class GetUserMusicController {
     public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@PathParam("userId") User.UserId userId,
                                                                      @RequestParam("publish") MusicPublish publish,
                                                                      MusicPagingRequest paging){
-        PagingInfo<MusicSort> musicPaging = paging.toCommand();
+        PagingInfo<MusicSort> musicPaging = paging.toPagingInfo();
         GetUserMusicService.Command command = new GetUserMusicService.Command(userId, publish, musicPaging);
         GetUserMusicService.Result result = service.execute(command);
 

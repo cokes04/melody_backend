@@ -14,9 +14,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class GenerateMusicService implements UseCase<GenerateMusicService.Command, GenerateMusicService.Result>{
 
     private final ImageFileStorage imageFileStorage;

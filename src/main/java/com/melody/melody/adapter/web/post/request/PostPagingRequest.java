@@ -26,7 +26,7 @@ public class PostPagingRequest {
     @JsonDeserialize(converter = StringToPostSortConverter.class)
     private PostSort sorting;
 
-    public PagingInfo<PostSort> toCommand(){
+    public PagingInfo<PostSort> toPagingInfo(){
         return new PagingInfo<PostSort>(page, size, sorting);
     }
 }

@@ -30,7 +30,7 @@ public class GetUserPostController {
                                                                          PostPagingRequest paging){
 
         Open open = getOpen(requester, userId.getValue());
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, open, paging.toCommand());
+        GetUserPostService.Command command = new GetUserPostService.Command(userId, open, paging.toPagingInfo());
         GetUserPostService.Result result = service.execute(command);
 
         return ResponseEntity.ok()

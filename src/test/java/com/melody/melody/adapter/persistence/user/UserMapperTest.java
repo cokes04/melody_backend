@@ -28,6 +28,8 @@ class UserMapperTest {
         assertEquals(user.getEmail().getValue(), actual.getEmail());
         assertEquals(user.getPassword().getEncryptedString(), actual.getPassword());
         assertEquals(user.isWithdrawn(), actual.isWithdrawn());
+        assertNotNull(actual.getCreatedDate());
+        assertNotNull(actual.getLastActivityDate());
     }
 
     @Test

@@ -1,10 +1,10 @@
-package com.melody.melody.adapter.web.music.request;
+package com.melody.melody.adapter.web.user.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.melody.melody.adapter.web.converter.StringToPostSortConverter;
 import com.melody.melody.application.dto.MusicSort;
 import com.melody.melody.application.dto.PagingInfo;
-import com.melody.melody.application.dto.PostSort;
+import com.melody.melody.application.dto.UserSort;
 import lombok.*;
 
 import javax.validation.constraints.Min;
@@ -16,7 +16,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Builder
 @ToString
 @EqualsAndHashCode
-public class MusicPagingRequest {
+public class UserPagingRequest {
 
     @PositiveOrZero
     private int page;
@@ -24,11 +24,7 @@ public class MusicPagingRequest {
     @Min(value = 10)
     private int size;
 
-    @NotNull
-    @JsonDeserialize(converter = StringToPostSortConverter.class)
-    private MusicSort sorting;
-
-    public PagingInfo<MusicSort> toPagingInfo(){
-        return new PagingInfo<MusicSort>(page, size, sorting);
+    public PagingInfo<UserSort> toPagingInfo(){
+        return new PagingInfo<UserSort>(page, size, UserSort.recent_activity);
     }
 }
