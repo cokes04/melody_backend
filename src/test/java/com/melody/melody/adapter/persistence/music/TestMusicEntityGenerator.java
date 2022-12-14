@@ -20,9 +20,14 @@ public class TestMusicEntityGenerator {
     private static final Faker faker = new Faker();
 
     public static Map<Long, MusicEntity> saveRandomMusicEntitys(TestEntityManager em, UserEntity userEntity, Music.Status status, int count){
+        return saveRandomMusicEntitys(em, userEntity, status, count, 0);
+    }
+
+
+    public static Map<Long, MusicEntity> saveRandomMusicEntitys(TestEntityManager em, UserEntity userEntity, Music.Status status, int count, int plusMinut){
+        LocalDateTime now = LocalDateTime.now().withNano(0);
         return IntStream.range(0, count)
-                .mapToObj(i -> saveRandomMusicEntity(em, status, userEntity))
-                .peek(e -> e.setUserEntity(userEntity))
+                .mapToObj(i -> saveRandomMusicEntity(em, status, now.plusMinutes(i * plusMinut), userEntity))
                 .collect(Collectors.toMap(
                         e -> e.getId(),
                         e -> e
@@ -30,7 +35,11 @@ public class TestMusicEntityGenerator {
     }
 
     public static MusicEntity saveRandomMusicEntity(TestEntityManager em, Music.Status status, UserEntity savedUserEntity){
-        MusicEntity musicEntity = randomMusicEntity(null, status, savedUserEntity);
+        return saveRandomMusicEntity(em, status, LocalDateTime.now().withNano(0), savedUserEntity);
+    }
+
+    public static MusicEntity saveRandomMusicEntity(TestEntityManager em, Music.Status status, LocalDateTime createdDate, UserEntity savedUserEntity){
+        MusicEntity musicEntity = randomMusicEntity(null, status, createdDate.withNano(0), savedUserEntity);
         em.persist(musicEntity);
         return musicEntity;
     }
@@ -41,10 +50,11 @@ public class TestMusicEntityGenerator {
 
 
     public static MusicEntity randomMusicEntity(Music.Status status, UserEntity userEntity){
-        return randomMusicEntity(randomId(), status, userEntity);
+        LocalDateTime createdDate = LocalDateTime.now().withNano(0);
+        return randomMusicEntity(randomId(), status, createdDate, userEntity);
     }
 
-    public static MusicEntity randomMusicEntity(Long musicId, Music.Status status, UserEntity userEntity){
+    public static MusicEntity randomMusicEntity(Long musicId, Music.Status status, LocalDateTime createdDate, UserEntity userEntity){
         return MusicEntity.builder()
                 .id(musicId)
                 .emotion(randomEmotion())
@@ -52,7 +62,20 @@ public class TestMusicEntityGenerator {
                 .imageUrl(randomImageUrl())
                 .musicUrl(randomMusicUrl())
                 .status(status)
+                .createdDate(createdDate)
                 .userEntity(userEntity)
+                .build();
+    }
+
+    public static MusicData randomMusicData(){
+        return MusicData.builder()
+                .id(randomId())
+                .emotion(randomEmotion())
+                .explanation(randomExplanation())
+                .imageUrl(randomImageUrl())
+                .musicUrl(randomMusicUrl())
+                .status(randomStatus())
+                .userId(TestUserEntityGenerator.randomId())
                 .build();
     }
 

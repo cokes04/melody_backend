@@ -2,6 +2,8 @@ package com.melody.melody.adapter.web.restdocs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.melody.melody.application.dto.MusicPublish;
+import com.melody.melody.application.dto.MusicSort;
 import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
@@ -55,9 +57,11 @@ public class CreateEnumSnippet {
             @NotNull
             public MockResponse dispatch(@NotNull RecordedRequest request) {
                 Map<String, Map<String, String>> body = new HashMap<>();
-                body.put("postSort", getPostSort());
                 body.put("emotion", getEmotion());
                 body.put("musicStatus", getMusicStatus());
+                body.put("postSort", getPostSort());
+                body.put("musicSort", getMusicSort());
+                body.put("musicPublish", getMusicPublish());
 
                 return new MockResponse()
                         .addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -86,12 +90,6 @@ public class CreateEnumSnippet {
                         document(
                                 "enum-docs",
                                 new CustomFieldSnippet("code",
-                                        beneathPath("postSort").withSubsectionId("postSort"),
-                                        Arrays.asList(enumConvertFieldDescriptor(getPostSort())),
-                                        attributes(key("title").value("게시물 정렬 기준")),
-                                        true
-                                ),
-                                new CustomFieldSnippet("code",
                                         beneathPath("emotion").withSubsectionId("emotion"),
                                         Arrays.asList(enumConvertFieldDescriptor(getEmotion())),
                                         attributes(key("title").value("감정 종류")),
@@ -101,6 +99,24 @@ public class CreateEnumSnippet {
                                         beneathPath("musicStatus").withSubsectionId("musicStatus"),
                                         Arrays.asList(enumConvertFieldDescriptor(getMusicStatus())),
                                         attributes(key("title").value("음악 상태")),
+                                        true
+                                ),
+                                new CustomFieldSnippet("code",
+                                        beneathPath("postSort").withSubsectionId("postSort"),
+                                        Arrays.asList(enumConvertFieldDescriptor(getPostSort())),
+                                        attributes(key("title").value("게시물 정렬 기준")),
+                                        true
+                                ),
+                                new CustomFieldSnippet("code",
+                                        beneathPath("musicSort").withSubsectionId("musicSort"),
+                                        Arrays.asList(enumConvertFieldDescriptor(getMusicSort())),
+                                        attributes(key("title").value("음악 정렬 기준")),
+                                        true
+                                ),
+                                new CustomFieldSnippet("code",
+                                        beneathPath("musicPublish").withSubsectionId("musicPublish"),
+                                        Arrays.asList(enumConvertFieldDescriptor(getMusicPublish())),
+                                        attributes(key("title").value("음악 게시 상태")),
                                         true
                                 )
                         )
@@ -134,6 +150,24 @@ public class CreateEnumSnippet {
 
         return map;
     }
+
+    private Map<String, String> getMusicSort() {
+        Map<String,String> map = new HashMap<>();
+        map.put(MusicSort.newest.name().toLowerCase(), "음악 최신순");
+        map.put(MusicSort.oldest.name().toLowerCase(), "음악 오래된순");
+
+        return map;
+    }
+
+    private Map<String, String> getMusicPublish() {
+        Map<String,String> map = new HashMap<>();
+        map.put(MusicPublish.Everything.name().toLowerCase(), "음악의 모든 게시 상태");
+        map.put(MusicPublish.Published.name().toLowerCase(), "음악이 게시물로 생성된 상태");
+        map.put(MusicPublish.Unpublished.name().toLowerCase(), "음악이 게시물로 생성되지 않은 상태");
+
+        return map;
+    }
+
 
     private static FieldDescriptor[] enumConvertFieldDescriptor(Map<String, String> enumValues) {
         return enumValues.entrySet().stream()

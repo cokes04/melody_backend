@@ -31,6 +31,26 @@ include::{snippets}/generate-music/response-fields.adoc[]
 === curl
 include::{snippets}/generate-music/curl-request.adoc[]
 
+== [GET] 유저의 음악 정보
+GET /ussers/{userId}/music
+
+=== 요청
+include::{snippets}/get-users-music/http-request.adoc[]
+==== 패치 파라미터
+include::{snippets}/get-users-music/path-parameters.adoc[]
+==== 요청 파라미터
+include::{snippets}/get-users-music/request-parameters.adoc[]
+==== 요청 헤더
+include::{snippets}/get-users-music/request-headers.adoc[]
+
+=== 응답
+include::{snippets}/get-users-music/http-response.adoc[]
+==== 응답 필드
+include::{snippets}/get-users-music/response-fields.adoc[]
+
+=== curl
+include::{snippets}/get-users-music/curl-request.adoc[]
+
 == [GET] 음악 정보
 GET /music/{id}
 

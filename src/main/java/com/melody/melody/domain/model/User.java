@@ -95,7 +95,7 @@ public class User {
 
         public static Email from(String email){
             if(StringUtil.isNullOrEmpty(email) || !Pattern.matches(EMAIL_FORMAT_REGEX, email) )
-                throw new InvalidArgumentException(DomainError.of(UserErrorType.INVALID_EMAIL_FORMAT));
+                throw new InvalidArgumentException(DomainError.of(UserErrorType.Invalid_Email_Format));
 
             return new Email(email);
         }

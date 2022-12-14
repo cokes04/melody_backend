@@ -30,10 +30,11 @@ class MusicMapperTest {
         assertEquals(music.getStatus(), actual.getStatus());
         assertTrue(music.getMusicUrl().isPresent());
         assertEquals(music.getMusicUrl().get().getValue(), actual.getMusicUrl());
+        assertNotNull(actual.getCreatedDate());
     }
 
     @Test
-    void toModel_ShouldReturnModel() {
+    void toModel_entity_ShouldReturnModel() {
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 
         Music actual = mapper.toModel(entity);
@@ -47,5 +48,22 @@ class MusicMapperTest {
         assertEquals(entity.getStatus(), actual.getStatus());
         assertTrue(actual.getMusicUrl().isPresent());
         assertEquals(entity.getMusicUrl(), actual.getMusicUrl().get().getValue());
+    }
+
+    @Test
+    void toModel_data_ShouldReturnModel() {
+        MusicData musicData = TestMusicEntityGenerator.randomMusicData();
+
+        Music actual = mapper.toModel(musicData);
+
+        assertTrue(actual.getId().isPresent());
+        assertEquals(musicData.getId(), actual.getId().get().getValue());
+        assertEquals(musicData.getUserId(), actual.getUserId().getValue());
+        assertEquals(musicData.getEmotion(), actual.getEmotion());
+        assertEquals(musicData.getImageUrl(), actual.getImageUrl().getValue());
+        assertEquals(musicData.getExplanation(), actual.getExplanation().getValue());
+        assertEquals(musicData.getStatus(), actual.getStatus());
+        assertTrue(actual.getMusicUrl().isPresent());
+        assertEquals(musicData.getMusicUrl(), actual.getMusicUrl().get().getValue());
     }
 }

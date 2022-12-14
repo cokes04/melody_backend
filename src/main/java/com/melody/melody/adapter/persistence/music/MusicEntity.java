@@ -1,19 +1,21 @@
 package com.melody.melody.adapter.persistence.music;
 
+import com.melody.melody.adapter.persistence.post.PostEntity;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "postEntity")
+@EqualsAndHashCode(exclude = {"userEntity", "postEntity"})
 @Entity(name = "MUSIC")
 @Table(name = "MUSIC")
 public class MusicEntity {
@@ -38,8 +40,15 @@ public class MusicEntity {
     @Column(nullable = false)
     private Music.Status status;
 
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserEntity userEntity;
+
+    @OneToOne(targetEntity = PostEntity.class, fetch = FetchType.LAZY, mappedBy = "musicEntity")
+    @JoinColumn(name = "POST_ID", nullable = true)
+    private PostEntity postEntity;
 
 }

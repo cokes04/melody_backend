@@ -12,7 +12,6 @@ import javax.servlet.Filter;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new BooleanToYNConverter());
@@ -21,6 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(new StringToUserIdConverter());
         registry.addConverter(new YNToBooleanConverter());
         registry.addConverter(new EmotionToStringConverter());
+        registry.addConverter(new StringToMusicSortConverter());
+        registry.addConverter(new StringToMusicPublishConverter());
     }
 
     @Bean
