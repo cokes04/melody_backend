@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"userEntity", "musicEntity"})
 @Entity(name = "POST")
 @Table(name = "POST")
 public class PostEntity {

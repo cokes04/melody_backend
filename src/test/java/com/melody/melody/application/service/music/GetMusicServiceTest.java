@@ -35,7 +35,7 @@ class GetMusicServiceTest {
         GetMusicService.Command command = new GetMusicService.Command(id);
 
 
-        when(repository.getById(eq(id)))
+        when(repository.findById(eq(id)))
                 .thenReturn(Optional.of(music));
 
 
@@ -45,7 +45,7 @@ class GetMusicServiceTest {
         assertNotNull((actualMusic = result.getMusic()));
         assertEquals(expectedMusic, actualMusic);
 
-        verify(repository, times(1)).getById(id);
+        verify(repository, times(1)).findById(id);
     }
 
 }

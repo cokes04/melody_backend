@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(PersistenceTestConfig.class)
 class PostDetailRepositoryImplTest {
 
-    private PostDetailRepository repository;
+    private PostDetailRepositoryImpl repository;
 
     @Autowired
     private JPAQueryFactory jpaQueryFactory;

@@ -66,7 +66,7 @@ class GetUserPostControllerTest {
 
     @Test
     @WithMockRequester(userId = requesterUserId)
-    void getPost_Ok() throws Exception {
+    void getUsersPost_Ok() throws Exception {
         User.UserId userId = new User.UserId(requesterUserId);
 
         GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.Everything, new PagingInfo(0, 4, PostSort.newest));

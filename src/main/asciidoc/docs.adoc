@@ -266,8 +266,10 @@ include::{snippets}/get-users-post/curl-request.adoc[]
 
 == 코드 목록
 include::{snippets}/enum-docs/code-fields-emotion.adoc[]
-include::{snippets}/enum-docs/code-fields-postSort.adoc[]
 include::{snippets}/enum-docs/code-fields-musicStatus.adoc[]
+include::{snippets}/enum-docs/code-fields-postSort.adoc[]
+include::{snippets}/enum-docs/code-fields-musicSort.adoc[]
+include::{snippets}/enum-docs/code-fields-musicPublish.adoc[]
 
 == 에러 목록
 include::{snippets}/error-docs/error-code-fields-errors.adoc[]

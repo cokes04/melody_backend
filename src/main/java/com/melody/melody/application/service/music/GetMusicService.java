@@ -8,6 +8,7 @@ import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,9 +16,10 @@ import org.springframework.stereotype.Service;
 public class GetMusicService implements UseCase<GetMusicService.Command, GetMusicService.Result> {
     private final MusicRepository musicRepository;
 
+    @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        return musicRepository.getById(command.musicId)
+        return musicRepository.findById(command.musicId)
                 .map(Result::new)
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
     }

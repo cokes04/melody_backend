@@ -8,6 +8,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @Getter
 @RequiredArgsConstructor
 public enum  PostOrderBy {
@@ -17,12 +19,12 @@ public enum  PostOrderBy {
     private final PostSort postSort;
     private final OrderSpecifier orderSpecifier;
 
-    public static PostOrderBy get(PostSort postSort){
+    public static Optional<PostOrderBy> get(PostSort postSort){
         for (PostOrderBy postOrderBy : PostOrderBy.values()){
             if (postOrderBy.postSort.equals(postSort))
-                return postOrderBy;
+                return Optional.of(postOrderBy);
         }
-        return null;
+        return Optional.empty();
     }
 
 }

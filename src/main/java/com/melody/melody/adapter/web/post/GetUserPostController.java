@@ -1,8 +1,10 @@
 package com.melody.melody.adapter.web.post;
 
 import com.melody.melody.adapter.web.WebAdapter;
+import com.melody.melody.adapter.web.common.PageResponse;
 import com.melody.melody.adapter.web.post.request.PostPagingRequest;
 import com.melody.melody.adapter.web.post.response.PostDetailMapper;
+import com.melody.melody.adapter.web.post.response.PostDetailResponse;
 import com.melody.melody.adapter.web.security.Requester;
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.dto.Open;
@@ -23,9 +25,9 @@ public class GetUserPostController {
     private final GetUserPostService service;
 
     @GetMapping("/users/{userId}/posts")
-    public ResponseEntity<?> getUsersPost(@Requester UserDetailsImpl requester,
-                                          @PathParam("userId") User.UserId userId,
-                                          PostPagingRequest paging){
+    public ResponseEntity<PageResponse<PostDetailResponse>> getUsersPost(@Requester UserDetailsImpl requester,
+                                                                         @PathParam("userId") User.UserId userId,
+                                                                         PostPagingRequest paging){
 
         Open open = getOpen(requester, userId.getValue());
         GetUserPostService.Command command = new GetUserPostService.Command(userId, open, paging.toCommand());

@@ -40,14 +40,14 @@ public class CreatePostServicePermissionCheckTest {
         Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
         Music.MusicId musicId = music.getId().get();
 
-        when(musicRepository.getById(musicId))
+        when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, musicId);
         service.execute(command);
 
         verify(musicRepository, times(2))
-                .getById(any(Music.MusicId.class));
+                .findById(any(Music.MusicId.class));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class CreatePostServicePermissionCheckTest {
     void excute_ShouldBlock_WhenNotExsistMusic() {
         User.UserId userId = new User.UserId(requesterId);
 
-        when(musicRepository.getById(any(Music.MusicId.class)))
+        when(musicRepository.findById(any(Music.MusicId.class)))
                 .thenReturn(Optional.empty());
 
         CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, new Music.MusicId(239829L));
@@ -64,7 +64,7 @@ public class CreatePostServicePermissionCheckTest {
 
 
         verify(musicRepository, times(1))
-                .getById(any(Music.MusicId.class));
+                .findById(any(Music.MusicId.class));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class CreatePostServicePermissionCheckTest {
         Music music = TestMusicDomainGenerator.randomCompletionMusic(new User.UserId((requesterId / 13) * 3));
         Music.MusicId musicId = music.getId().get();
 
-        when(musicRepository.getById(musicId))
+        when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, musicId);
@@ -83,7 +83,7 @@ public class CreatePostServicePermissionCheckTest {
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(musicRepository, times(2))
-                .getById(any(Music.MusicId.class));
+                .findById(any(Music.MusicId.class));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class CreatePostServicePermissionCheckTest {
         Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
         Music.MusicId musicId = music.getId().get();
 
-        when(musicRepository.getById(musicId))
+        when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(new User.UserId(requesterId / 13), musicId);
@@ -101,6 +101,6 @@ public class CreatePostServicePermissionCheckTest {
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(musicRepository, times(2))
-                .getById(any(Music.MusicId.class));
+                .findById(any(Music.MusicId.class));
     }
 }

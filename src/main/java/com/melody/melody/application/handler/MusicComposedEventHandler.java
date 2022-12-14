@@ -26,7 +26,7 @@ public class MusicComposedEventHandler implements EventHandler<MusicComposed> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void handle(MusicComposed event) {
-        Music music = repository.getById(new Music.MusicId(event.getMusicId()))
+        Music music = repository.findById(new Music.MusicId(event.getMusicId()))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
 
         music.completeGeneration(new Music.MusicUrl(event.getMusicUrl()));

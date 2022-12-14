@@ -58,7 +58,6 @@ class PostJpaRepositoryTest {
         em.clear();
 
         Optional<PostEntity> actual = repository.findById(postEntity.getId());
-
         assertTrue(actual.isPresent());
         assertEquals(postEntity, actual.get());
     }

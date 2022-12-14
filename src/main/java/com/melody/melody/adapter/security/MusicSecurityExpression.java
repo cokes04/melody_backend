@@ -16,7 +16,7 @@ public class MusicSecurityExpression extends AbstractSecurityExpression{
     private final MusicRepository repository;
 
     public boolean isOwner(Music.MusicId musicId){
-        Optional<Long> musicOwnerId = repository.getById(musicId).map(m -> m.getUserId().getValue());
+        Optional<Long> musicOwnerId = repository.findById(musicId).map(m -> m.getUserId().getValue());
         if (musicOwnerId.isEmpty()) return true;
 
         Optional<UserDetailsImpl> optional = getUserPrincipal();
@@ -26,6 +26,6 @@ public class MusicSecurityExpression extends AbstractSecurityExpression{
     }
 
     public boolean isExist(Music.MusicId musicId){
-        return repository.getById(musicId).isPresent();
+        return repository.findById(musicId).isPresent();
     }
 }

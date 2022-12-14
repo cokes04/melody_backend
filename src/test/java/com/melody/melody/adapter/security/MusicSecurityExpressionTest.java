@@ -38,7 +38,7 @@ class MusicSecurityExpressionTest {
 
         setAuthentication(userId.getValue());
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         boolean actual = expression.isOwner(musicId);
@@ -54,7 +54,7 @@ class MusicSecurityExpressionTest {
         assertNotEquals(music.getUserId().getValue(), userId);
         setAuthentication(userId);
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         boolean actual = expression.isOwner(musicId);
@@ -66,7 +66,7 @@ class MusicSecurityExpressionTest {
     void isOwner_ShouldReturnTrue_WhenNotFoundMusic() {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.empty());
 
         boolean actual = expression.isOwner(musicId);
@@ -79,7 +79,7 @@ class MusicSecurityExpressionTest {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         expression.setAuthentication(null);
@@ -94,7 +94,7 @@ class MusicSecurityExpressionTest {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
         boolean actual = expression.isExist(musicId);
@@ -106,7 +106,7 @@ class MusicSecurityExpressionTest {
     void isExist_ShouldReturnFalse_WhenNotExsistMusic() {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
-        when(repository.getById(musicId))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.empty());
 
         boolean actual = expression.isExist(musicId);

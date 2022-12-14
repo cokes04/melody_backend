@@ -4,6 +4,9 @@ import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.adapter.persistence.post.PostOrderBy;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.out.PostDetailRepository;
+import com.melody.melody.domain.exception.DomainError;
+import com.melody.melody.domain.exception.InvalidArgumentException;
+import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
 import com.querydsl.core.BooleanBuilder;
@@ -45,7 +48,11 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
 
         List<? extends PostDetail> result = select()
                 .where(where)
-                .orderBy(PostOrderBy.get(postPaging.getSorting()).getOrderSpecifier())
+                .orderBy(PostOrderBy
+                        .get(postPaging.getSorting())
+                        .map(PostOrderBy::getOrderSpecifier)
+                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)))
+                )
                 .offset(postPaging.getPage() * postPaging.getSize())
                 .limit(postPaging.getSize())
                 .fetch();
