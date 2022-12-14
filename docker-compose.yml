@@ -6,7 +6,7 @@ services:
     container_name: melody-service
     mem_limit: 800m
     ports:
-      - 8080:8080
+      - 80:8080
     env_file:
       - '.env'
     depends_on:

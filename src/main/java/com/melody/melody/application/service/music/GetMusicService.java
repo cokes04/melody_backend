@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetMusicService implements UseCase<GetMusicService.Command, GetMusicService.Result> {
     private final MusicRepository musicRepository;
 
-    @PreAuthorize("#user.isMe(#command.userId)")
+    @PreAuthorize("#music.isOwner(#command.musicId)")
     @Override
     public Result execute(Command command) {
         return musicRepository.findById(command.musicId)
