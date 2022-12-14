@@ -50,7 +50,7 @@ public class TestUserEntityGenerator {
                 .nickName(nickName)
                 .email(randomEmail())
                 .password(randomPassword())
-                .createdDate(LocalDateTime.now())
+                .createdDate(LocalDateTime.now().withNano(0))
                 .lastActivityDate(lastActivityDate)
                 .withdrawn(false)
                 .build();

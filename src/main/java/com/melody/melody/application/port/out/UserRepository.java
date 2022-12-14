@@ -1,6 +1,7 @@
 package com.melody.melody.application.port.out;
 
 import com.melody.melody.domain.model.User;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Optional;
 

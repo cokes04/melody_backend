@@ -41,6 +41,7 @@ public class LambdaMusicGenerator implements MusicGenerator {
     @Override
     public void executeAsync(Music.MusicId musicId, Emotion emotion, int musicLength, int noise) {
         LambdaGenerateMusicRequest request = LambdaGenerateMusicRequest.builder()
+                .musicId(musicId.getValue())
                 .emotion(EmotionMapping.of(emotion).getGeneration())
                 .musicLength(musicLength)
                 .noise(noise)

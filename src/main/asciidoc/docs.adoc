@@ -171,6 +171,42 @@ include::{snippets}/logout-user/response-headers.adoc[]
 === curl
 include::{snippets}/logout-user/curl-request.adoc[]
 
+== [GET] 유저 검색
+GET /users/{userId}
+
+=== 요청
+include::{snippets}/get-user/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/get-user/request-headers.adoc[]
+==== 패치 파라미터
+include::{snippets}/get-user/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/get-user/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/get-user/response-fields.adoc[]
+
+=== curl
+include::{snippets}/get-user/curl-request.adoc[]
+
+== [GET] 유저 키워드 검색
+GET /users/search/keyword
+
+=== 요청
+include::{snippets}/search-keyword-user/http-request.adoc[]
+==== 요청 헤더
+include::{snippets}/search-keyword-user/request-headers.adoc[]
+==== 요청 파라미터
+include::{snippets}/search-keyword-user/request-parameters.adoc[]
+
+=== 응답
+include::{snippets}/search-keyword-user/http-response.adoc[]
+=== 응답 필드
+include::{snippets}/search-keyword-user/response-fields.adoc[]
+
+=== curl
+include::{snippets}/search-keyword-user/curl-request.adoc[]
+
 == [POST] 게시물 생성
 POST /posts
 
