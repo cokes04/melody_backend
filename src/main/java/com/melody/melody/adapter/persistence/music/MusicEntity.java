@@ -24,23 +24,23 @@ public class MusicEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "EMOTION", nullable = false, columnDefinition = "varchar(16)")
     private Emotion emotion;
 
-    @Column(nullable = false)
+    @Column(name = "EXPLANATION", nullable = false)
     private String explanation;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "IMAGE_URL", nullable = false, unique = true)
     private String imageUrl;
 
-    @Column(nullable = true, unique = true)
+    @Column(name = "MUSIC_URL", nullable = true, unique = true)
     private String musicUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "STATUS", nullable = false, columnDefinition = "varchar(16)")
     private Music.Status status;
 
-    @Column(updatable = false)
+    @Column(name = "CREATED_DATE", updatable = false, nullable = false)
     private LocalDateTime createdDate;
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
@@ -50,5 +50,4 @@ public class MusicEntity {
     @OneToOne(targetEntity = PostEntity.class, fetch = FetchType.LAZY, mappedBy = "musicEntity")
     @JoinColumn(name = "POST_ID", nullable = true)
     private PostEntity postEntity;
-
 }

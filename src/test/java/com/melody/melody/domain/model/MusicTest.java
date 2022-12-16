@@ -46,17 +46,27 @@ class MusicTest {
     }
 
     @Test
-    void completeGeneration_ShouldThrowException_WhenStatusIsNotPROGRESS() {
-        Music music = generatedMusic();
+    void completeGeneration_ShouldThrowException_WhenCompletion() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Music music = randomCompletionMusic(userId);
         Music.MusicUrl musicUrl = randomMusicUrl();
-        Music.MusicUrl newMusicUrl = randomMusicUrl();
 
-        music.completeGeneration(musicUrl);
-
-        assertNotEquals(Music.Status.PROGRESS, music.getStatus());
         assertEquals(Music.Status.COMPLETION, music.getStatus());
 
-        assertException(() -> music.completeGeneration(newMusicUrl),
+        assertException(() -> music.completeGeneration(musicUrl),
+                InvalidStatusException.class,
+                DomainError.of(MusicErrorType.Should_Be_Progress_State_For_Complete_Generation));
+    }
+
+    @Test
+    void completeGeneration_ShouldThrowException_WhenDeleted() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Music music = randomDeletedMusic(userId);
+        Music.MusicUrl musicUrl = randomMusicUrl();
+
+        assertEquals(Music.Status.DELETED, music.getStatus());
+
+        assertException(() -> music.completeGeneration(musicUrl),
                 InvalidStatusException.class,
                 DomainError.of(MusicErrorType.Should_Be_Progress_State_For_Complete_Generation));
     }

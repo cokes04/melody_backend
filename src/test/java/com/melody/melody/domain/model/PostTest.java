@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostTest {
 
     @Test
-    void create_ShouldReturnPost() {
+    void create_ShouldReturnCreatedPost() {
         User.UserId userId = TestUserDomainGenerator.randomUserId();
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
         Post.Title title = TestPostDomainGenerator.randomTitle();

@@ -19,22 +19,21 @@ public class UserEntity {
     @Column(name = "USER_ID")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "NICK_NAME", nullable = false, columnDefinition = "varchar(64)")
     private String nickName;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "PASSOWORD", nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "WITHDRAWN", nullable = false)
     private boolean withdrawn;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "CREATED_DATE", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
-    @Column(nullable = false)
+    @Column(name = "LAST_ACTIVITY_DATE", nullable = false)
     private LocalDateTime lastActivityDate;
-
 }
