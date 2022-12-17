@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetUserMusicService implements UseCase<GetUserMusicService.Command, GetUserMusicService.Result> {
     private final MusicRepository musicRepository;
 
-    @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
         PagingResult<Music> pagingResult = musicRepository.findByUserId(command.userId, command.musicPublishing, command.musicPaging);

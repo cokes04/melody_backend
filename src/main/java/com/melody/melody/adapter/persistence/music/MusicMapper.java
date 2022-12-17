@@ -18,7 +18,7 @@ public class MusicMapper {
                 .musicUrl(new Music.MusicUrl(entity.getMusicUrl()))
                 .imageUrl(new Music.ImageUrl(entity.getImageUrl()))
                 .explanation(new Music.Explanation(entity.getExplanation()))
-                .userId(new User.UserId(entity.getUserEntity().getId()))
+                .userId(new User.UserId(entity.getUserId()))
                 .build();
     }
 
@@ -43,7 +43,7 @@ public class MusicMapper {
                 .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
                 .status(music.getStatus())
                 .createdDate(LocalDateTime.now())
-                .userEntity(UserEntity.builder().id(music.getUserId().getValue()).build())
+                .userId(music.getUserId().getValue())
                 .build();
     }
 }

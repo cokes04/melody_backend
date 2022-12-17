@@ -14,12 +14,15 @@ import javax.validation.constraints.Positive;
 @Builder
 public class GenerateMusicRequest {
     @Positive @NotNull
+    private long userId;
+
+    @Positive @NotNull
     private int musicLength;
 
     @Positive @NotNull
     private int noise;
 
-    public GenerateMusicService.Command toCommand(MultipartFile image, long userId){
+    public GenerateMusicService.Command toCommand(MultipartFile image){
         return new GenerateMusicService.Command(
                 new User.UserId(userId),
                 this.toImage(image),

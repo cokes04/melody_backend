@@ -30,12 +30,10 @@ public class GenerateMusicController {
             }
     )
     public ResponseEntity<MusicResponse> generate(
-            @Requester UserDetailsImpl requester,
             @RequestPart(name = "image") MultipartFile image,
-            @RequestPart(name = "body") GenerateMusicRequest request ){
+            @RequestPart(name = "body") GenerateMusicRequest request){
 
-
-        GenerateMusicService.Command command = request.toCommand(image, requester.getUserId());
+        GenerateMusicService.Command command = request.toCommand(image);
         GenerateMusicService.Result result = service.execute(command);
         MusicResponse musicResponse = MusicResponse.to(result.getMusic());
 

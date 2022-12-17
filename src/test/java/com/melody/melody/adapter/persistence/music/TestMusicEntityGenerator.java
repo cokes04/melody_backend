@@ -63,7 +63,7 @@ public class TestMusicEntityGenerator {
                 .musicUrl(randomMusicUrl())
                 .status(status)
                 .createdDate(createdDate)
-                .userEntity(userEntity)
+                .userId(userEntity.getId())
                 .build();
     }
 

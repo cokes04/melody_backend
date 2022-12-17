@@ -25,7 +25,6 @@ public class GenerateMusicService implements UseCase<GenerateMusicService.Comman
     private final MusicGenerator musicGenerator;
     private final MusicRepository musicRepository;
 
-    @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command){
 

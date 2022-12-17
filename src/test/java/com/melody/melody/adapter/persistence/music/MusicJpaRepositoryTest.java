@@ -44,50 +44,6 @@ class MusicJpaRepositoryTest {
     }
 
     @Test
-    void save_ShouldReturnEntityWithId() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
-        MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
-        musicEntity.setId(null);
-        musicEntity.setUserEntity(UserEntity.builder().id(userEntity.getId()).build());
-
-        MusicEntity actual = repository.save(musicEntity);
-
-        assertNotNull(actual.getId());
-        assertTrue(actual.getId() > 0);
-        assertEquals(userEntity, entityManager.find(UserEntity.class, userEntity.getId()));
-    }
-
-    @Test
-    void save_ShouldException_WhenUnSavedUserEntity() {
-        UserEntity userEntity = TestUserEntityGenerator.randomUserEntity();
-
-        MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
-        musicEntity.setId(null);
-        musicEntity.setUserEntity(userEntity);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        assertThrows(
-                DataIntegrityViolationException.class,
-                () -> repository.save(musicEntity)
-        );
-    }
-
-
-    @Test
-    void save_ShouldException_WhenNullUserEntity() {
-        MusicEntity musicEntity = TestMusicEntityGenerator.randomMusicEntity();
-        musicEntity.setId(null);
-        musicEntity.setUserEntity(null);
-
-        assertThrows(
-                DataIntegrityViolationException.class,
-                () -> repository.save(musicEntity)
-        );
-    }
-
-    @Test
     void findById_ShouldReturnMusic() {
         UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(entityManager);
         MusicEntity expected = TestMusicEntityGenerator.saveRandomMusicEntity(entityManager, Music.Status.COMPLETION, userEntity);

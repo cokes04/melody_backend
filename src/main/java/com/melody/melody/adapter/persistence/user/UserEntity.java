@@ -22,7 +22,7 @@ public class UserEntity {
     @Column(name = "NICK_NAME", nullable = false, columnDefinition = "varchar(64)")
     private String nickName;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(name = "EMAIL", nullable = false, unique = false)
     private String email;
 
     @Column(name = "PASSOWORD", nullable = false)

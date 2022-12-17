@@ -53,26 +53,9 @@ public class MusicRepositoryImpl implements MusicRepository {
     public PagingResult<Music> findByUserId(User.UserId userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging) {
         BooleanBuilder where = new BooleanBuilder();
         where.and(musicEntity.status.ne(Music.Status.DELETED));
-        where.and(musicEntity.userEntity.id.eq(userId.getValue()));
+        where.and(musicEntity.userId.eq(userId.getValue()));
 
         JPAQuery<MusicData> query = select();
-
-        switch (musicPublish){
-            case Everything:
-                break;
-            case Published:
-                query.innerJoin(musicEntity.postEntity, postEntity);
-                where.and(musicEntity.postEntity.id.isNotNull());
-                where.and(musicEntity.postEntity.deleted.eq(false));
-                break;
-            case Unpublished:
-                query.leftJoin(musicEntity.postEntity, postEntity);
-                where.and(
-                        musicEntity.postEntity.id.isNull()
-                                .or(musicEntity.postEntity.deleted.eq(true))
-                );
-                break;
-        }
 
         List<Music> result = query
                 .where(where)
@@ -96,7 +79,7 @@ public class MusicRepositoryImpl implements MusicRepository {
     public void deleteByUserId(User.UserId userId){
         factory.update(musicEntity)
                 .set(musicEntity.status, Music.Status.DELETED)
-                .where(musicEntity.userEntity.id.eq(userId.getValue()))
+                .where(musicEntity.userId.eq(userId.getValue()))
                 .execute();
     }
 
@@ -104,7 +87,7 @@ public class MusicRepositoryImpl implements MusicRepository {
         return factory.select(
                 new QMusicData(
                         musicEntity.id,
-                        musicEntity.userEntity.id,
+                        musicEntity.userId,
                         musicEntity.emotion,
                         musicEntity.explanation,
                         musicEntity.imageUrl,
@@ -112,7 +95,6 @@ public class MusicRepositoryImpl implements MusicRepository {
                         musicEntity.status
                 )
         )
-                .from(musicEntity)
-                .leftJoin(musicEntity.userEntity, userEntity);
+                .from(musicEntity);
     }
 }

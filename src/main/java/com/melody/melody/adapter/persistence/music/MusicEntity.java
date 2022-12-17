@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-@ToString(exclude = "postEntity")
-@EqualsAndHashCode(exclude = {"userEntity", "postEntity"})
+@ToString
+@EqualsAndHashCode
 @Entity(name = "MUSIC")
 @Table(name = "MUSIC")
 public class MusicEntity {
@@ -43,11 +43,6 @@ public class MusicEntity {
     @Column(name = "CREATED_DATE", updatable = false, nullable = false)
     private LocalDateTime createdDate;
 
-    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private UserEntity userEntity;
-
-    @OneToOne(targetEntity = PostEntity.class, fetch = FetchType.LAZY, mappedBy = "musicEntity")
-    @JoinColumn(name = "POST_ID", nullable = true)
-    private PostEntity postEntity;
+    @Column(name = "USER_ID", nullable = true, unique = false)
+    private Long userId;
 }

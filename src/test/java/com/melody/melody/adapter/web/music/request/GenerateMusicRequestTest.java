@@ -13,16 +13,16 @@ class GenerateMusicRequestTest {
 
     @Test
     void toCommand_returnCreatedCommand() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
 
+        long userId = 3402;
         int musicLength = 50;
         int noise = 33;
-        GenerateMusicRequest generateMusicRequest = GenerateMusicRequest.builder().musicLength(musicLength).noise(noise).build();
+        GenerateMusicRequest generateMusicRequest = GenerateMusicRequest.builder().musicLength(musicLength).noise(noise).userId(userId).build();
         MultipartFile image = randomMultipartFile();
 
-        GenerateMusicService.Command actual = generateMusicRequest.toCommand(image, userId.getValue());
+        GenerateMusicService.Command actual = generateMusicRequest.toCommand(image);
 
-        assertEquals(userId, actual.getUserId());
+        assertEquals(new User.UserId(userId), actual.getUserId());
         assertEquals(image.getContentType(), actual.getImage().getMediaType());
         assertEquals(image.getResource(), actual.getImage().getResource());
         assertEquals(image.getSize(), actual.getImage().getSize());
