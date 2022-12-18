@@ -1,4 +1,4 @@
-package com.melody.melody.application.service.user;
+package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.dto.SearchedUser;
 import com.melody.melody.domain.model.TestUserDomainGenerator;

@@ -39,7 +39,7 @@ public class TestMusicDomainGenerator {
 
     public static Music generatedMusic(){
         return Music.generate(
-                TestUserDomainGenerator.randomUserId(),
+                String.valueOf(TestUserDomainGenerator.randomUserId()),
                 randomEmotion(),
                 randomExplanation(),
                 randomImageUrl()
@@ -72,7 +72,7 @@ public class TestMusicDomainGenerator {
     public static Music randomMusic(Music.MusicId musicId, User.UserId userId, Music.Status status, Music.MusicUrl musicUrl){
         return Music.builder()
                 .id(musicId)
-                .userId(userId)
+                .userId(String.valueOf(userId.getValue()))
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())

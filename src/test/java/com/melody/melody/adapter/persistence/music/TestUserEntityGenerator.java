@@ -1,15 +1,12 @@
-package com.melody.melody.adapter.persistence.user;
+package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.adapter.persistence.post.PostEntity;
-import com.melody.melody.adapter.persistence.post.TestPostEntityGenerator;
-import com.melody.melody.application.service.user.TestSearchedUserServiceGenerator;
+import com.melody.melody.adapter.persistence.user.UserEntity;
+import com.melody.melody.application.service.music.TestSearchedUserServiceGenerator;
 import com.melody.melody.domain.model.*;
 import net.datafaker.Faker;
 import org.junit.platform.commons.util.StringUtils;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;

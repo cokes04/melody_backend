@@ -14,7 +14,7 @@ class GenerateMusicRequestTest {
     @Test
     void toCommand_returnCreatedCommand() {
 
-        long userId = 3402;
+        String userId = "3402";
         int musicLength = 50;
         int noise = 33;
         GenerateMusicRequest generateMusicRequest = GenerateMusicRequest.builder().musicLength(musicLength).noise(noise).userId(userId).build();
@@ -22,7 +22,7 @@ class GenerateMusicRequestTest {
 
         GenerateMusicService.Command actual = generateMusicRequest.toCommand(image);
 
-        assertEquals(new User.UserId(userId), actual.getUserId());
+        assertEquals(userId, actual.getUserId());
         assertEquals(image.getContentType(), actual.getImage().getMediaType());
         assertEquals(image.getResource(), actual.getImage().getResource());
         assertEquals(image.getSize(), actual.getImage().getSize());

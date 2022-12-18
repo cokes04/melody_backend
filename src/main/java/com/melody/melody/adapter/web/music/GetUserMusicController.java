@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.websocket.server.PathParam;
@@ -25,8 +26,9 @@ public class GetUserMusicController {
     private final GetUserMusicService service;
 
     @GetMapping(value = "/users/{userId}/music")
-    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@PathParam("userId") User.UserId userId,
+    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@PathVariable("userId") String userId,
                                                                      MusicPagingRequest paging){
+
         PagingInfo<MusicSort> musicPaging = paging.toPagingInfo();
         GetUserMusicService.Command command = new GetUserMusicService.Command(userId, MusicPublish.Everything, musicPaging);
         GetUserMusicService.Result result = service.execute(command);

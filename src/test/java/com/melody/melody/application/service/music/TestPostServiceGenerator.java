@@ -1,6 +1,8 @@
-package com.melody.melody.application.service.post;
+package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.application.service.post.CreatePostService;
+import com.melody.melody.application.service.post.UpdatePostService;
 import com.melody.melody.domain.model.*;
 import net.datafaker.Faker;
 import org.springframework.core.io.UrlResource;

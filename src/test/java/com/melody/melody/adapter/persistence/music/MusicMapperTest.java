@@ -23,7 +23,7 @@ class MusicMapperTest {
 
         assertTrue(music.getId().isPresent());
         assertEquals(music.getId().get().getValue(), actual.getId());
-        assertEquals(music.getUserId().getValue(), actual.getUserId());
+        assertEquals(music.getUserId(), actual.getUserId());
         assertEquals(music.getEmotion(), actual.getEmotion());
         assertEquals(music.getImageUrl().getValue(), actual.getImageUrl());
         assertEquals(music.getExplanation().getValue(), actual.getExplanation());
@@ -41,7 +41,7 @@ class MusicMapperTest {
 
         assertTrue(actual.getId().isPresent());
         assertEquals(entity.getId(), actual.getId().get().getValue());
-        assertEquals(entity.getUserId(), actual.getUserId().getValue());
+        assertEquals(entity.getUserId(), actual.getUserId());
         assertEquals(entity.getEmotion(), actual.getEmotion());
         assertEquals(entity.getImageUrl(), actual.getImageUrl().getValue());
         assertEquals(entity.getExplanation(), actual.getExplanation().getValue());
@@ -58,7 +58,7 @@ class MusicMapperTest {
 
         assertTrue(actual.getId().isPresent());
         assertEquals(musicData.getId(), actual.getId().get().getValue());
-        assertEquals(musicData.getUserId(), actual.getUserId().getValue());
+        assertEquals(musicData.getUserId(), actual.getUserId());
         assertEquals(musicData.getEmotion(), actual.getEmotion());
         assertEquals(musicData.getImageUrl(), actual.getImageUrl().getValue());
         assertEquals(musicData.getExplanation(), actual.getExplanation().getValue());

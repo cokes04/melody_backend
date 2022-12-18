@@ -14,7 +14,7 @@ class MusicTest {
 
     @Test
     public void generate_ReturnCreatedMusic(){
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        String userId = String.valueOf(TestUserDomainGenerator.randomUserId());
         Emotion emotion = randomEmotion();
         Music.Explanation explanation = randomExplanation();
         Music.ImageUrl imageUrl = randomImageUrl();

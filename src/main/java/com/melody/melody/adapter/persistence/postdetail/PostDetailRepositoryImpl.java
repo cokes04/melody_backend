@@ -87,7 +87,7 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
                         postEntity.open,
                         postEntity.deleted,
                         postEntity.createdDate,
-                        userEntity.id,
+                        userEntity.id.stringValue(),
                         userEntity.nickName,
                         musicEntity.id,
                         musicEntity.emotion,

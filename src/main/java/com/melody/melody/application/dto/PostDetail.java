@@ -28,7 +28,7 @@ public class PostDetail {
     private LocalDateTime createdDate;
 
 
-    private Long userId;
+    private String userId;
 
     private String nickname;
 

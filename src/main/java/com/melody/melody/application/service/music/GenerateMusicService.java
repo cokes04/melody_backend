@@ -47,7 +47,7 @@ public class GenerateMusicService implements UseCase<GenerateMusicService.Comman
 
     @Value
     public static class Command implements UseCase.Command{
-        private final User.UserId userId;
+        private final String userId;
         private final Image image;
         private final int musicLength;
         private final int noise;

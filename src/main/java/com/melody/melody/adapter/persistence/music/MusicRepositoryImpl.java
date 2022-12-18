@@ -50,10 +50,10 @@ public class MusicRepositoryImpl implements MusicRepository {
     }
 
     @Override
-    public PagingResult<Music> findByUserId(User.UserId userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging) {
+    public PagingResult<Music> findByUserId(String userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging) {
         BooleanBuilder where = new BooleanBuilder();
         where.and(musicEntity.status.ne(Music.Status.DELETED));
-        where.and(musicEntity.userId.eq(userId.getValue()));
+        where.and(musicEntity.userId.eq(userId));
 
         JPAQuery<MusicData> query = select();
 
@@ -76,10 +76,10 @@ public class MusicRepositoryImpl implements MusicRepository {
         return  new PagingResult<Music>(result, result.size(), totalSize, (int)Math.ceil((double) totalSize / musicPaging.getSize()));
     }
 
-    public void deleteByUserId(User.UserId userId){
+    public void deleteByUserId(String userId){
         factory.update(musicEntity)
                 .set(musicEntity.status, Music.Status.DELETED)
-                .where(musicEntity.userId.eq(userId.getValue()))
+                .where(musicEntity.userId.eq(userId))
                 .execute();
     }
 

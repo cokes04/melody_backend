@@ -14,7 +14,7 @@ import javax.validation.constraints.Positive;
 @Builder
 public class GenerateMusicRequest {
     @Positive @NotNull
-    private long userId;
+    private String userId;
 
     @Positive @NotNull
     private int musicLength;
@@ -24,7 +24,7 @@ public class GenerateMusicRequest {
 
     public GenerateMusicService.Command toCommand(MultipartFile image){
         return new GenerateMusicService.Command(
-                new User.UserId(userId),
+                userId,
                 this.toImage(image),
                 this.musicLength,
                 this.noise

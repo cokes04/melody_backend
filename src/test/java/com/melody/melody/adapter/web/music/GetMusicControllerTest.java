@@ -65,7 +65,7 @@ class GetMusicControllerTest {
                 .thenReturn(result);
 
         mockMvc.perform(
-                get("/music/{id}", musicId.getValue())
+                get("/music/{musicId}", musicId.getValue())
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andExpect(status().isOk())
@@ -73,11 +73,11 @@ class GetMusicControllerTest {
                         document(
                                 "get-music",
                                 pathParameters(
-                                        parameterWithName("id").description("음악 아이디")
+                                        parameterWithName("musicId").description("음악 아이디")
                                 ),
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),
-                                        fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.NUMBER),
+                                        fieldWithPath("userId").description("유저 아이디").type(JsonFieldType.STRING),
                                         fieldWithPath("emotion").description("감정(감정 분류 코드)").type(JsonFieldType.STRING),
                                         fieldWithPath("explanation").description("이미지 설명").type(JsonFieldType.STRING),
                                         fieldWithPath("imageUrl").description("이미지 URI").type(JsonFieldType.STRING),

@@ -15,7 +15,7 @@ import lombok.Value;
 public class MusicResponse {
     private final Long musicId;
 
-    private final Long userId;
+    private final String userId;
 
     @JsonSerialize(converter = EmotionToStringConverter.class)
     private final Emotion emotion;
@@ -33,7 +33,7 @@ public class MusicResponse {
     public static MusicResponse to(Music music){
         return MusicResponse.builder()
                 .musicId(music.getId().map(Music.MusicId::getValue).orElse(-1L))
-                .userId(music.getUserId().getValue())
+                .userId(music.getUserId())
                 .imageUrl(music.getImageUrl().getValue())
                 .explanation(music.getExplanation().getValue())
                 .emotion(music.getEmotion())

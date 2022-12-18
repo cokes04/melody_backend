@@ -26,6 +26,6 @@ public class UserWithdrewEventHandler implements EventHandler<UserWithdrew> {
     public void handle(UserWithdrew event) {
         User.UserId userId = new User.UserId(event.getUserId());
         postRepository.deleteByUserId(userId);
-        musicRepository.deleteByUserId(userId);
+        musicRepository.deleteByUserId(String.valueOf(userId));
     }
 }

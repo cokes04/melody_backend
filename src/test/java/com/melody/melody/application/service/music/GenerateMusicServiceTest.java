@@ -48,7 +48,7 @@ class GenerateMusicServiceTest {
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
         GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand();
 
-        User.UserId userId = command.getUserId();
+        String userId = command.getUserId();
         Music.MusicId musicId = randomMusicId();
         Music.ImageUrl imageUrl = randomImageUrl();
         Music.Explanation explanation = randomExplanation();

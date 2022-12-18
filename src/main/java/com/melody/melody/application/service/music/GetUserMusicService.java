@@ -26,7 +26,7 @@ public class GetUserMusicService implements UseCase<GetUserMusicService.Command,
 
     @Value
     public static class Command implements UseCase.Command {
-        private final User.UserId userId;
+        private final String userId;
         private final MusicPublish musicPublishing;
         private final PagingInfo<MusicSort> musicPaging;
     }

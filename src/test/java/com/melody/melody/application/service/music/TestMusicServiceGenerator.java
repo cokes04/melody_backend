@@ -26,7 +26,7 @@ public class TestMusicServiceGenerator {
 
     public static GenerateMusicService.Command randomGenerateMusicCommand(User.UserId userId) throws MalformedURLException {
         return new GenerateMusicService.Command(
-                userId,
+                String.valueOf(userId),
                 randomImage(),
                 randomMusicLength(),
                 randomNoise()

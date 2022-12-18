@@ -6,7 +6,7 @@ import lombok.Value;
 @Value
 @Builder
 public class WriterResponse {
-    private Long userId;
+    private String userId;
 
     private String nickname;
 }

@@ -1,6 +1,7 @@
-package com.melody.melody.application.service.user;
+package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.application.service.user.CreateUserService;
 import com.melody.melody.domain.model.Password;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import net.datafaker.Faker;

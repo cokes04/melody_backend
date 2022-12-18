@@ -1,9 +1,5 @@
 package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.adapter.persistence.post.PostEntity;
-import com.melody.melody.adapter.persistence.post.TestPostEntityGenerator;
-import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
@@ -63,7 +59,7 @@ public class TestMusicEntityGenerator {
                 .musicUrl(randomMusicUrl())
                 .status(status)
                 .createdDate(createdDate)
-                .userId(userEntity.getId())
+                .userId(String.valueOf(userEntity.getId()))
                 .build();
     }
 
@@ -75,7 +71,7 @@ public class TestMusicEntityGenerator {
                 .imageUrl(randomImageUrl())
                 .musicUrl(randomMusicUrl())
                 .status(randomStatus())
-                .userId(TestUserEntityGenerator.randomId())
+                .userId(String.valueOf(TestUserEntityGenerator.randomId()))
                 .build();
     }
 

@@ -11,7 +11,7 @@ public class PostDetailData extends PostDetail {
 
     @QueryProjection
     public PostDetailData(Long id, String title, String content, int likeCount, boolean open, boolean deleted, LocalDateTime createdDate,
-                          Long userId, String nickname, Long musicId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status musicStatus) {
+                          String userId, String nickname, Long musicId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status musicStatus) {
         super(id, title, content, likeCount, open, deleted, createdDate, userId, nickname, musicId, emotion, explanation, imageUrl, musicUrl, musicStatus);
     }
 }

@@ -12,7 +12,7 @@ import lombok.Setter;
 public class MusicData{
     private Long id;
 
-    private Long userId;
+    private String userId;
 
     private Emotion emotion;
 
@@ -26,7 +26,7 @@ public class MusicData{
 
     @Builder
     @QueryProjection
-    public MusicData(Long id, Long userId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status status) {
+    public MusicData(Long id, String userId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status status) {
         this.id = id;
         this.userId = userId;
         this.emotion = emotion;

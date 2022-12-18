@@ -30,7 +30,7 @@ class GetUserMusicServiceTest {
 
     @Test
     void excute_ShouldReturnList() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        String userId = String.valueOf(TestUserDomainGenerator.randomUserId());
         MusicPublish publish = MusicPublish.Everything;
         PagingInfo<MusicSort> musicPaging = new PagingInfo<>(2, 10, MusicSort.newest);
 

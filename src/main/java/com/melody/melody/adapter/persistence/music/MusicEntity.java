@@ -44,5 +44,5 @@ public class MusicEntity {
     private LocalDateTime createdDate;
 
     @Column(name = "USER_ID", nullable = true, unique = false)
-    private Long userId;
+    private String userId;
 }

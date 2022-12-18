@@ -11,7 +11,7 @@ public interface MusicRepository {
 
     Optional<Music> findById(Music.MusicId id);
 
-    PagingResult<Music> findByUserId(User.UserId userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging);
+    PagingResult<Music> findByUserId(String userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging);
 
-    void deleteByUserId(User.UserId userId);
+    void deleteByUserId(String userId);
 }
