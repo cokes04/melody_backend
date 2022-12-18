@@ -24,7 +24,7 @@ class EmailIsUniqueTest {
     }
 
     @Test
-    void check() {
+    void check_ShouldPass() {
         User.Email email = randomEmail();
 
         when(repository.existsByEmail(email))

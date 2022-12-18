@@ -24,7 +24,7 @@ class PasswordMatchesTest {
     }
 
     @Test
-    void check() {
+    void check_ShouldPass() {
         String raw = "randomRawPassword";
         Password encrypterd = new Password("randomEncrypterdPassword");
 

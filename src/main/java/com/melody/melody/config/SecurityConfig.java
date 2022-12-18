@@ -58,14 +58,18 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/login", "/logout").permitAll()
 
+                .antMatchers(HttpMethod.GET, "/users/search/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/{userId}").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.PATCH, "/users/{userId}/password").hasRole("USER")
+                .antMatchers(HttpMethod.PATCH, "/users/{userId}").hasRole("USER")
                 .antMatchers(HttpMethod.DELETE, "/users").hasRole("USER")
-                .antMatchers(HttpMethod.GET, "/users/{userId}/posts").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/search/keyword").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/music/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/users/{userId}/music").permitAll()
+                .antMatchers(HttpMethod.GET, "/music/**").hasRole("USER")
                 .antMatchers(HttpMethod.POST,"/music/**").hasRole("USER")
 
+                .antMatchers(HttpMethod.GET, "/users/{userId}/posts").permitAll()
                 .antMatchers(HttpMethod.GET, "/posts/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/posts").hasRole("USER")
                 .antMatchers(HttpMethod.PATCH, "/posts/**").hasRole("USER")

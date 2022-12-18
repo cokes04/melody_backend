@@ -54,7 +54,7 @@ class GetMusicControllerTest {
     }
 
     @Test
-    void get_Ok() throws Exception {
+    void getMusic_Ok() throws Exception {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
         Music music = TestMusicDomainGenerator.randomMusic();
 

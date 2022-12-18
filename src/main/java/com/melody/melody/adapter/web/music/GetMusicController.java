@@ -23,7 +23,7 @@ public class GetMusicController {
     private final GetMusicService service;
 
     @GetMapping(value = "/music/{id}")
-    public ResponseEntity<MusicResponse> get(@NotNull @Positive @PathVariable long id){
+    public ResponseEntity<MusicResponse> getMusic(@NotNull @Positive @PathVariable long id){
         Music.MusicId musicId = new Music.MusicId(id);
         GetMusicService.Command command = new GetMusicService.Command(musicId);
         GetMusicService.Result result = service.execute(command);

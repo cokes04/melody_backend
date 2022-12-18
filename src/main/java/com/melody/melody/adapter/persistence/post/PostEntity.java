@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @EqualsAndHashCode(exclude = {"userEntity", "musicEntity"})
-@Entity(name = "POST")
+@Entity(name = "POSTA")
 @Table(name = "POST")
 public class PostEntity {
 
@@ -22,15 +22,19 @@ public class PostEntity {
     @Column(name = "POST_ID")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "TITLE", nullable = false, columnDefinition = "varchar(128)")
     private String title;
 
+    @Column(name = "CONTENT", nullable = false, columnDefinition = "varchar(2048)")
     private String content;
 
+    @Column(name = "LIKE_COUNT", nullable = false, columnDefinition = "int")
     private int likeCount;
 
+    @Column(name = "OPEN", nullable = false)
     private boolean open;
 
+    @Column(name = "DELETED", nullable = false)
     private boolean deleted;
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.EAGER)
@@ -38,9 +42,9 @@ public class PostEntity {
     private UserEntity userEntity;
 
     @OneToOne(targetEntity = MusicEntity.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "MUSIC_ID", nullable = false)
+    @JoinColumn(name = "MUSIC_ID", nullable = false, unique = true)
     private MusicEntity musicEntity;
 
-    @Column(updatable = false)
+    @JoinColumn(name = "CREATED_DATE", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 }

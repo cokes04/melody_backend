@@ -66,7 +66,7 @@ class GetUserControllerTest {
     }
 
     @Test
-    void search_Ok() throws Exception{
+    void getUser_Ok() throws Exception{
         User user = TestUserDomainGenerator.randomUser();
         User.UserId userId = user.getId().get();
         GetUserService.Command command = new GetUserService.Command(userId);

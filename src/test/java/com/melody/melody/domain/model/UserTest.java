@@ -39,7 +39,7 @@ class UserTest {
     }
 
     @Test
-    void create() {
+    void create_ShuoldReturnCreatedUser() {
         String nickName = randomNickName().getValue();
         String email =randomEmail().getValue();
         Password password =randomPassword();
@@ -67,7 +67,7 @@ class UserTest {
     }
 
     @Test
-    void update_ShouldException_WhenWithdawn() {
+    void update_ShouldThrowException_WhenWithdawn() {
         User user = randomUser();
         user.withdraw();
         String nickName = randomNickName().getValue();
@@ -97,7 +97,7 @@ class UserTest {
     }
 
     @Test
-    void changePassword_ShouldException_WhenOldPasswordNotMatches() {
+    void changePassword_ShouldThrowException_WhenOldPasswordNotMatches() {
         User user = randomUser();
         String oldRawPassword =  "abcdefg123EWAS";
         Password newPassword = randomPassword();
@@ -113,7 +113,7 @@ class UserTest {
     }
 
     @Test
-    void changePassword_ShouldException_WhenWithdawn() {
+    void changePassword_ShouldThrowException_WhenWithdawn() {
         User user = randomUser();
         user.withdraw();
         String oldRawPassword =  "abcdefg123EWAS";

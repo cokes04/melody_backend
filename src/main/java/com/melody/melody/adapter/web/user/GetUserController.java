@@ -25,7 +25,7 @@ public class GetUserController {
     private final GetUserService service;
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<?> get(@PathVariable("userId") User.UserId userId){
+    public ResponseEntity<?> getUser(@PathVariable("userId") User.UserId userId){
         GetUserService.Command command = new GetUserService.Command(userId);
         GetUserService.Result result = service.execute(command);
 
