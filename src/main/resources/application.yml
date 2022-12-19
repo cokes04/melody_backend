@@ -132,7 +132,7 @@ logging.level.com.melody.melody: debug
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://database:3306/reply_db?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&useLegacyDatetimeCode=false
+    url: ENC(+bk5OPtYBi7RTO5H53mWnquTblpKOvdcqJgD8C3Nd/lRVfvJeyqEaHfJjUeCqif6Pcf/JCVLwpuODG0DE/04hwj82wyPk/4Q11YVYzXXf9IqderK3QkrE64jnAEQ+i+VxqaQddW2dD0ZJGT1W98ie7YQkd3rKpJYQPFPoS900MGRIR/gzrbDvwQujWysXJ2cQso3Gewt2DmO9lH1T3i5ygoKmqhrn4YzKyMFMPf9XHIS5nAfllaY5D5kuMjOFfgYTIOSFAf3ULc=)
     username: root
     password: ${DATABASE_ROOT_PWD}
 

@@ -17,25 +17,6 @@ services:
     logging:
       driver: json-file
 
-  database:
-    image: mysql:5.7
-    container_name: database
-    mem_limit: 500m
-    ports:
-      - 3306:3306
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PWD}
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - mydatavolume:/var/lib/mysql
-    healthcheck:
-      test: "/usr/bin/mysql --user=root --password=${DATABASE_ROOT_PWD} --execute \"SHOW DATABASES;\""
-      interval: 10s
-      timeout: 5s
-      retries: 15
-
   rabbitmq:
     image: rabbitmq:management
     container_name: rabbitmq
