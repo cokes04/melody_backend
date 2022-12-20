@@ -21,7 +21,7 @@ public class LambdaEmotionClassifier implements EmotionClassifier {
 
     private WebClient webClient;
 
-    @Value("${aws.lambda.emotionClassification.uri}")
+    @Value("${cloud.aws.lambda.emotionClassification.uri}")
     private String uri;
 
     static {

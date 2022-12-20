@@ -1,10 +1,9 @@
 package com.melody.melody.application.service.user;
 
-import com.melody.melody.application.handler.Events;
+import com.melody.melody.domain.event.Events;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
-import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.TestUserDomainGenerator;

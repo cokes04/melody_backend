@@ -1,7 +1,7 @@
 package com.melody.melody.adapter.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.melody.melody.application.port.out.ImageFileStorage;
@@ -9,6 +9,8 @@ import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.model.Music;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -16,17 +18,16 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @Component
 public class S3ImageFileStorage implements ImageFileStorage {
     private final AmazonS3 amazonS3;
-    private final String bucketName;
-    private final List<String> allowMediaType;
 
-    public S3ImageFileStorage(AmazonS3 amazonS3, S3Config s3Config) {
-        this.amazonS3 = amazonS3;
-        this.bucketName = s3Config.getBucketName();
-        this.allowMediaType = s3Config.getAllowMediaType();
-    }
+    @Value("${cloud.aws.s3.image.bucketName}")
+    private String bucketName;
+
+    @Value("${cloud.aws.s3.image.allowMediaType}")
+    private List<String> allowMediaType;
 
     public Music.ImageUrl save(GenerateMusicService.Image image){
         validate(image);

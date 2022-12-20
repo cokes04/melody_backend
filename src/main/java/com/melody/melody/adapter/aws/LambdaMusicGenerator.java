@@ -22,7 +22,7 @@ public class LambdaMusicGenerator implements MusicGenerator {
 
     private WebClient webClient;
 
-    @Value("${aws.lambda.generateMusic.uri}")
+    @Value("${cloud.aws.lambda.generateMusic.uri}")
     private String uri;
 
     static {

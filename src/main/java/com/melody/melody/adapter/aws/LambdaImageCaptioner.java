@@ -19,7 +19,7 @@ public class LambdaImageCaptioner implements ImageCaptioner {
 
     private WebClient webClient;
 
-    @Value("${aws.lambda.imageCaptioning.uri}")
+    @Value("${cloud.aws.lambda.imageCaptioning.uri}")
     private String uri;
 
     static {

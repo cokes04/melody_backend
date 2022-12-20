@@ -9,34 +9,5 @@ services:
       - 80:8080
     env_file:
       - '.env'
-    depends_on:
-      database:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     logging:
       driver: json-file
-
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: rabbitmq
-    mem_limit: 400m
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USR}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PWD}
-    healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
-      interval: 10s
-      timeout: 5s
-      retries: 15
-
-volumes:
-  mydatavolume:
-
-networks:
-  default:
-    external:
-      name: my_net

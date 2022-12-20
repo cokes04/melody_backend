@@ -1,6 +1,5 @@
 package com.melody.melody.adapter.persistence.user;
 
-import com.amazonaws.services.apigateway.model.Op;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;

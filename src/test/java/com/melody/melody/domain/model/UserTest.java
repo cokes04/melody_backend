@@ -1,6 +1,6 @@
 package com.melody.melody.domain.model;
 
-import com.melody.melody.application.handler.Events;
+import com.melody.melody.domain.event.Events;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;

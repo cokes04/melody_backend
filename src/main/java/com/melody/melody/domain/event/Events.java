@@ -1,4 +1,4 @@
-package com.melody.melody.application.handler;
+package com.melody.melody.domain.event;
 
 import com.melody.melody.domain.event.Event;
 import org.springframework.context.ApplicationEventPublisher;

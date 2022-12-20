@@ -28,25 +28,6 @@ spring:
   profiles :
     active : dev
 
-rabbit:
-  exchange:
-    compose-music :
-      name: "x.compose-music"
-      durable : false
-      autoDelete : true
-
-  queue:
-    complete-music:
-      name: "q.complete-music"
-      durable : false
-      exclusive : true
-      autoDelete : true
-
-  binding:
-    - exchange: ${rabbit.exchange.compose-music.name}
-      queue: ${rabbit.queue.complete-music.name}
-      key: "#"
-
 ---
 spring.config.activate.on-profile: dev
 
@@ -75,22 +56,6 @@ spring:
         default_batch_fetch_size: 100
         use_sql_comments: true
 
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    dynamic: true
-
-    listener:
-      simple:
-        retry:
-          enabled: true
-          initial-interval: 2s
-          max-attempts: 3
-          max-interval: 5s
-          multiplier: 2
-
 app:
   jwt:
     accessToken:
@@ -99,68 +64,70 @@ app:
       name: Authorization
 
     refreshToken:
-      validMilliSecond: 1036800000 # 12 * 24 * 60 * 60 * 1000 # 12일
+      validMilliSecond: 5184000000 # 60 * 24 * 60 * 60 * 1000 # 60일
       secretKey: ENC(ZIFmw2pQ8F06AjNOW2XH98hJ0DwQkf7+9VfXCflEsyBZEXCZEYjszZh/J3RgEV96WpGhEEwdWf4=)
       name: rt
 
-aws:
-  s3:
-    image:
-      credentials:
-        accessKey: ENC(EodsFXWhMnY1vZc5XkY9rFmLKpgFz4h8gmHvsZrwQOw=)
-        secretKey: ENC(AqnKcxmzs3lGMGMTypBODOS/vqiJN26DY1kD54yMbVIY/AWSwycnVoN8Yb+gPmlQPy5iiEQktkw=)
-      region: ap-northeast-2
-      bucketName: melody-image-bucket
-      allowMediaType: image/jpeg,image/jpg
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(WKZ06xz3g4SnxhLAahEsqnrvFCDyLFWALa9NG2DX1xU=)
+      secretKey: ENC(JHiFE2vg3IzhiSl/qoRrsm7HrxINX4fa2hHXSJvmnUK9CIURCjPlVxiXGfkwGNHlEKl7YzAnETA=)
 
-  lambda:
-    generateMusic:
-      uri: ENC(9LAe9lSFdHVaOIp5iAAYHtD44zs6wIYJslqX5G8bVhFFZ76VgyAiimn2KCOuns+jBVKSzn4jNhKJSnBsdSCaG0ceatRSufT8o1w8Y8nh0wk=)
+    stack:
+      auto: false
 
-    emotionClassification:
-      uri: ENC(4gFc/D7Ao7Q2s3jq2N5Oak4u8nxwSo77/+j2spO7SpOOyAWvceqHOKCUwS3bOrt50gL7JGZwcuyJ4AVJolmXCjn24UTbrRvj/jDg4Jma8IjmqxSltM+Mgw==)
+    region:
+      static: ap-northeast-2
+      auto: false
 
-    imageCaptioning:
-      uri: ENC(TgTOHT5QVUaJawBnDmLyZoCJUMQjIQ/48VZ1qbjphRAj05ui5sZ/qKnf24eQBNo1QeOAMfz3dFgh5siRQpr6c7wV1WnQK/9XVjsQcGPmQZFvxVhmTxqz8A==)
+    s3:
+      image:
+        bucketName: melody-image-bucket
+        allowMediaType: image/jpeg,image/jpg
+
+    sqs:
+      queue:
+        complete-music:
+          name: complete-music-dev
+          uri: ENC(NqZ6/8vLxQeW8ZPa9ibF5dePexxRs4Xb9HBXx4q3CxE7exdSG6tZ89tA0CTQgSTeXJKMu5W1fBEtwDvGt94RnbOs5FfKQka1nY0BbX/Nm3w1ojE5YBkNNQ==)
+
+    lambda:
+      generateMusic:
+        uri: ENC(9LAe9lSFdHVaOIp5iAAYHtD44zs6wIYJslqX5G8bVhFFZ76VgyAiimn2KCOuns+jBVKSzn4jNhKJSnBsdSCaG0ceatRSufT8o1w8Y8nh0wk=)
+
+      emotionClassification:
+        uri: ENC(4gFc/D7Ao7Q2s3jq2N5Oak4u8nxwSo77/+j2spO7SpOOyAWvceqHOKCUwS3bOrt50gL7JGZwcuyJ4AVJolmXCjn24UTbrRvj/jDg4Jma8IjmqxSltM+Mgw==)
+
+      imageCaptioning:
+        uri: ENC(TgTOHT5QVUaJawBnDmLyZoCJUMQjIQ/48VZ1qbjphRAj05ui5sZ/qKnf24eQBNo1QeOAMfz3dFgh5siRQpr6c7wV1WnQK/9XVjsQcGPmQZFvxVhmTxqz8A==)
 
 ---
 spring.config.activate.on-profile: production
 
-logging.level.root: debug
-logging.level.com.melody.melody: debug
+logging.level.root: info
+logging.level.com.melody.melody: info
 
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ENC(+bk5OPtYBi7RTO5H53mWnquTblpKOvdcqJgD8C3Nd/lRVfvJeyqEaHfJjUeCqif6Pcf/JCVLwpuODG0DE/04hwj82wyPk/4Q11YVYzXXf9IqderK3QkrE64jnAEQ+i+VxqaQddW2dD0ZJGT1W98ie7YQkd3rKpJYQPFPoS900MGRIR/gzrbDvwQujWysXJ2cQso3Gewt2DmO9lH1T3i5ygoKmqhrn4YzKyMFMPf9XHIS5nAfllaY5D5kuMjOFfgYTIOSFAf3ULc=)
-    username: root
-    password: ${DATABASE_ROOT_PWD}
+    username: ENC(6R7trh9/opACeHwgD0S5vg==)
+    password: ENC(pq82a9orAlXGOqXTmFKXCHe8bUUJfBxJpfo4OUVBEPLIHIM7i7pd01jUBfDqUlGh)
 
   jpa :
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 
     hibernate:
-      ddl_auto: create
+      ddl_auto: validate
 
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+        show_sql: false
+        format_sql: false
         default_batch_fetch_size: 500
-        use_sql_comments: true
-
-  rabbitmq:
-    dynamic: true
-
-    listener:
-      simple:
-        retry:
-          enabled: true
-          initial-interval: 2s
-          max-attempts: 3
-          max-interval: 5s
-          multiplier: 2
+        use_sql_comments: false
 
 app:
   jwt:
@@ -174,22 +141,36 @@ app:
       secretKey: ENC(FdL5HqsnhlQr3moxnneFaLUeCDdXyROUMLOPOUIKfVCnN043e9PDZ5CHsQ4u6X/Yq8iNgEiEZeo=)
       name: rt
 
-aws:
-  s3:
-    image:
-      credentials:
-        accessKey: ENC(oobpEq9E6ZD2BONeQxALsbNDVdPHUiW76ods0+qN/SE=)
-        secretKey: ENC(ZB1Vjxr739ZsWaIfUOSSJlFAj4M1J6Se/MfJH2NSjHCLbYSyAVodHSVpg5ztcpg8h6sJDqtFKY0=)
-      region: ap-northeast-2
-      bucketName: melody-image-bucket
-      allowMediaType: image/jpeg,image/jpg
+cloud:
+  aws:
+    credentials:
+      accessKey: ENC(V06F/sfMLSMds9/6xkw71QBAZD+SayJLkxavr078udg=)
+      secretKey: ENC(FayBBGiUT/gRk8lguKhb39fvR3Hg6IyZOYR1ag+2uWsOYnmYQ+Cj5x1m+HZSYTxVWm4f0LJWpU0=)
 
-  lambda:
-    generateMusic:
-      uri: ENC(HKyRxTyNmwYR4Un4lKcfpL2s+SsMahuzfoOMjsS0mQ6XZ3G1DTDN3N02+rxnKUJtjbMIVdPAXmkV5zU5nG1YqiaI2GJrqPa9xUkCg2hLx/0=)
+    stack:
+      auto: false
 
-    emotionClassification:
-      uri: ENC(MEgmLp7T2WIhvGZE9iS1dNd3cOvtZVkGlRceRxVgleOxDhjRRsIAAnkD3PVunYIcNx/mapQRJSLQ1pMg7KXeEA/03pz2KL1XT7kj71HSI2KtUb/z4zG5Ug==)
+    region:
+      static: ap-northeast-2
+      auto: false
 
-    imageCaptioning:
-      uri: ENC(MOvxhR7AjpU4uFEgsSUvzoQZJJ4pXmoygmDoOpxghv9VWJqSrjixsXE5/6bJIiC8H37VZr4hORpayCVjzAo7ksMQBIb5Jt+4dPJl9uJVu50PzpQQuXZMqw==)
+    sqs:
+      queue:
+        complete-music:
+          name: complete-music
+          uri: ENC(TNahtLiI/GDajKWX26x0ymO8SS/PnWr1lVX+QSkR13fD03bewvXtsfUPwOz5rb3+inD9yeFklP6h1ORW5su00JH3qFrtzMQaM7TgWpevUFI=)
+
+    s3:
+      image:
+        bucketName: melody-image-bucket
+        allowMediaType: image/jpeg,image/jpg
+
+    lambda:
+      generateMusic:
+        uri: ENC(HKyRxTyNmwYR4Un4lKcfpL2s+SsMahuzfoOMjsS0mQ6XZ3G1DTDN3N02+rxnKUJtjbMIVdPAXmkV5zU5nG1YqiaI2GJrqPa9xUkCg2hLx/0=)
+
+      emotionClassification:
+        uri: ENC(MEgmLp7T2WIhvGZE9iS1dNd3cOvtZVkGlRceRxVgleOxDhjRRsIAAnkD3PVunYIcNx/mapQRJSLQ1pMg7KXeEA/03pz2KL1XT7kj71HSI2KtUb/z4zG5Ug==)
+
+      imageCaptioning:
+        uri: ENC(MOvxhR7AjpU4uFEgsSUvzoQZJJ4pXmoygmDoOpxghv9VWJqSrjixsXE5/6bJIiC8H37VZr4hORpayCVjzAo7ksMQBIb5Jt+4dPJl9uJVu50PzpQQuXZMqw==)
