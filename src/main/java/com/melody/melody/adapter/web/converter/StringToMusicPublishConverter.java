@@ -4,11 +4,9 @@ package com.melody.melody.adapter.web.converter;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.melody.melody.application.dto.MusicPublish;
-import org.springframework.core.convert.converter.Converter;
+import com.melody.melody.domain.model.Music;
 
-public class StringToMusicPublishConverter implements
-        Converter<String, MusicPublish>,
-        com.fasterxml.jackson.databind.util.Converter<String, MusicPublish>{
+public class StringToMusicPublishConverter implements Converter<String, MusicPublish>{
 
   @Override
   public MusicPublish convert(String source) {

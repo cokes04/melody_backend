@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.melody.melody.domain.model.Emotion;
 
-public class EmotionToStringConverter implements
-        org.springframework.core.convert.converter.Converter<Emotion, String>,
-        com.fasterxml.jackson.databind.util.Converter<Emotion, String>{
+public class EmotionToStringConverter implements Converter<Emotion, String> {
 
     @Override
     public String convert(Emotion source) {
