@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -20,8 +20,8 @@ public class UpdateUserController {
     private final UpdateUserService service;
 
     @PatchMapping("/users/{userId}")
-    public ResponseEntity<?> update(@Positive @PathVariable("userId") long userId, @RequestBody UpdateUserRequest request){
-        UpdateUserService.Command command = new UpdateUserService.Command(new User.UserId(userId), request.getNickName());
+    public ResponseEntity<?> update(@NotNull @PathVariable("userId") User.UserId userId, @RequestBody UpdateUserRequest request){
+        UpdateUserService.Command command = new UpdateUserService.Command(userId, request.getNickName());
         service.execute(command);
         return ResponseEntity.ok().build();
     }

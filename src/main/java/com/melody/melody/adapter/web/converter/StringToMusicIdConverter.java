@@ -3,13 +3,13 @@ package com.melody.melody.adapter.web.converter;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.Music;
 
-public class StringToUserIdConverter implements Converter<String, User.UserId> {
+public class StringToMusicIdConverter implements Converter<String, Music.MusicId> {
 
   @Override
-  public User.UserId convert(String source) {
-    return new User.UserId(Long.parseLong(source));
+  public Music.MusicId convert(String source) {
+    return new Music.MusicId(Long.parseLong(source));
   }
 
   @Override
@@ -19,6 +19,6 @@ public class StringToUserIdConverter implements Converter<String, User.UserId> {
 
   @Override
   public JavaType getOutputType(TypeFactory typeFactory) {
-    return typeFactory.constructType(User.UserId.class);
+    return typeFactory.constructType(Music.MusicId.class);
   }
 }

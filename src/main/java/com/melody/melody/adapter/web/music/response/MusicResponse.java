@@ -6,7 +6,6 @@ import com.melody.melody.adapter.web.converter.EmotionToStringConverter;
 import com.melody.melody.adapter.web.converter.MusicStatusToStringConverter;
 import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.User;
 import lombok.Builder;
 import lombok.Value;
 

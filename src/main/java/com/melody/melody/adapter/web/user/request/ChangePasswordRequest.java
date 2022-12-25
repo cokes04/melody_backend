@@ -19,9 +19,9 @@ public class ChangePasswordRequest {
     @Size(min=10, max=20)
     private final String newPassword;
 
-    public ChangePasswordService.Command toCommand(long userId){
+    public ChangePasswordService.Command toCommand(User.UserId userId){
         return new ChangePasswordService.Command(
-                new User.UserId(userId),
+                userId,
                 this.oldPassword,
                 this.newPassword
         );

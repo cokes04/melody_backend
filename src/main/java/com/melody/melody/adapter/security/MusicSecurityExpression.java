@@ -4,8 +4,6 @@ import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;

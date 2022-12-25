@@ -2,7 +2,6 @@ package com.melody.melody.adapter.web.exception;
 
 import com.melody.melody.domain.exception.*;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.rule.BreakBusinessRuleException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import javax.validation.constraints.NotNull;
 import javax.websocket.server.PathParam;
 
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class DeletePostController {
     private final DeletePostService service;
 
     @DeleteMapping("/posts/{postId}")
-    public ResponseEntity<?> delete(@PathParam("postId") Post.PostId postId){
+    public ResponseEntity<?> delete(@NotNull @PathParam("postId") Post.PostId postId){
         DeletePostService.Command command = new DeletePostService.Command(postId);
         service.execute(command);
 

@@ -3,11 +3,7 @@ package com.melody.melody.adapter.web.converter;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.melody.melody.application.dto.MusicPublish;
 import com.melody.melody.application.dto.PostSort;
-import com.melody.melody.domain.model.Emotion;
-import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.User;
 
 public class StringToPostSortConverter implements Converter<String, PostSort> {
 

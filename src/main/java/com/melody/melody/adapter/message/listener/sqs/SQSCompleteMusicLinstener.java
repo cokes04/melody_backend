@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Component
-public class SqsCompleteMusicLinstener implements SQSLinstener<MusicComposed> {
+public class SQSCompleteMusicLinstener implements SQSLinstener<MusicComposed> {
     private final MusicComposedEventHandler handler;
 
     @Override

@@ -3,9 +3,7 @@ package com.melody.melody.adapter.web.exception;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.melody.melody.domain.exception.DomainError;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Value;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

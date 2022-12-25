@@ -2,7 +2,6 @@ package com.melody.melody.adapter.web.post.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.melody.melody.adapter.web.converter.StringToPostSortConverter;
-import com.melody.melody.adapter.web.converter.YNToBooleanConverter;
 import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostSort;
 import lombok.*;

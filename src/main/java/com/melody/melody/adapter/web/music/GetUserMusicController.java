@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.websocket.server.PathParam;
+import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
 @WebAdapter
@@ -26,8 +26,8 @@ public class GetUserMusicController {
     private final GetUserMusicService service;
 
     @GetMapping(value = "/users/{userId}/music")
-    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@PathVariable("userId") User.UserId userId,
-                                                                     @RequestParam("publish") MusicPublish publish,
+    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@NotNull @PathVariable("userId") User.UserId userId,
+                                                                     @NotNull @RequestParam("publish") MusicPublish publish,
                                                                      MusicPagingRequest paging){
         PagingInfo<MusicSort> musicPaging = paging.toPagingInfo();
         GetUserMusicService.Command command = new GetUserMusicService.Command(userId, publish, musicPaging);

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.service.music.GetUserMusicService;
-import com.melody.melody.application.service.post.GetUserPostService;
-import com.melody.melody.application.service.post.TestPostDetailServiceGenerator;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import com.melody.melody.domain.model.User;

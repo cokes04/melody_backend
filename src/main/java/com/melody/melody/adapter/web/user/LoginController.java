@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 @WebAdapter
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
     private final AuthenticationService authenticationService;
     private final TokenProvider tokenProvider;
-    private final JwtConfig jwtConfig;
+    private final CookieSupporter cookieSupporter;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request){
@@ -32,22 +31,10 @@ public class LoginController {
         User.UserId id = result.getUser().getId().get();
         String accessToken = tokenProvider.createAccessToken(id);
         String refreshToken = tokenProvider.createRefreshToken(id);
-        String refreshTokenCookie = getRefreshTokenCookie(refreshToken);
+        String refreshTokenCookie = cookieSupporter.getRefreshTokenCookie(refreshToken);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new AuthenticationResponse(accessToken));
-    }
-
-    private String getRefreshTokenCookie(String refreshToken){
-        return ResponseCookie
-                .from(jwtConfig.getRefreshToken().getName(), refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .path(null)
-                .domain(null)
-                .maxAge(jwtConfig.getRefreshToken().getValidMilliSecond() / 1000)
-                .build()
-                .toString();
     }
 }

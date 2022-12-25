@@ -2,7 +2,6 @@ package com.melody.melody.adapter.web.converter;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 
 public class MusicStatusToStringConverter implements Converter<Music.Status, String> {

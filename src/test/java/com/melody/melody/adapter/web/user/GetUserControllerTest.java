@@ -2,13 +2,7 @@ package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.security.TokenProvider;
-import com.melody.melody.application.dto.PagingInfo;
-import com.melody.melody.application.dto.PagingResult;
-import com.melody.melody.application.dto.SearchedUser;
-import com.melody.melody.application.dto.UserSort;
 import com.melody.melody.application.service.user.GetUserService;
-import com.melody.melody.application.service.user.KeywordSearchUserService;
-import com.melody.melody.application.service.user.TestSearchedUserServiceGenerator;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;

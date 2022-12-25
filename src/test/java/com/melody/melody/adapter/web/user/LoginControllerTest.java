@@ -4,17 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.security.TokenProvider;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
 import com.melody.melody.application.service.authentication.AuthenticationService;
-import com.melody.melody.config.JwtConfig;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -43,10 +44,16 @@ class LoginControllerTest {
 
     @MockBean
     private AuthenticationService authenticationService;
+
     @MockBean
     private TokenProvider tokenProvider;
+
     @MockBean
-    private JwtConfig jwtConfig;
+    private CookieSupporter cookieSupporter;
+
+
+    @Value("${app.jwt.refreshToken.name}")
+    private String refreshTokenName;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
@@ -69,6 +76,8 @@ class LoginControllerTest {
         User user = TestUserDomainGenerator.randomUser();
         User.UserId id = user.getId().get();
 
+        String refreshToken = "header.refreshTokenClaim.signature";
+
         when(authenticationService.execute( any(AuthenticationService.Command.class) ))
                 .thenReturn( new AuthenticationService.Result(user) );
 
@@ -76,10 +85,18 @@ class LoginControllerTest {
                 .thenReturn("header.accessTokenClaim.signature");
 
         when(tokenProvider.createRefreshToken(id))
-                .thenReturn("header.refreshTokenClaim.signature");
+                .thenReturn(refreshToken);
 
-        when(jwtConfig.getRefreshToken())
-                .thenReturn(new JwtConfig.Token(100000, "key","rt"));
+        when(cookieSupporter.getRefreshTokenCookie(anyString()))
+                .thenReturn(ResponseCookie
+                        .from(refreshTokenName, refreshToken)
+                        .httpOnly(true)
+                        .secure(false)
+                        .path(null)
+                        .domain(null)
+                        .maxAge(10000000)
+                        .build()
+                        .toString());
 
         mockMvc.perform(
                 post("/login")
@@ -96,7 +113,7 @@ class LoginControllerTest {
                                         fieldWithPath("password").description("비밀번호").type(JsonFieldType.STRING)
                                 ),
                                 responseHeaders(
-                                        headerWithName(HttpHeaders.SET_COOKIE).description(jwtConfig.getRefreshToken().getName() + " : 리프레쉬 토큰")
+                                        headerWithName(HttpHeaders.SET_COOKIE).description(refreshTokenName + " : 리프레쉬 토큰")
                                 ),
                                 responseFields(
                                         fieldWithPath("token").description("엑세스 토큰").type(JsonFieldType.STRING)

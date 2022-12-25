@@ -1,15 +1,16 @@
 package com.melody.melody.adapter.web.user;
 
 import com.melody.melody.application.service.user.WithdrawUserService;
-import com.melody.melody.config.JwtConfig;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,6 +38,12 @@ class WithdrawUserControllerTest {
     @MockBean
     private WithdrawUserService service;
 
+    @MockBean
+    private CookieSupporter cookieSupporter;
+
+    @Value("${app.jwt.refreshToken.name}")
+    private String refreshTokenName;
+
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
@@ -57,6 +64,17 @@ class WithdrawUserControllerTest {
         when(service.execute(command))
                 .thenReturn(new WithdrawUserService.Result(user));
 
+        when(cookieSupporter.removeRefreshTokenCookie())
+                .thenReturn(ResponseCookie
+                        .from(refreshTokenName, null)
+                        .httpOnly(true)
+                        .secure(false)
+                        .path(null)
+                        .domain(null)
+                        .maxAge(0)
+                        .build()
+                        .toString());
+
         this.mockMvc.perform(
                 delete("/users/{userId}", userId.getValue())
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
@@ -71,6 +89,9 @@ class WithdrawUserControllerTest {
                                 ),
                                 requestHeaders(
                                         headerWithName(HttpHeaders.AUTHORIZATION).description("엑세스 토큰")
+                                ),
+                                responseHeaders(
+                                        headerWithName(HttpHeaders.SET_COOKIE).description(refreshTokenName + " : 리프레쉬 토큰 제거")
                                 )
                         )
                 );

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -36,10 +38,8 @@ class LogoutControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private JwtConfig jwtConfig;
+    private CookieSupporter cookieSupporter;
 
-    @Value("${app.rest.logout.redirectUri}")
-    private String logoutRedirectUri;
 
     @Value("${app.jwt.refreshToken.name}")
     private String refreshTokenName;
@@ -52,21 +52,23 @@ class LogoutControllerTest {
                 .apply(documentationConfiguration(restDocumentation))
                 .addFilter(new CharacterEncodingFilter("UTF-8", false, true))
                 .build();
-
-        when(jwtConfig.getRefreshToken())
-                .thenReturn(
-                        new JwtConfig.Token(
-                                10000,
-                                "abc",
-                                refreshTokenName
-                                )
-                );
     }
 
 
     @Test
     void logout_200() throws Exception {
         String refreshCookie = refreshTokenName + "=" + "header.payload.signature";
+
+        when(cookieSupporter.removeRefreshTokenCookie())
+                .thenReturn(ResponseCookie
+                        .from(refreshTokenName, null)
+                        .httpOnly(true)
+                        .secure(false)
+                        .path(null)
+                        .domain(null)
+                        .maxAge(0)
+                        .build()
+                        .toString());
 
         mockMvc.perform(
                 post("/logout")

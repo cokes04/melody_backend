@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -65,7 +64,7 @@ class GetMusicControllerTest {
                 .thenReturn(result);
 
         mockMvc.perform(
-                get("/music/{id}", musicId.getValue())
+                get("/music/{musicId}", musicId.getValue())
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andExpect(status().isOk())
@@ -73,7 +72,7 @@ class GetMusicControllerTest {
                         document(
                                 "get-music",
                                 pathParameters(
-                                        parameterWithName("id").description("음악 아이디")
+                                        parameterWithName("musicId").description("음악 아이디")
                                 ),
                                 responseFields(
                                         fieldWithPath("musicId").description("음악 아이디").type(JsonFieldType.NUMBER),

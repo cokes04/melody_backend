@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.melody.melody.adapter.web.converter.StringToPostSortConverter;
 import com.melody.melody.application.dto.MusicSort;
 import com.melody.melody.application.dto.PagingInfo;
-import com.melody.melody.application.dto.PostSort;
 import lombok.*;
 
 import javax.validation.constraints.Min;

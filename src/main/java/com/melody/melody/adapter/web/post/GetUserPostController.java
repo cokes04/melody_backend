@@ -15,9 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.websocket.server.PathParam;
+import javax.validation.constraints.NotNull;
 
 @RequiredArgsConstructor
 @WebAdapter
@@ -27,7 +26,7 @@ public class GetUserPostController {
 
     @GetMapping("/users/{userId}/posts")
     public ResponseEntity<PageResponse<PostDetailResponse>> getUsersPost(@Requester UserDetailsImpl requester,
-                                                                         @PathVariable("userId") User.UserId userId,
+                                                                         @NotNull @PathVariable("userId") User.UserId userId,
                                                                          PostPagingRequest paging){
 
         Open open = getOpen(requester, userId.getValue());

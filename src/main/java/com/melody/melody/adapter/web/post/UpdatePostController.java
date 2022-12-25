@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.validation.constraints.NotNull;
 import javax.websocket.server.PathParam;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class UpdatePostController {
     private final UpdatePostService service;
 
     @PatchMapping("/posts/{postId}")
-    public ResponseEntity<?> update(@PathParam("postId") Post.PostId postId,
+    public ResponseEntity<?> update(@NotNull @PathParam("postId") Post.PostId postId,
                                     @RequestBody UpdatePostRequest request){
         UpdatePostService.Command command = request.toCommand(postId);
         service.execute(command);

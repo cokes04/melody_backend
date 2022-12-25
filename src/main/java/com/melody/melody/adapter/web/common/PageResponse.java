@@ -1,6 +1,5 @@
 package com.melody.melody.adapter.web.common;
 
-import lombok.Builder;
 import lombok.Value;
 
 import java.util.List;
