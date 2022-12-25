@@ -1,8 +1,6 @@
 package com.melody.melody.config;
 
-import com.melody.melody.adapter.web.security.JwtAuthenticationFilter;
-import com.melody.melody.adapter.web.security.JwtTokenProvider;
-import com.melody.melody.adapter.web.security.UserDetailsServiceImpl;
+import com.melody.melody.adapter.web.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +21,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
+
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
+    private CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -77,6 +82,11 @@ public class SecurityConfig {
 
                 .antMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
+                .and()
+
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
 
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
