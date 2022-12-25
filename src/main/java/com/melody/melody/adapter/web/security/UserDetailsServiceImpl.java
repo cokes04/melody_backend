@@ -4,6 +4,7 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,14 +19,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(User.Email.from(email))
-                .filter(u -> !u.isWithdrawn())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }
 
+    @Cacheable(cacheNames = "userDetails", key = "#id")
     public UserDetails loadUserById(User.UserId id) throws UsernameNotFoundException {
         return userRepository.findById(id)
-                .filter(u -> !u.isWithdrawn())
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }
