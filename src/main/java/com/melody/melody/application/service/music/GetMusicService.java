@@ -8,6 +8,7 @@ import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetMusicService implements UseCase<GetMusicService.Command, GetMusicService.Result> {
     private final MusicRepository musicRepository;
 
-    @PreAuthorize("#music.isOwner(#command.musicId)")
+    @PostAuthorize("#music.isOwner(returnObject.music)")
     @Override
     public Result execute(Command command) {
         return musicRepository.findById(command.musicId)
@@ -29,6 +30,7 @@ public class GetMusicService implements UseCase<GetMusicService.Command, GetMusi
     @Value
     public static class Command implements UseCase.Command {
         private final Music.MusicId musicId;
+
     }
 
     @Value

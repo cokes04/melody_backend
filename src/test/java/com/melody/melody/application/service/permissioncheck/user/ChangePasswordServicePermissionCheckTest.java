@@ -1,4 +1,4 @@
-package com.melody.melody.application.service.permissioncheck;
+package com.melody.melody.application.service.permissioncheck.user;
 
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.port.out.PasswordEncrypter;

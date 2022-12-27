@@ -31,7 +31,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnTrue_WhenMusicOwner() {
+    void isOwner_musicId_ShouldReturnTrue_WhenMusicOwner() {
         Music music = TestMusicDomainGenerator.randomMusic();
         User.UserId userId = music.getUserId();
         Music.MusicId musicId = music.getId().get();
@@ -46,7 +46,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnFalse_WhenOtherUser() {
+    void isOwner_musicId_ShouldReturnFalse_WhenOtherUser() {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();
 
@@ -63,7 +63,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnTrue_WhenNotFoundMusic() {
+    void isOwner_musicId_ShouldReturnTrue_WhenNotFoundMusic() {
         Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(repository.findById(musicId))
@@ -75,7 +75,7 @@ class MusicSecurityExpressionTest {
     }
 
     @Test
-    void isOwner_ShouldReturnFalse_WhenNullAuthentication() {
+    void isOwner_musicId_ShouldReturnFalse_WhenNullAuthentication() {
         Music music = TestMusicDomainGenerator.randomMusic();
         Music.MusicId musicId = music.getId().get();
 
@@ -88,6 +88,37 @@ class MusicSecurityExpressionTest {
         assertFalse(actual);
     }
 
+
+    @Test
+    void isOwner_music_ShouldReturnTrue_WhenMusicOwner() {
+        Music music = TestMusicDomainGenerator.randomMusic();
+        User.UserId userId = music.getUserId();
+
+        setAuthentication(userId.getValue());
+
+        boolean actual = expression.isOwner(music);
+        assertTrue(actual);
+    }
+
+    @Test
+    void isOwner_music_ShouldReturnFalse_WhenOtherUser() {
+        Music music = TestMusicDomainGenerator.randomMusic();
+
+        setAuthentication((music.getUserId().getValue() / 13) + 37);
+
+        boolean actual = expression.isOwner(music);
+        assertFalse(actual);
+
+    }
+
+    @Test
+    void isOwner_music_ShouldReturnFalse_WhenNullAuthentication() {
+        Music music = TestMusicDomainGenerator.randomMusic();
+        expression.setAuthentication(null);
+
+        boolean actual = expression.isOwner(music);
+        assertFalse(actual);
+    }
 
     @Test
     void isExist_ShouldReturnTrue_WhenExsistMusic() {
