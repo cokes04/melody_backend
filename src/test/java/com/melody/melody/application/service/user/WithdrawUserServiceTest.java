@@ -6,6 +6,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.AfterEach;
@@ -42,32 +43,32 @@ class WithdrawUserServiceTest {
     @Test
     void execute_ShouldReturnUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId id = user.getId().get();
+        Identity userId = user.getId();
 
-        when(userRepository.findById(eq(id)))
+        when(userRepository.findById(eq(userId)))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class)))
                 .thenAnswer(a -> a.getArgument(0, User.class));
 
-        WithdrawUserService.Command command = new WithdrawUserService.Command(id);
+        WithdrawUserService.Command command = new WithdrawUserService.Command(userId.getValue());
 
         WithdrawUserService.Result actual = service.execute(command);
         User actualUser = actual.getUser();
 
         assertEquals(user, actualUser);
 
-        verify(userRepository, times(1)).findById(eq(id));
+        verify(userRepository, times(1)).findById(eq(userId));
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void execute_ShouldException_WhenNotFoundUser() {
-        User.UserId id = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
-        when(userRepository.findById(eq(id)))
+        when(userRepository.findById(eq(userId)))
                 .thenReturn(Optional.empty());
 
-        WithdrawUserService.Command command = new WithdrawUserService.Command(id);
+        WithdrawUserService.Command command = new WithdrawUserService.Command(userId.getValue());
 
         assertException(
                 () -> service.execute(command),

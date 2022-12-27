@@ -5,11 +5,9 @@ import com.melody.melody.adapter.web.security.TokenProvider;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
 import com.melody.melody.adapter.web.user.response.AuthenticationResponse;
 import com.melody.melody.application.service.authentication.AuthenticationService;
-import com.melody.melody.config.JwtConfig;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.Identity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +26,9 @@ public class LoginController {
         AuthenticationService.Command command = request.toCommand();
         AuthenticationService.Result result = authenticationService.execute(command);
 
-        User.UserId id = result.getUser().getId().get();
-        String accessToken = tokenProvider.createAccessToken(id);
-        String refreshToken = tokenProvider.createRefreshToken(id);
+        Identity userId = result.getUser().getId();
+        String accessToken = tokenProvider.createAccessToken(userId);
+        String refreshToken = tokenProvider.createRefreshToken(userId);
         String refreshTokenCookie = cookieSupporter.getRefreshTokenCookie(refreshToken);
 
         return ResponseEntity.ok()

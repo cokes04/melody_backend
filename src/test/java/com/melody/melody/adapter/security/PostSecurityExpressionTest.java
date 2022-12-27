@@ -35,8 +35,8 @@ class PostSecurityExpressionTest {
     @Test
     void isOwner_ShouldReturnTrue_WhenPostOwner() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        User.UserId userId = post.getUserId();
-        Post.PostId postId = post.getId().get();
+        Identity userId = post.getUserId();
+        Identity postId = post.getId();
 
         setAuthentication(userId.getValue());
 
@@ -50,8 +50,8 @@ class PostSecurityExpressionTest {
     @Test
     void isOwner_ShouldReturnFalse_WhenOtherUser() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        User.UserId userId = post.getUserId();
-        Post.PostId postId = post.getId().get();
+        Identity userId = post.getUserId();
+        Identity postId = post.getId();
 
         long otherUserId = userId.getValue() + 322312;
         setAuthentication(otherUserId);
@@ -66,7 +66,7 @@ class PostSecurityExpressionTest {
     @Test
     void isOwner_ShouldReturnFalse_WhenNullAuthentication() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
+        Identity postId = post.getId();
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
@@ -79,7 +79,7 @@ class PostSecurityExpressionTest {
 
     @Test
     void isOwner_ShouldReturnTrue_WhenNotFoundPost() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
         when(repository.findById(postId))
                 .thenReturn(Optional.empty());

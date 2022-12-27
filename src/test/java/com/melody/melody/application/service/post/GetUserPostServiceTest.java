@@ -2,12 +2,11 @@ package com.melody.melody.application.service.post;
 
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.out.PostDetailRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ class GetUserPostServiceTest {
 
     @Test
     void excute_ShouldReturnList() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.Everything;
         PagingInfo<PostSort> postPaging = new PagingInfo<>(2, 10, PostSort.newest);
 
@@ -40,7 +39,7 @@ class GetUserPostServiceTest {
         when(repository.findByUserId(userId, open, postPaging))
                 .thenReturn(new PagingResult<>(postDetailList, postDetailList.size(), 50, 5));
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, open, postPaging);
+        GetUserPostService.Command command = new GetUserPostService.Command(userId.getValue(), open, postPaging);
         GetUserPostService.Result result = service.execute(command);
         PagingResult<PostDetail> actual = result.getPagingResult();
         assertEquals(postDetailList, actual.getList());

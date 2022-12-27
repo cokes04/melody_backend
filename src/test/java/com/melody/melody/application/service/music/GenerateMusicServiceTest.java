@@ -1,21 +1,18 @@
 package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.port.out.*;
-import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.net.MalformedURLException;
 
-import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,13 +45,13 @@ class GenerateMusicServiceTest {
     void execute_ShouldCreateAndReturnMusic() throws MalformedURLException {
         GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand();
 
-        User.UserId userId = command.getUserId();
-        Music.MusicId musicId = randomMusicId();
-        Music.ImageUrl imageUrl = randomImageUrl();
-        Music.Explanation explanation = randomExplanation();
-        Emotion emotion = randomEmotion();
+        Identity userId = Identity.from(command.getUserId());
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
+        Music.ImageUrl imageUrl = TestMusicDomainGenerator.randomImageUrl();
+        Music.Explanation explanation = TestMusicDomainGenerator.randomExplanation();
+        Music.Emotion emotion = TestMusicDomainGenerator.randomEmotion();
         Music expectedMusic = Music.generate(userId, emotion, explanation, imageUrl);
-        expectedMusic = insertMusicId(expectedMusic, musicId);
+        expectedMusic = TestMusicDomainGenerator.insertMusicId(expectedMusic, musicId);
 
         when(imageFileStorage.save(eq(command.getImage())))
                 .thenReturn(imageUrl);
@@ -67,7 +64,7 @@ class GenerateMusicServiceTest {
 
         when(musicRepository.save(any(Music.class)))
                 .thenAnswer(
-                        ans -> insertMusicId(ans.getArgument(0, Music.class), musicId)
+                        ans -> TestMusicDomainGenerator.insertMusicId(ans.getArgument(0, Music.class), musicId)
                 );
 
         GenerateMusicService.Result result = service.execute(command);

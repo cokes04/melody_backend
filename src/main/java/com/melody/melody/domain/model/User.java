@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @ToString
 @Getter
 public class User {
-    private UserId id;
+    private Identity id;
 
     private NickName nickName;
 
@@ -32,7 +32,7 @@ public class User {
 
     public static User create(String nickName, String email, Password password){
         return User.builder()
-                .id(null)
+                .id(Identity.empty())
                 .nickName(NickName.from(nickName))
                 .email(Email.from(email))
                 .password(password)
@@ -64,14 +64,6 @@ public class User {
         Events.raise(new UserWithdrew(this.id.getValue()));
     }
 
-    public Optional<User.UserId> getId(){
-        return Optional.ofNullable(this.id);
-    }
-
-    @Value
-    public static class UserId {
-        private final Long value;
-    }
 
     @Value
     public static class NickName {
@@ -98,6 +90,15 @@ public class User {
                 throw new InvalidArgumentException(DomainError.of(UserErrorType.Invalid_Email_Format));
 
             return new Email(email);
+        }
+    }
+
+    @Value
+    public static class Password {
+        private final String encryptedString;
+
+        public static Password emptyPassword(){
+            return new Password("");
         }
     }
 }

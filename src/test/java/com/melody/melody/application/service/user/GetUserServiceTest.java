@@ -5,7 +5,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,12 +31,12 @@ class GetUserServiceTest {
     @Test
     void excute_ShouldReturnUser_WhenExistUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        GetUserService.Command command = new GetUserService.Command(userId);
+        GetUserService.Command command = new GetUserService.Command(userId.getValue());
         GetUserService.Result result = service.execute(command);
         User actual = result.getUser();
 
@@ -45,12 +45,12 @@ class GetUserServiceTest {
 
     @Test
     void excute_ShouldThrowException_WhenNotExsitUser() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.empty());
 
-        GetUserService.Command command = new GetUserService.Command(userId);
+        GetUserService.Command command = new GetUserService.Command(userId.getValue());
         assertException(
                 () -> service.execute(command),
                 NotFoundException.class,

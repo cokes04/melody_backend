@@ -6,7 +6,7 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BusinessRuleChecker;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +25,18 @@ public class ChangePasswordService implements UseCase<ChangePasswordService.Comm
     @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        User user = repository.findById(command.getUserId())
+        User user = repository.findById(Identity.from(command.getUserId()))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(UserErrorType.User_Not_Found)));
 
-        Password newPassword = passwordEncrypter.encrypt(command.newPassword);
-        user.changePassword(passwordEncrypter, command.oldPassword, newPassword);
+        User.Password newPassword = passwordEncrypter.encrypt(command.getNewPassword());
+        user.changePassword(passwordEncrypter, command.getOldPassword(), newPassword);
 
         return new Result(repository.save(user));
     }
 
     @Value
     public static class Command implements UseCase.Command{
-        private final User.UserId userId;
+        private final long userId;
         private final String oldPassword;
         private final String newPassword;
     }

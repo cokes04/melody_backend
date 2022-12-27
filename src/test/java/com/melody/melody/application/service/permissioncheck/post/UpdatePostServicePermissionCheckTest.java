@@ -5,9 +5,9 @@ import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.application.service.post.TestPostServiceGenerator;
 import com.melody.melody.application.service.post.UpdatePostService;
 import com.melody.melody.domain.exception.NotFoundException;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,48 +36,48 @@ public class UpdatePostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_SholudPass_WhenPostOwner() {
-        Post post = TestPostDomainGenerator.randomOpenPost(new User.UserId(requesterId));
+        Post post = TestPostDomainGenerator.randomOpenPost(Identity.from(requesterId));
 
-        when(postRepository.findById(post.getId().get()))
+        when(postRepository.findById(post.getId()))
                 .thenReturn(Optional.of(post));
 
-        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(post.getId().get());
+        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(post.getId().getValue());
         service.execute(command);
 
         verify(postRepository, times(2))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_SholudPass_WhenNotExistsPost() {
-        when(postRepository.findById(any(Post.PostId.class)))
+        when(postRepository.findById(any(Identity.class)))
                 .thenReturn(Optional.empty());
 
-        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(new Post.PostId(143289));
+        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(143289);
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(NotFoundException.class);
 
         verify(postRepository, times(2))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_SholudBlock_WhenNotPostOwner() {
-        Post post = TestPostDomainGenerator.randomOpenPost(new User.UserId((requesterId / 13) * 3));
+        Post post = TestPostDomainGenerator.randomOpenPost(Identity.from((requesterId / 13) * 3));
 
-        when(postRepository.findById(post.getId().get()))
+        when(postRepository.findById(post.getId()))
                 .thenReturn(Optional.of(post));
 
-        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(post.getId().get());
+        UpdatePostService.Command command = TestPostServiceGenerator.randomUpdatePostService(post.getId().getValue());
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(postRepository, times(1))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 
 }

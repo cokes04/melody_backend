@@ -59,14 +59,14 @@ class GetUserControllerTest {
     @Test
     void getUser_Ok() throws Exception{
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        long userId = user.getId().getValue();
         GetUserService.Command command = new GetUserService.Command(userId);
 
         when(service.execute(command))
                 .thenReturn(new GetUserService.Result(user));
 
         mockMvc.perform(
-                get("/users/{userId}", userId.getValue())
+                get("/users/{userId}", userId)
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andExpect(status().isOk())

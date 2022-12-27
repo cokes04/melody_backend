@@ -11,7 +11,7 @@ import com.melody.melody.application.dto.Open;
 import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.application.port.out.PasswordEncrypter;
-import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile("dev123")
 public class Runner implements ApplicationRunner {
     private final UserJpaRepository userJpaRepository;
     private final MusicJpaRepository musicJpaRepository;
@@ -56,7 +56,7 @@ public class Runner implements ApplicationRunner {
         for (int i = 0; i < 5000; i ++){
             music = MusicEntity.builder()
                     .musicUrl("musicUrl " + i)
-                    .emotion(Emotion.GLOOMY)
+                    .emotion(Music.Emotion.GLOOMY)
                     .explanation("explanation " + i )
                     .imageUrl("imageUrl " + i)
                     .status(Music.Status.COMPLETION)
@@ -83,7 +83,7 @@ public class Runner implements ApplicationRunner {
         for (int i = 5000; i < 5200; i ++){
             music = MusicEntity.builder()
                     .musicUrl("musicUrl " + i)
-                    .emotion(Emotion.GLOOMY)
+                    .emotion(Music.Emotion.GLOOMY)
                     .explanation("explanation " + i )
                     .imageUrl("imageUrl " + i)
                     .status(Music.Status.COMPLETION)
@@ -95,14 +95,14 @@ public class Runner implements ApplicationRunner {
         }
 
         postDetailDao.findByUserId(
-                new User.UserId(user.getId()),
+                Identity.from(user.getId()),
                 Open.Everything,
                 new PagingInfo<PostSort>(0, 20, PostSort.newest)
         );
 
-        postDetailDao.findTotalSizeByUserId(new User.UserId(user.getId()), Open.OnlyClose);
-        postDetailDao.findTotalSizeByUserId(new User.UserId(user.getId()), Open.OnlyOpen);
-        postDetailDao.findTotalSizeByUserId(new User.UserId(user.getId()), Open.Everything);
+        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.OnlyClose);
+        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.OnlyOpen);
+        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.Everything);
     }
 
     private boolean randomOpen(Random random){

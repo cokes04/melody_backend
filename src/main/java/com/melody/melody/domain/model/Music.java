@@ -14,9 +14,9 @@ import java.util.Optional;
 @Getter
 public class Music {
 
-    private MusicId id;
+    private Identity id;
 
-    private User.UserId userId;
+    private Identity userId;
 
     private Emotion emotion;
 
@@ -28,9 +28,9 @@ public class Music {
 
     private Status status;
 
-    public static Music generate(User.UserId userId, Emotion emotion, Explanation explanation, ImageUrl imageUrl){
+    public static Music generate(Identity userId, Emotion emotion, Explanation explanation, ImageUrl imageUrl){
         return new Music(
-                null,
+                Identity.empty(),
                 userId,
                 emotion,
                 explanation,
@@ -56,17 +56,8 @@ public class Music {
         this.status = Status.DELETED;
     }
 
-    public Optional<MusicId> getId(){
-        return Optional.ofNullable(this.id);
-    }
-
     public Optional<MusicUrl> getMusicUrl(){
         return Optional.ofNullable(this.musicUrl);
-    }
-
-    @Value
-    public static class MusicId {
-        private final Long value;
     }
 
     @Value
@@ -86,5 +77,9 @@ public class Music {
 
     public enum Status {
         DELETED, PROGRESS, COMPLETION;
+    }
+
+    public enum Emotion {
+        DELIGHTED, TENSE, GLOOMY, RELAXED;
     }
 }

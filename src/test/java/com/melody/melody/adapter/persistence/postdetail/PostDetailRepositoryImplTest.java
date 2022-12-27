@@ -1,10 +1,7 @@
 package com.melody.melody.adapter.persistence.postdetail;
 
 import com.melody.melody.application.dto.*;
-import com.melody.melody.domain.model.Post;
-import com.melody.melody.domain.model.TestPostDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +27,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findById_ShouldRunDao() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
         repository.findById(postId);
 
@@ -41,7 +38,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldGetTotalSizeInCache_WhenEveryting_EverytingTotalSizeInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.Everything;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -62,7 +59,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_EmptyCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.Everything;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -94,7 +91,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_OnlyOpenTotalSizeInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.Everything;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -129,7 +126,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_OnlyCloseTotalSizeInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.Everything;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -164,7 +161,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldGetTotalSizeInCache_WhenOnlyClose_OnlyCloseTotalSizeInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.OnlyClose;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -186,7 +183,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldRunDaoAndUpdateCache_WhenOnlyClose_OnlyCloseTotalSizeNotInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.OnlyClose;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -215,7 +212,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldGetTotalSizeInCache_WhenOnlyOpen_OnlyOpenTotalSizeInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.OnlyOpen;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
@@ -236,7 +233,7 @@ class PostDetailRepositoryImplTest {
 
     @Test
     void findByUserId_ShouldRunDaoAndUpdateCache_WhenOnlyOpen_OnlyOpenTotalSizeNotInCache() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Open open = Open.OnlyOpen;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 

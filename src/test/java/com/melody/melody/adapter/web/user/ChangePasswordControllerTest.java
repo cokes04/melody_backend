@@ -5,7 +5,6 @@ import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.adapter.web.user.request.ChangePasswordRequest;
 import com.melody.melody.application.service.user.ChangePasswordService;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,14 +60,13 @@ class ChangePasswordControllerTest {
     @Test
     @WithMockRequester(userId = requesterUserId)
     void changePassword_204() throws Exception {
-        User.UserId userId = new User.UserId(requesterUserId);
         ChangePasswordRequest request =ChangePasswordRequest.builder()
                 .newPassword(TestUserDomainGenerator.randomPassword().getEncryptedString())
                 .oldPassword(TestUserDomainGenerator.randomPassword().getEncryptedString())
                 .build();
 
         mockMvc.perform(
-                patch("/users/{userId}/password", userId.getValue())
+                patch("/users/{userId}/password", requesterUserId)
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request))

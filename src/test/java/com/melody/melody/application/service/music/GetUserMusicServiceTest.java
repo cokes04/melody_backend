@@ -2,10 +2,7 @@ package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.out.MusicRepository;
-import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +27,7 @@ class GetUserMusicServiceTest {
 
     @Test
     void excute_ShouldReturnList() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         MusicPublish publish = MusicPublish.Everything;
         PagingInfo<MusicSort> musicPaging = new PagingInfo<>(2, 10, MusicSort.newest);
 
@@ -41,7 +38,7 @@ class GetUserMusicServiceTest {
         when(repository.findByUserId(userId, publish, musicPaging))
                 .thenReturn(new PagingResult<>(musicList, musicList.size(), 50, 5));
 
-        GetUserMusicService.Command command = new GetUserMusicService.Command(userId, publish, musicPaging);
+        GetUserMusicService.Command command = new GetUserMusicService.Command(userId.getValue(), publish, musicPaging);
         GetUserMusicService.Result result = service.execute(command);
         PagingResult<Music> actual = result.getPagingResult();
 

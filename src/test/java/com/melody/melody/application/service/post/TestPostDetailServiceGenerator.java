@@ -19,7 +19,7 @@ public class TestPostDetailServiceGenerator {
         Music music = TestMusicDomainGenerator.randomMusic();
 
         return PostDetail.builder()
-                .id(post.getId().get().getValue())
+                .id(post.getId().getValue())
                 .title(post.getTitle().getValue())
                 .content(post.getContent().getValue())
                 .deleted(deleted)
@@ -27,7 +27,7 @@ public class TestPostDetailServiceGenerator {
                 .open(open)
                 .createdDate(LocalDateTime.now())
 
-                .musicId(music.getId().get().getValue())
+                .musicId(music.getId().getValue())
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation().getValue())
                 .imageUrl(music.getImageUrl().getValue())

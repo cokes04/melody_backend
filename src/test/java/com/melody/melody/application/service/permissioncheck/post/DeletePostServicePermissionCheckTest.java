@@ -4,9 +4,9 @@ import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.application.service.post.DeletePostService;
 import com.melody.melody.domain.exception.NotFoundException;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,51 +31,50 @@ public class DeletePostServicePermissionCheckTest {
 
     private final long requesterId = 53245;
 
-
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenPostOwner() {
-        Post post = TestPostDomainGenerator.randomOpenPost(new User.UserId(requesterId));
+        Post post = TestPostDomainGenerator.randomOpenPost(Identity.from(requesterId));
 
-        when(postRepository.findById(post.getId().get()))
+        when(postRepository.findById(post.getId()))
                 .thenReturn(Optional.of(post));
 
-        DeletePostService.Command command = new DeletePostService.Command(post.getId().get());
+        DeletePostService.Command command = new DeletePostService.Command(post.getId().getValue());
         service.execute(command);
 
         verify(postRepository, times(2))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenNotExistsPost() {
-        when(postRepository.findById(any(Post.PostId.class)))
+        when(postRepository.findById(any(Identity.class)))
                 .thenReturn(Optional.empty());
 
-        DeletePostService.Command command = new DeletePostService.Command(new Post.PostId(4102));
+        DeletePostService.Command command = new DeletePostService.Command(4102);
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(NotFoundException.class);
 
         verify(postRepository, times(2))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotPostOwner() {
-        Post post = TestPostDomainGenerator.randomOpenPost(new User.UserId((requesterId / 13) * 3));
+        Post post = TestPostDomainGenerator.randomOpenPost(Identity.from((requesterId / 13) * 3));
 
-        when(postRepository.findById(post.getId().get()))
+        when(postRepository.findById(post.getId()))
                 .thenReturn(Optional.of(post));
 
-        DeletePostService.Command command = new DeletePostService.Command(post.getId().get());
+        DeletePostService.Command command = new DeletePostService.Command(post.getId().getValue());
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(postRepository, times(1))
-                .findById(any(Post.PostId.class));
+                .findById(any(Identity.class));
     }
 }

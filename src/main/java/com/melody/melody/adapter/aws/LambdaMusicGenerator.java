@@ -4,7 +4,7 @@ import com.melody.melody.adapter.aws.request.LambdaGenerateMusicRequest;
 import com.melody.melody.adapter.aws.response.EmotionMapping;
 import com.melody.melody.application.port.out.MusicGenerator;
 import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +39,7 @@ public class LambdaMusicGenerator implements MusicGenerator {
     }
 
     @Override
-    public void executeAsync(Music.MusicId musicId, Emotion emotion, int musicLength, int noise) {
+    public void executeAsync(Identity musicId, Music.Emotion emotion, int musicLength, int noise) {
         LambdaGenerateMusicRequest request = LambdaGenerateMusicRequest.builder()
                 .musicId(musicId.getValue())
                 .emotion(EmotionMapping.of(emotion).getGeneration())

@@ -36,71 +36,68 @@ public class CreatePostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenMusicExsist_AndMusicOwner_AndReqeusterIsMe() {
-        User.UserId userId = new User.UserId(requesterId);
+        Identity userId = Identity.from(requesterId);
         Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
-        Music.MusicId musicId = music.getId().get();
+        Identity musicId = music.getId();
 
         when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
-        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, musicId);
+        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId.getValue(), musicId.getValue());
         service.execute(command);
 
         verify(musicRepository, times(2))
-                .findById(any(Music.MusicId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotExsistMusic() {
-        User.UserId userId = new User.UserId(requesterId);
-
-        when(musicRepository.findById(any(Music.MusicId.class)))
+        when(musicRepository.findById(any(Identity.class)))
                 .thenReturn(Optional.empty());
 
-        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, new Music.MusicId(239829L));
+        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(requesterId, 239829L);
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
 
         verify(musicRepository, times(1))
-                .findById(any(Music.MusicId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotMusicOwner() {
-        User.UserId userId = new User.UserId(requesterId);
-        Music music = TestMusicDomainGenerator.randomCompletionMusic(new User.UserId((requesterId / 13) * 3));
-        Music.MusicId musicId = music.getId().get();
+        Music music = TestMusicDomainGenerator.randomCompletionMusic(Identity.from((requesterId / 13) * 3));
+        Identity musicId = music.getId();
 
         when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
-        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(userId, musicId);
+        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(requesterId, musicId.getValue());
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(musicRepository, times(2))
-                .findById(any(Music.MusicId.class));
+                .findById(any(Identity.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenReqeusterIsNotMe() {
-        User.UserId userId = new User.UserId(requesterId);
+        Identity userId = Identity.from(requesterId);
         Music music = TestMusicDomainGenerator.randomCompletionMusic(userId);
-        Music.MusicId musicId = music.getId().get();
+        Identity musicId = music.getId();
 
         when(musicRepository.findById(musicId))
                 .thenReturn(Optional.of(music));
 
-        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(new User.UserId(requesterId / 13), musicId);
+        CreatePostService.Command command = TestPostServiceGenerator.randomCreatePostCommand(requesterId / 13, musicId.getValue());
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(musicRepository, times(2))
-                .findById(any(Music.MusicId.class));
+                .findById(any(Identity.class));
     }
 }

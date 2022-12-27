@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.web.security.TokenProvider;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
 import com.melody.melody.application.service.authentication.AuthenticationService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,17 +75,17 @@ class LoginControllerTest {
                 .build();
 
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId id = user.getId().get();
+        Identity userId = user.getId();
 
         String refreshToken = "header.refreshTokenClaim.signature";
 
         when(authenticationService.execute( any(AuthenticationService.Command.class) ))
                 .thenReturn( new AuthenticationService.Result(user) );
 
-        when(tokenProvider.createAccessToken(id))
+        when(tokenProvider.createAccessToken(userId))
                 .thenReturn("header.accessTokenClaim.signature");
 
-        when(tokenProvider.createRefreshToken(id))
+        when(tokenProvider.createRefreshToken(userId))
                 .thenReturn(refreshToken);
 
         when(cookieSupporter.getRefreshTokenCookie(anyString()))

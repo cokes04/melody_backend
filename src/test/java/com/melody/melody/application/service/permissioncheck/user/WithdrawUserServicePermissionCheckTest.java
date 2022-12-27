@@ -3,6 +3,7 @@ package com.melody.melody.application.service.permissioncheck.user;
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.application.service.user.WithdrawUserService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
@@ -30,13 +31,13 @@ public class WithdrawUserServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenUserSelf() {
-        User user = TestUserDomainGenerator.randomUser(new User.UserId(requesterId));
-        User.UserId userId = user.getId().get();
+        User user = TestUserDomainGenerator.randomUser(Identity.from(requesterId));
+        Identity userId = user.getId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        WithdrawUserService.Command command = new WithdrawUserService.Command(userId);
+        WithdrawUserService.Command command = new WithdrawUserService.Command(userId.getValue());
         service.execute(command);
 
         verify(repository, times(1))
@@ -46,18 +47,18 @@ public class WithdrawUserServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotUserSelf() {
-        User user = TestUserDomainGenerator.randomUser(new User.UserId(53245 / 3L));
-        User.UserId userId = user.getId().get();
+        User user = TestUserDomainGenerator.randomUser(Identity.from(53245 / 3L));
+        Identity userId = user.getId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        WithdrawUserService.Command command = new WithdrawUserService.Command(userId);
+        WithdrawUserService.Command command = new WithdrawUserService.Command(userId.getValue());
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(repository, times(0))
-                .findById(any(User.UserId.class));
+                .findById(any(Identity.class));
     }
 }

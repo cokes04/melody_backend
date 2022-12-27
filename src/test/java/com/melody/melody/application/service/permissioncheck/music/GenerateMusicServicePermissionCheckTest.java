@@ -4,11 +4,9 @@ import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.port.out.*;
 import com.melody.melody.application.service.music.GenerateMusicService;
 import com.melody.melody.application.service.music.TestMusicServiceGenerator;
-import com.melody.melody.application.service.post.CreatePostService;
-import com.melody.melody.application.service.post.TestPostServiceGenerator;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.net.MalformedURLException;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,19 +36,17 @@ public class GenerateMusicServicePermissionCheckTest {
     @MockBean
     private MusicRepository musicRepository;
 
-
-
     private final long requesterId = 53245;
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenUserSelf() throws MalformedURLException {
-        User.UserId userId = new User.UserId(requesterId);
+        Identity userId = Identity.from(requesterId);
 
         when(musicRepository.save(any(Music.class)))
                 .thenReturn(TestMusicDomainGenerator.randomCompletionMusic(userId));
 
-        GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand(userId);
+        GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand(userId.getValue());
         service.execute(command);
 
         verify(musicRepository, times(1))
@@ -61,9 +56,9 @@ public class GenerateMusicServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotUserSelf() throws MalformedURLException {
-        User.UserId userId = new User.UserId(requesterId / 31);
+        Identity userId = Identity.from(requesterId / 31);
 
-        GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand(userId);
+        GenerateMusicService.Command command = TestMusicServiceGenerator.randomGenerateMusicCommand(userId.getValue());;
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 

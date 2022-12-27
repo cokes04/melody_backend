@@ -15,8 +15,8 @@ class CreatePostRequestTest {
 
         CreatePostService.Command actual = request.toCommand(userId);
 
-        assertEquals(userId, actual.getUserId().getValue());
-        assertEquals(request.getMusicId(), actual.getMusicId().getValue());
+        assertEquals(userId, actual.getUserId());
+        assertEquals(request.getMusicId(), actual.getMusicId());
         assertEquals(request.getTitle(), actual.getTitle());
         assertEquals(request.getContent(), actual.getContent());
         assertEquals(request.getOpen(), actual.isOpen());

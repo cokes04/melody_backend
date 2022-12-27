@@ -1,6 +1,6 @@
 package com.melody.melody.adapter.security;
 
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,7 +27,7 @@ class PasswordEncrypterImplTest {
         when(encoder.encode(eq(raw)))
                 .thenReturn(encrypted);
 
-        Password actual = encrypter.encrypt(raw);
+        User.Password actual = encrypter.encrypt(raw);
 
         assertNotNull(actual);
         assertEquals(encrypted, actual.getEncryptedString());

@@ -20,17 +20,16 @@ class MusicMapperTest {
         Music music = TestMusicDomainGenerator.randomMusic();
 
         MusicEntity actual = mapper.toEntity(music);
+        assertEqualsModelAndEntity(music, actual);
+    }
 
-        assertTrue(music.getId().isPresent());
-        assertEquals(music.getId().get().getValue(), actual.getId());
-        assertEquals(music.getUserId().getValue(), actual.getUserEntity().getId());
-        assertEquals(music.getEmotion(), actual.getEmotion());
-        assertEquals(music.getImageUrl().getValue(), actual.getImageUrl());
-        assertEquals(music.getExplanation().getValue(), actual.getExplanation());
-        assertEquals(music.getStatus(), actual.getStatus());
-        assertTrue(music.getMusicUrl().isPresent());
-        assertEquals(music.getMusicUrl().get().getValue(), actual.getMusicUrl());
-        assertNotNull(actual.getCreatedDate());
+
+    @Test
+    void toEntity_ShouldReturnNullIdEntity_WhenEmptyIdentity() {
+        Music music = TestMusicDomainGenerator.randomEmptyIdentityMusic();
+
+        MusicEntity actual = mapper.toEntity(music);
+        assertEqualsModelAndEntity(music, actual);
     }
 
     @Test
@@ -38,16 +37,15 @@ class MusicMapperTest {
         MusicEntity entity = TestMusicEntityGenerator.randomMusicEntity();
 
         Music actual = mapper.toModel(entity);
+        assertEqualsModelAndEntity(actual, entity);
+    }
 
-        assertTrue(actual.getId().isPresent());
-        assertEquals(entity.getId(), actual.getId().get().getValue());
-        assertEquals(entity.getUserEntity().getId(), actual.getUserId().getValue());
-        assertEquals(entity.getEmotion(), actual.getEmotion());
-        assertEquals(entity.getImageUrl(), actual.getImageUrl().getValue());
-        assertEquals(entity.getExplanation(), actual.getExplanation().getValue());
-        assertEquals(entity.getStatus(), actual.getStatus());
-        assertTrue(actual.getMusicUrl().isPresent());
-        assertEquals(entity.getMusicUrl(), actual.getMusicUrl().get().getValue());
+    @Test
+    void toModel_entity_ShouldReturnEmptyIdentityModel_WhenNullId() {
+        MusicEntity entity = TestMusicEntityGenerator.randomNullIdMusicEntity();
+
+        Music actual = mapper.toModel(entity);
+        assertEqualsModelAndEntity(actual, entity);
     }
 
     @Test
@@ -55,15 +53,45 @@ class MusicMapperTest {
         MusicData musicData = TestMusicEntityGenerator.randomMusicData();
 
         Music actual = mapper.toModel(musicData);
+        assertEqualsModelAndData(actual, musicData);
+    }
 
-        assertTrue(actual.getId().isPresent());
-        assertEquals(musicData.getId(), actual.getId().get().getValue());
-        assertEquals(musicData.getUserId(), actual.getUserId().getValue());
-        assertEquals(musicData.getEmotion(), actual.getEmotion());
-        assertEquals(musicData.getImageUrl(), actual.getImageUrl().getValue());
-        assertEquals(musicData.getExplanation(), actual.getExplanation().getValue());
-        assertEquals(musicData.getStatus(), actual.getStatus());
-        assertTrue(actual.getMusicUrl().isPresent());
-        assertEquals(musicData.getMusicUrl(), actual.getMusicUrl().get().getValue());
+    @Test
+    void toModel_data_ShouldReturnEmptyIdentityModel_WhenNullId() {
+        MusicData musicData = TestMusicEntityGenerator.randomNullIdMusicData();
+
+        Music actual = mapper.toModel(musicData);
+        assertEqualsModelAndData(actual, musicData);
+    }
+
+    private void assertEqualsModelAndEntity(Music music, MusicEntity entity){
+        if (music.getId().isEmpty())
+            assertNull(entity.getId());
+        else
+            assertEquals(music.getId().getValue(), entity.getId());
+
+        assertEquals(music.getUserId().getValue(), entity.getUserEntity().getId());
+        assertEquals(music.getEmotion(), entity.getEmotion());
+        assertEquals(music.getImageUrl().getValue(), entity.getImageUrl());
+        assertEquals(music.getExplanation().getValue(), entity.getExplanation());
+        assertEquals(music.getStatus(), entity.getStatus());
+        assertTrue(music.getMusicUrl().isPresent());
+        assertEquals(music.getMusicUrl().get().getValue(), entity.getMusicUrl());
+        assertNotNull(entity.getCreatedDate());
+    }
+
+    private void assertEqualsModelAndData(Music music, MusicData data){
+        if (music.getId().isEmpty())
+            assertNull(data.getId());
+        else
+            assertEquals(music.getId().getValue(), data.getId());
+
+        assertEquals(music.getUserId().getValue(), data.getUserId());
+        assertEquals(music.getEmotion(), data.getEmotion());
+        assertEquals(music.getImageUrl().getValue(), data.getImageUrl());
+        assertEquals(music.getExplanation().getValue(), data.getExplanation());
+        assertEquals(music.getStatus(), data.getStatus());
+        assertTrue(music.getMusicUrl().isPresent());
+        assertEquals(music.getMusicUrl().get().getValue(), data.getMusicUrl());
     }
 }

@@ -1,7 +1,6 @@
 package com.melody.melody.adapter.web.user.request;
 
 import com.melody.melody.application.service.user.ChangePasswordService;
-import com.melody.melody.domain.model.User;
 import lombok.Builder;
 import lombok.Value;
 
@@ -19,7 +18,7 @@ public class ChangePasswordRequest {
     @Size(min=10, max=20)
     private final String newPassword;
 
-    public ChangePasswordService.Command toCommand(User.UserId userId){
+    public ChangePasswordService.Command toCommand(long userId){
         return new ChangePasswordService.Command(
                 userId,
                 this.oldPassword,

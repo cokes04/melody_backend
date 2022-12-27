@@ -6,10 +6,7 @@ import com.melody.melody.adapter.persistence.post.TestPostEntityGenerator;
 import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.application.dto.*;
-import com.melody.melody.domain.model.Post;
-import com.melody.melody.domain.model.TestPostDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +47,7 @@ class PostDetailDaoTest {
     @Test
     void findById_ShouldReturnPostDetail() {
         PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
-        Post.PostId postId = new Post.PostId(savedPostEntity.getId());
+        Identity postId = Identity.from(savedPostEntity.getId());
 
         em.flush();
         em.clear();
@@ -64,7 +61,7 @@ class PostDetailDaoTest {
 
     @Test
     void findById_ShouldReturnEmpty_WhenUnSavedPost() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
         assertNull(em.find(PostEntity.class, postId.getValue()));
 
         em.flush();
@@ -79,7 +76,7 @@ class PostDetailDaoTest {
         PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
         savedPostEntity.setDeleted(true);
 
-        Post.PostId postId = new Post.PostId(savedPostEntity.getId());
+        Identity postId = Identity.from(savedPostEntity.getId());
 
         em.persist(savedPostEntity);
 
@@ -99,7 +96,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(9, actual.size());
         actual.forEach( p -> {
             if(p.isOpen())
@@ -118,7 +115,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyOpen, new PagingInfo<PostSort>(0, 9, PostSort.newest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.OnlyOpen, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(6, actual.size());
         actual.forEach( p -> assertEqualsEntityAndDetail(openPostMap.get(p.getId()), p));
         assertEquals(0, actual.stream().filter( p -> closePostMap.containsKey(p.getId())).count());
@@ -133,7 +130,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyClose, new PagingInfo<PostSort>(0, 9, PostSort.newest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.OnlyClose, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(3, actual.size());
         actual.forEach( p -> assertEqualsEntityAndDetail(closePostMap.get(p.getId()), p));
         assertEquals(0, actual.stream().filter( p -> openPostMap.containsKey(p.getId())).count());
@@ -149,7 +146,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(6, actual.size());
         actual.forEach( p -> assertEqualsEntityAndDetail(postMap.get(p.getId()), p));
         assertEquals(0, actual.stream().filter( p -> deletedPostMap.containsKey(p.getId())).count());
@@ -157,7 +154,7 @@ class PostDetailDaoTest {
 
     @Test
     void findByUserId_ShouldReturnEmptyList_WhenNotExistUser() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         List<PostDetail> actual = dao.findByUserId(userId, Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
         assertEquals(0, actual.size());
@@ -166,7 +163,7 @@ class PostDetailDaoTest {
     @Test
     void findByUserId_ShouldReturnEmptyList_WhenUserNotHavePost() {
         UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        User.UserId userId = new User.UserId(userEntity.getId());
+        Identity userId = Identity.from(userEntity.getId());
 
         em.flush();
         em.clear();
@@ -188,7 +185,7 @@ class PostDetailDaoTest {
                 .limit(8)
                 .collect(Collectors.toList());
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.newest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.newest));
         for (int i = 0; i < 8; i++){
             assertEqualsEntityAndDetail(sortedList.get(i), actual.get(i));
         }
@@ -207,7 +204,7 @@ class PostDetailDaoTest {
                 .limit(8)
                 .collect(Collectors.toList());
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.oldest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.oldest));
         for (int i = 0; i < 8; i++){
             assertEqualsEntityAndDetail(sortedList.get(i), actual.get(i));
         }
@@ -227,7 +224,7 @@ class PostDetailDaoTest {
                 .limit(8)
                 .collect(Collectors.toList());
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(1, 8, PostSort.oldest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(1, 8, PostSort.oldest));
         for (int i = 0; i < 8; i++){
             assertEqualsEntityAndDetail(sortedList.get(i), actual.get(i));
         }
@@ -247,7 +244,7 @@ class PostDetailDaoTest {
                 .limit(8)
                 .collect(Collectors.toList());
 
-        List<PostDetail> actual = dao.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(2, 8, PostSort.oldest));
+        List<PostDetail> actual = dao.findByUserId(Identity.from(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(2, 8, PostSort.oldest));
 
         for (int i = 0; i < 4; i++){
             assertEqualsEntityAndDetail(sortedList.get(i), actual.get(i));
@@ -266,7 +263,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        long actual = dao.findTotalSizeByUserId(new User.UserId(userEntity.getId()), Open.Everything);
+        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.Everything);
         assertEquals(30, actual);
     }
 
@@ -279,7 +276,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        long actual = dao.findTotalSizeByUserId(new User.UserId(userEntity.getId()), Open.Everything);
+        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.Everything);
         assertEquals(30, actual);
     }
 
@@ -292,7 +289,7 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        long actual = dao.findTotalSizeByUserId(new User.UserId(userEntity.getId()), Open.OnlyOpen);
+        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.OnlyOpen);
         assertEquals(20, actual);
     }
 
@@ -305,13 +302,13 @@ class PostDetailDaoTest {
         em.flush();
         em.clear();
 
-        long actual = dao.findTotalSizeByUserId(new User.UserId(userEntity.getId()), Open.OnlyClose);
+        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.OnlyClose);
         assertEquals(10, actual);
     }
 
     @Test
     void findTotalSizeByUserId_ShouldReturnZero_WhenNotExistUser() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         long actual = dao.findTotalSizeByUserId(userId, Open.OnlyClose);
         assertEquals(0, actual);

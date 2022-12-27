@@ -2,7 +2,7 @@ package com.melody.melody.adapter.web.post.request;
 
 import com.melody.melody.adapter.web.post.TestPostWebGenerator;
 import com.melody.melody.application.service.post.UpdatePostService;
-import com.melody.melody.domain.model.Post;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +13,9 @@ class UpdatePostRequestTest {
     @Test
     void toCommand_ShuoldReturnCreatedCommand() {
         UpdatePostRequest request = TestPostWebGenerator.randomUpdatePostRequest();
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.toCommand(postId);
+        UpdatePostService.Command command = request.toCommand(postId.getValue());
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertEquals(request.getContent(), command.getContent().get());
@@ -30,9 +30,9 @@ class UpdatePostRequestTest {
                 .open(true)
                 .build();
 
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.toCommand(postId);
+        UpdatePostService.Command command = request.toCommand(postId.getValue());
 
         assertTrue(command.getTitle().isEmpty());
         assertEquals(request.getContent(), command.getContent().get());
@@ -47,9 +47,9 @@ class UpdatePostRequestTest {
                 .open(true)
                 .build();
 
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.toCommand(postId);
+        UpdatePostService.Command command = request.toCommand(postId.getValue());
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertTrue(command.getContent().isEmpty());
@@ -64,9 +64,9 @@ class UpdatePostRequestTest {
                 .open(null)
                 .build();
 
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
-        UpdatePostService.Command command = request.toCommand(postId);
+        UpdatePostService.Command command = request.toCommand(postId.getValue());
 
         assertEquals(request.getTitle(), command.getTitle().get());
         assertEquals(request.getContent(), command.getContent().get());

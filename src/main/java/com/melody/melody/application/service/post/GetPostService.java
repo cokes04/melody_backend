@@ -6,6 +6,7 @@ import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -23,7 +24,7 @@ public class GetPostService implements UseCase<GetPostService.Command, GetPostSe
     @PostAuthorize("#post.isOwner(returnObject.postDetail) or #post.isOpen(returnObject.postDetail)")
     @Override
     public Result execute(Command command) {
-        PostDetail postDetail = repository.findById(command.postId)
+        PostDetail postDetail = repository.findById(Identity.from(command.getPostId()))
                 .orElseThrow( () -> new NotFoundException(DomainError.of(PostErrorType.Not_Found_Post)));
 
          return new Result(postDetail);
@@ -31,7 +32,7 @@ public class GetPostService implements UseCase<GetPostService.Command, GetPostSe
 
     @Value
     public static class Command implements UseCase.Command {
-        private final Post.PostId postId;
+        private final long postId;
     }
 
     @Value

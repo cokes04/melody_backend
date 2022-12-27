@@ -13,8 +13,8 @@ class PostTest {
 
     @Test
     void create_ShouldReturnCreatedPost() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
-        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
         Post.Title title = TestPostDomainGenerator.randomTitle();
         Post.Content content = TestPostDomainGenerator.randomContent();
         boolean open = true;

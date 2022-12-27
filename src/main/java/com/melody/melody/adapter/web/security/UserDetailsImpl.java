@@ -1,10 +1,6 @@
 package com.melody.melody.adapter.web.security;
 
-import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.FailedAuthenticationException;
-import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,9 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     public UserDetailsImpl(User user){
         this.email = user.getEmail().getValue();
         this.password = user.getPassword().getEncryptedString();
-
-        this.userId = user.getId().map(User.UserId::getValue)
-                .orElseThrow(() -> new FailedAuthenticationException(DomainError.of(UserErrorType.Authentication_Failed)));
+        this.userId = user.getId().getValue();
 
         this.authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");

@@ -1,8 +1,8 @@
 package com.melody.melody.adapter.web.security;
 
 import com.melody.melody.config.JwtConfig;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,11 +25,11 @@ class JwtTokenProviderTest {
         when(jwtConfig.getAccessToken())
                 .thenReturn(getAccessTokenConfig());
 
-        User.UserId userId = new User.UserId(50L);
+        Identity userId = Identity.from(50L);
         String accessToken = provider.createAccessToken(userId);
 
         long id = provider.getIdToAcessToken(accessToken);
-        assertEquals(userId.getValue().longValue(), id);
+        assertEquals(userId.getValue(), id);
     }
 
 
@@ -38,11 +38,11 @@ class JwtTokenProviderTest {
         when(jwtConfig.getRefreshToken())
                 .thenReturn(getRefreshTokenConfig());
 
-        User.UserId userId = new User.UserId(50L);
+        Identity userId = Identity.from(50L);
         String accessToken = provider.createRefreshToken(userId);
 
         long id = provider.getIdToRefreshToken(accessToken);
-        assertEquals(userId.getValue().longValue(), id);
+        assertEquals(userId.getValue(), id);
     }
 
     @Test
@@ -51,8 +51,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getAccessToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String accessToken = provider.createAccessToken(id);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String accessToken = provider.createAccessToken(userId);
 
         assertNotNull(accessToken);
 
@@ -65,8 +65,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getRefreshToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String accessToken = provider.createRefreshToken(id);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String accessToken = provider.createRefreshToken(userId);
 
         assertNotNull(accessToken);
     }
@@ -78,8 +78,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getAccessToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String refreshToken = provider.createAccessToken(id);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String refreshToken = provider.createAccessToken(userId);
 
         boolean actual = provider.validateAccessToken(refreshToken);
 
@@ -93,8 +93,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getAccessToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String counterfeitAccessToken = provider.createAccessToken(id) + "위조";
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String counterfeitAccessToken = provider.createAccessToken(userId) + "위조";
 
         boolean actual = provider.validateAccessToken(counterfeitAccessToken);
 
@@ -108,8 +108,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getRefreshToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String refreshToken = provider.createRefreshToken(id);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String refreshToken = provider.createRefreshToken(userId);
 
         boolean actual = provider.validateRefreshToken(refreshToken);
 
@@ -123,8 +123,8 @@ class JwtTokenProviderTest {
         when(jwtConfig.getRefreshToken())
                 .thenReturn(token);
 
-        User.UserId id = TestUserDomainGenerator.randomUserId();
-        String counterfeitRefreshToken = provider.createRefreshToken(id) + "위조";
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String counterfeitRefreshToken = provider.createRefreshToken(userId) + "위조";
 
         boolean actual = provider.validateRefreshToken(counterfeitRefreshToken);
 

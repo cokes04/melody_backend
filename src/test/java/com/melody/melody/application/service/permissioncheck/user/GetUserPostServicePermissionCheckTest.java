@@ -6,7 +6,7 @@ import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.application.service.post.GetUserPostService;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.Identity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,37 +32,37 @@ public class GetUserPostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenPostOwner() {
-        User.UserId userId = new User.UserId(requesterId);
+        Identity userId = Identity.from(requesterId);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.Everything, new PagingInfo(0, 2, PostSort.newest));
+        GetUserPostService.Command command = new GetUserPostService.Command(userId.getValue(), Open.Everything, new PagingInfo(0, 2, PostSort.newest));
         service.execute(command);
 
         verify(postDetailRepository, times(1))
-                .findByUserId(any(User.UserId.class), any(Open.class), any(PagingInfo.class));
+                .findByUserId(any(Identity.class), any(Open.class), any(PagingInfo.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenNotPostOwnerAndOpenPost() {
-        User.UserId userId = new User.UserId(requesterId / 13);
+        Identity userId = Identity.from(requesterId / 13);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.OnlyOpen, new PagingInfo(0, 2, PostSort.newest));
+        GetUserPostService.Command command = new GetUserPostService.Command(userId.getValue(), Open.OnlyOpen, new PagingInfo(0, 2, PostSort.newest));
         service.execute(command);
 
         verify(postDetailRepository, times(1))
-                .findByUserId(any(User.UserId.class), any(Open.class), any(PagingInfo.class));
+                .findByUserId(any(Identity.class), any(Open.class), any(PagingInfo.class));
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotPostOwnerAndClosePost() {
-        User.UserId userId = new User.UserId(requesterId / 13);
+        Identity userId = Identity.from(requesterId / 13);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.OnlyClose, new PagingInfo(0, 2, PostSort.newest));
+        GetUserPostService.Command command = new GetUserPostService.Command(userId.getValue(), Open.OnlyClose, new PagingInfo(0, 2, PostSort.newest));
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(postDetailRepository, times(0))
-                .findByUserId(any(User.UserId.class), any(Open.class), any(PagingInfo.class));
+                .findByUserId(any(Identity.class), any(Open.class), any(PagingInfo.class));
     }
 }

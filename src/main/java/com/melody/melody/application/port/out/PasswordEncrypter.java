@@ -1,9 +1,9 @@
 package com.melody.melody.application.port.out;
 
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.User;
 
 public interface PasswordEncrypter {
-    Password encrypt(String rawString);
+    User.Password encrypt(String rawString);
 
-    boolean matches(String raw, Password encrypted);
+    boolean matches(String raw, User.Password encrypted);
 }

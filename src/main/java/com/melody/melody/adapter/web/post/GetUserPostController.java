@@ -9,7 +9,6 @@ import com.melody.melody.adapter.web.security.Requester;
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.dto.Open;
 import com.melody.melody.application.service.post.GetUserPostService;
-import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @RequiredArgsConstructor
 @WebAdapter
@@ -26,10 +26,10 @@ public class GetUserPostController {
 
     @GetMapping("/users/{userId}/posts")
     public ResponseEntity<PageResponse<PostDetailResponse>> getUsersPost(@Requester UserDetailsImpl requester,
-                                                                         @NotNull @PathVariable("userId") User.UserId userId,
+                                                                         @NotNull @Positive @PathVariable("userId") long userId,
                                                                          PostPagingRequest paging){
 
-        Open open = getOpen(requester, userId.getValue());
+        Open open = getOpen(requester, userId);
         GetUserPostService.Command command = new GetUserPostService.Command(userId, open, paging.toPagingInfo());
         GetUserPostService.Result result = service.execute(command);
 

@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.persistence.user;
 
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
@@ -114,7 +115,7 @@ class UserRepositoryImplTest {
     void findById_ShouldReturnUser_WhenSavedId() {
         UserEntity entity = TestUserEntityGenerator.randomUserEntity();
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
 
         when(jpaRepository.findById(eq(userId.getValue())))
                 .thenReturn(Optional.of(entity));
@@ -130,7 +131,7 @@ class UserRepositoryImplTest {
 
     @Test
     void findById_ShouldReturnEmpty_WhenUnSavedId() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(jpaRepository.findById(eq(userId.getValue())))
                 .thenReturn(Optional.empty());
@@ -144,7 +145,7 @@ class UserRepositoryImplTest {
     void findById_ShouldReturnEmpty_WhenWithrawnUserId() {
         UserEntity entity = TestUserEntityGenerator.randomUserEntity();
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         entity.setWithdrawn(true);
 
         when(jpaRepository.findById(eq(userId.getValue())))

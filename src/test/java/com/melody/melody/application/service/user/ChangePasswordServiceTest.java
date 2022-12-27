@@ -6,7 +6,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BreakBusinessRuleException;
@@ -37,12 +37,12 @@ class ChangePasswordServiceTest {
     @Test
     void excute_ShouldReturnPasswordChangedUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         String oldRawPassowrd = "sadlkweqkjwasd";
         String newRawPassword = "fseop4ir2fk20349";
-        Password newEncryptedPassowrd = TestUserDomainGenerator.randomPassword();
+        User.Password newEncryptedPassowrd = TestUserDomainGenerator.randomPassword();
         ChangePasswordService.Command command = new ChangePasswordService.Command(
-                userId,
+                userId.getValue(),
                 oldRawPassowrd,
                 newRawPassword
         );
@@ -68,11 +68,11 @@ class ChangePasswordServiceTest {
     @Test
     void excute_ShouldException_WhenNotFoundUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         String oldRawPassowrd = "sadlkweqkjwasd";
         String newRawPassword = "fseop4ir2fk20349";
         ChangePasswordService.Command command = new ChangePasswordService.Command(
-                userId,
+                userId.getValue(),
                 oldRawPassowrd,
                 newRawPassword
         );
@@ -91,12 +91,12 @@ class ChangePasswordServiceTest {
     @Test
     void excute_ShouldException_WhenNotMatchedPassword() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         String oldRawPassowrd = "sadlkweqkjwasd";
         String newRawPassword = "fseop4ir2fk20349";
-        Password newEncryptedPassowrd = TestUserDomainGenerator.randomPassword();
+        User.Password newEncryptedPassowrd = TestUserDomainGenerator.randomPassword();
         ChangePasswordService.Command command = new ChangePasswordService.Command(
-                userId,
+                userId.getValue(),
                 oldRawPassowrd,
                 newRawPassword
         );

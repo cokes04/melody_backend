@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.application.dto.MusicPublish;
 import com.melody.melody.application.dto.MusicSort;
 import com.melody.melody.application.dto.PostSort;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.Dispatcher;
@@ -135,10 +134,10 @@ public class CreateEnumSnippet {
 
     private Map<String, String> getEmotion() {
         Map<String,String> map = new HashMap<>();
-        map.put(Emotion.RELAXED.name().toLowerCase(), "편안한");
-        map.put(Emotion.DELIGHTED.name().toLowerCase(), "기쁜");
-        map.put(Emotion.GLOOMY.name().toLowerCase(), "슬픈");
-        map.put(Emotion.TENSE.name().toLowerCase(), "긴장된");
+        map.put(Music.Emotion.RELAXED.name().toLowerCase(), "편안한");
+        map.put(Music.Emotion.DELIGHTED.name().toLowerCase(), "기쁜");
+        map.put(Music.Emotion.GLOOMY.name().toLowerCase(), "슬픈");
+        map.put(Music.Emotion.TENSE.name().toLowerCase(), "긴장된");
 
         return map;
     }

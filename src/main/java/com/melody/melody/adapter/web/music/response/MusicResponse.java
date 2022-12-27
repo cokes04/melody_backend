@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.melody.melody.adapter.web.converter.EmotionToStringConverter;
 import com.melody.melody.adapter.web.converter.MusicStatusToStringConverter;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.Builder;
 import lombok.Value;
@@ -17,7 +16,7 @@ public class MusicResponse {
     private final Long userId;
 
     @JsonSerialize(converter = EmotionToStringConverter.class)
-    private final Emotion emotion;
+    private final Music.Emotion emotion;
 
     private final String explanation;
 
@@ -31,7 +30,7 @@ public class MusicResponse {
 
     public static MusicResponse to(Music music){
         return MusicResponse.builder()
-                .musicId(music.getId().map(Music.MusicId::getValue).orElse(-1L))
+                .musicId(music.getId().getValue())
                 .userId(music.getUserId().getValue())
                 .imageUrl(music.getImageUrl().getValue())
                 .explanation(music.getExplanation().getValue())

@@ -1,7 +1,6 @@
 package com.melody.melody.adapter.persistence.post;
 
 import com.melody.melody.adapter.persistence.PersistenceTestConfig;
-import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.*;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
-import javax.persistence.EntityManager;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,9 +42,9 @@ class PostRepositoryImplTest {
 
     @Test
     void save_ShouldReturnPostWithId() {
-        Post post = TestPostDomainGenerator.randomNoneIdPost();
+        Post post = TestPostDomainGenerator.randomEmptyIdentityPost();
 
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
         Post expect = TestPostDomainGenerator.insertIdPost(post, postId);
 
         PostEntity entity = TestPostEntityGenerator.randomPostEntity(true, false);
@@ -61,14 +59,14 @@ class PostRepositoryImplTest {
 
         Post actual = repository.save(post);
 
-        assertTrue(actual.getId().isPresent());
+        assertFalse(actual.getId().isEmpty());
         assertEquals(expect, actual);
     }
 
     @Test
     void findById_ShouldReturnPost_WhenExistPost() {
         Post expect = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = expect.getId().get();
+        Identity postId = expect.getId();
 
         PostEntity entity = TestPostEntityGenerator.randomPostEntity(true, false);
         when(jpaRepository.findById(postId.getValue()))
@@ -85,7 +83,7 @@ class PostRepositoryImplTest {
 
     @Test
     void findById_ShouldReturnEmpty_WhenDeletedPost() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
         PostEntity entity = TestPostEntityGenerator.randomPostEntity(true, false);
         entity.setDeleted(true);
@@ -110,7 +108,7 @@ class PostRepositoryImplTest {
         em.flush();
         em.clear();
 
-        User.UserId user1Id = new User.UserId(user1.getId());
+        Identity user1Id = Identity.from(user1.getId());
         repository.deleteByUserId(user1Id);
 
         assertDeleted(user1Posts, user1Posts.size());

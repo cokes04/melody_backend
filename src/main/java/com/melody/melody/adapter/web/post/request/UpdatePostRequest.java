@@ -3,7 +3,6 @@ package com.melody.melody.adapter.web.post.request;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.melody.melody.adapter.web.converter.YNToBooleanConverter;
 import com.melody.melody.application.service.post.UpdatePostService;
-import com.melody.melody.domain.model.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +21,7 @@ public class UpdatePostRequest {
     @JsonDeserialize(converter = YNToBooleanConverter.class)
     private Boolean open;
 
-    public UpdatePostService.Command toCommand(Post.PostId postId){
+    public UpdatePostService.Command toCommand(long postId){
         return new UpdatePostService.Command(
                 postId,
                 title,

@@ -1,8 +1,8 @@
 package com.melody.melody.adapter.web.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.post.request.UpdatePostRequest;
 import com.melody.melody.adapter.security.WithMockRequester;
+import com.melody.melody.adapter.web.post.request.UpdatePostRequest;
 import com.melody.melody.application.service.post.UpdatePostService;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,15 +25,19 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Map;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
-import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(controllers = {UpdatePostController.class})

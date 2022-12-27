@@ -2,6 +2,7 @@ package com.melody.melody.adapter.cache.userdetails;
 
 import com.melody.melody.adapter.cache.CacheType;
 import com.melody.melody.domain.event.UserWithdrew;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class UserDetailsCacheEventHandler {
         Cache cache = cacheManager.getCache(CacheType.UserDetails.getCacheName());
 
         if (Objects.nonNull(cache)){
-            cache.evict(new User.UserId(event.getUserId()));
+            cache.evict(Identity.from(event.getUserId()));
 
         } else{
             logger.error("{} : Not Found Cache", CacheType.UserDetails.getCacheName());

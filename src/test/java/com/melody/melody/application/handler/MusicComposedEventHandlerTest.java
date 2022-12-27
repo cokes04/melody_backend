@@ -6,6 +6,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,34 +34,34 @@ class MusicComposedEventHandlerTest {
     @Test
     void execute_ShouldCompletionMusic() {
         Music music = generatedMusic();
-        Music.MusicId id = randomMusicId();
-        music = insertMusicId(music, id);
+        Identity musicId = randomMusicId();
+        music = insertMusicId(music, musicId);
         Music.MusicUrl musicUrl = randomMusicUrl();
 
         Music expectedMusic = cloneMusic(music);
         expectedMusic.completeGeneration(musicUrl);
 
-        MusicComposed musicComposed = new MusicComposed(id.getValue(), musicUrl.getValue());
+        MusicComposed musicComposed = new MusicComposed(musicId.getValue(), musicUrl.getValue());
 
-        when(repository.findById(id))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
         when(repository.save(any(Music.class)))
                 .thenAnswer(a -> a.getArgument(0, Music.class));
 
         service.handle(musicComposed);
 
-        verify(repository, times(1)).findById(id);
+        verify(repository, times(1)).findById(musicId);
         verify(repository, times(1)).save(any(Music.class));
     }
 
     @Test
     void execute_ThrowException_WhenNonexistentMusic() {
-        Music.MusicId id = randomMusicId();
+        Identity musicId = randomMusicId();
         Music.MusicUrl musicUrl = randomMusicUrl();
-        MusicComposed musicComposed = new MusicComposed(id.getValue(), musicUrl.getValue());
+        MusicComposed musicComposed = new MusicComposed(musicId.getValue(), musicUrl.getValue());
 
 
-        when(repository.findById(id))
+        when(repository.findById(musicId))
                 .thenReturn(Optional.empty());
 
         assertException(
@@ -69,7 +70,7 @@ class MusicComposedEventHandlerTest {
                 DomainError.of(MusicErrorType.Not_Found_Music)
                 );
 
-        verify(repository, times(1)).findById(id);
+        verify(repository, times(1)).findById(musicId);
     }
 
     void assertException(Runnable runnable, Class< ? extends DomainException> exceptionClass, DomainError... domainErrors){

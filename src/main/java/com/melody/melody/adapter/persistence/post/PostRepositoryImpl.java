@@ -2,6 +2,7 @@ package com.melody.melody.adapter.persistence.post;
 
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.application.port.out.PostRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
 import com.querydsl.jpa.JPAExpressions;
@@ -26,12 +27,12 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Optional<Post> findById(Post.PostId postId) {
+    public Optional<Post> findById(Identity postId) {
         Optional<PostEntity> entity = jpaRepository.findById(postId.getValue());
         return entity.filter(e -> !e.isDeleted()).map(mapper::toModel);
     }
 
-    public void deleteByUserId(User.UserId userId){
+    public void deleteByUserId(Identity userId){
         factory.update(postEntity)
                 .set(postEntity.deleted, true)
                 .where(postEntity.userEntity.id.eq(userId.getValue()))

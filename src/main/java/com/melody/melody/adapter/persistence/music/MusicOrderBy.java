@@ -2,7 +2,6 @@ package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.adapter.persistence.post.QPostEntity;
 import com.melody.melody.application.dto.MusicSort;
-import com.melody.melody.application.dto.PostSort;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.DateTimePath;

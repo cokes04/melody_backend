@@ -16,7 +16,7 @@ import java.util.Optional;
 @ToString
 @Getter
 public class Post {
-    private PostId id;
+    private Identity id;
 
     private Title title;
 
@@ -28,11 +28,11 @@ public class Post {
 
     private boolean deleted;
 
-    private User.UserId userId;
+    private Identity userId;
 
-    private Music.MusicId musicId;
+    private Identity musicId;
 
-    public static Post create(User.UserId userId, Music.MusicId musicId, String title, String content, boolean open){
+    public static Post create(Identity userId, Identity musicId, String title, String content, boolean open){
         Events.raise(
                 new PostCreated(
                         userId.getValue(),
@@ -41,7 +41,7 @@ public class Post {
         );
 
         return Post.builder()
-                .id(null)
+                .id(Identity.empty())
                 .title(Title.from(title))
                 .content(Content.from(content))
                 .open(open)
@@ -101,15 +101,6 @@ public class Post {
                         this.open
                         )
         );
-    }
-
-    public Optional<PostId> getId() {
-        return Optional.ofNullable(id);
-    }
-
-    @Value
-    public static class PostId{
-        private final long value;
     }
 
     @Value

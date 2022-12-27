@@ -5,6 +5,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +32,8 @@ class DeletePostServiceTest {
     @Test
     void excute_ShouldReturnDeletedPost() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
-        DeletePostService.Command command = new DeletePostService.Command(postId);
+        Identity postId = post.getId();
+        DeletePostService.Command command = new DeletePostService.Command(postId.getValue());
 
         Post expect = TestPostDomainGenerator.clonePost(post);
         expect.delete();
@@ -54,8 +55,8 @@ class DeletePostServiceTest {
 
     @Test
     void excute_ShouldException_WhenPostNotFound() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
-        DeletePostService.Command command = new DeletePostService.Command(postId);
+        Identity postId = TestPostDomainGenerator.randomPostId();
+        DeletePostService.Command command = new DeletePostService.Command(postId.getValue());
 
         when(repository.findById(postId))
                 .thenReturn(Optional.empty());

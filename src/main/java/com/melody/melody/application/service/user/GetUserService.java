@@ -10,6 +10,7 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -26,14 +27,14 @@ public class GetUserService implements UseCase<GetUserService.Command, GetUserSe
     @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        return repository.findById(command.userId)
+        return repository.findById(Identity.from(command.getUserId()))
                 .map(Result::new)
                 .orElseThrow(() -> new NotFoundException(DomainError.of(UserErrorType.User_Not_Found)));
     }
 
     @Value
     public static class Command implements UseCase.Command{
-        private final User.UserId userId;
+        private final long userId;
     }
 
     @Value

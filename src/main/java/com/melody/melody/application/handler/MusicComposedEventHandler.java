@@ -6,6 +6,7 @@ import com.melody.melody.domain.event.MusicComposed;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -26,7 +27,7 @@ public class MusicComposedEventHandler implements EventHandler<MusicComposed> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void handle(MusicComposed event) {
-        Music music = repository.findById(new Music.MusicId(event.getMusicId()))
+        Music music = repository.findById(Identity.from(event.getMusicId()))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
 
         music.completeGeneration(new Music.MusicUrl(event.getMusicUrl()));

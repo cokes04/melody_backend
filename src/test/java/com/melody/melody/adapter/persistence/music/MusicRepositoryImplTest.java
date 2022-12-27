@@ -5,21 +5,15 @@ import com.melody.melody.adapter.persistence.post.*;
 import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.application.dto.*;
-import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
@@ -44,23 +38,34 @@ class MusicRepositoryImplTest {
     @Autowired
     private TestEntityManager em;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     @BeforeEach
     void setUp() {
         jpaRepository = Mockito.mock(MusicJpaRepository.class);
         mapper = Mockito.mock(MusicMapper.class);
         musicRepository = new MusicRepositoryImpl(jpaRepository, jpaQueryFactory, mapper);
-    }
-
-    @Test
-    public void getById_ShouldReturnMusic_WhenExistMusic() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        MusicEntity musicEntity = TestMusicEntityGenerator.saveRandomMusicEntity(em, Music.Status.COMPLETION, userEntity);
-
-        Music.MusicId musicId = new Music.MusicId(musicEntity.getId());
 
         when(mapper.toModel(any(MusicData.class)))
                 .thenCallRealMethod();
 
+        when(mapper.toModel(any(MusicEntity.class)))
+                .thenCallRealMethod();
+
+        when(mapper.toEntity(any(Music.class)))
+                .thenCallRealMethod();
+    }
+
+    @Test
+    public void findById_ShouldReturnMusic_WhenExistMusic() {
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        MusicEntity musicEntity = TestMusicEntityGenerator.saveRandomMusicEntity(em, Music.Status.COMPLETION, userEntity);
+
+        em.flush();
+        em.clear();
+
+        Identity musicId = Identity.from(musicEntity.getId());
         Optional<Music> actual = musicRepository.findById(musicId);
         assertTrue(actual.isPresent());
         assertEqualsEntityAndModel(musicEntity, actual.get());
@@ -69,22 +74,24 @@ class MusicRepositoryImplTest {
     }
 
     @Test
-    void getById_ShouldReturnEmpty_WhenNotExistMusic() {
-        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
-
+    void findById_ShouldReturnEmpty_WhenNotExistMusic() {
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
 
         Optional<Music> actual = musicRepository.findById(musicId);
         assertTrue(actual.isEmpty());
 
         verify(mapper, times(0)).toModel(any(MusicData.class));
     }
+
     @Test
-    void getById_ShouldReturnEmpty_WhenDeletedMusic() {
+    void findById_ShouldReturnEmpty_WhenDeletedMusic() {
         UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
         MusicEntity musicEntity = TestMusicEntityGenerator.saveRandomMusicEntity(em, Music.Status.DELETED, userEntity);
 
-        Music.MusicId musicId = new Music.MusicId(musicEntity.getId());
+        em.flush();
+        em.clear();
 
+        Identity musicId = Identity.from(musicEntity.getId());
         Optional<Music> actual = musicRepository.findById(musicId);
         assertTrue(actual.isEmpty());
 
@@ -128,7 +135,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        User.UserId user1Id = new User.UserId(user1.getId());
+        Identity user1Id = Identity.from(user1.getId());
         musicRepository.deleteByUserId(user1Id);
 
         assertDeleted(user1CompletionMusics, user1CompletionMusics.size());
@@ -156,14 +163,11 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
         assertEquals(11, actual.getCount());
         assertEquals(11, musicEntityMap.keySet().size());
         assertEquals(11, actual.getList().stream()
-                .filter(m -> musicEntityMap.containsKey(m.getId().get().getValue()))
+                .filter(m -> musicEntityMap.containsKey(m.getId().getValue()))
                 .count());
     }
 
@@ -190,14 +194,11 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Published, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Published, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
         assertEquals(3, actual.getCount());
         assertEquals(3, publishedIdSet.size());
         assertEquals(3, actual.getList().stream()
-                .filter( m -> publishedIdSet.contains(m.getId().get().getValue()))
+                .filter( m -> publishedIdSet.contains(m.getId().getValue()))
                 .count());
     }
 
@@ -231,21 +232,18 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Unpublished, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Unpublished, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
         assertEquals(8, actual.getCount());
         assertEquals(8, unPublishedIdSet.size());
         assertEquals(8, actual.getList().stream()
-                .filter( m -> unPublishedIdSet.contains(m.getId().get().getValue()))
+                .filter( m -> unPublishedIdSet.contains(m.getId().getValue()))
                 .count());
 
     }
 
     @Test
     void findByUserId_ShuoldReturnEmptyList_WhenNotExistUser() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         em.flush();
         em.clear();
@@ -264,7 +262,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.newest));
         assertEquals(0, actual.getCount());
     }
 
@@ -281,10 +279,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.newest));
         assertEquals(8, actual.getCount());
         assertEquals(20, actual.getTotalCount());
         assertEquals(3, actual.getTotalPage());
@@ -306,10 +301,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.oldest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(0, 8, MusicSort.oldest));
         assertEquals(8, actual.getCount());
         assertEquals(20, actual.getTotalCount());
         assertEquals(3, actual.getTotalPage());
@@ -332,10 +324,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(1, 8, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(1, 8, MusicSort.newest));
         assertEquals(8, actual.getCount());
         assertEquals(20, actual.getTotalCount());
         assertEquals(3, actual.getTotalPage());
@@ -358,10 +347,7 @@ class MusicRepositoryImplTest {
         em.flush();
         em.clear();
 
-        when(mapper.toModel(any(MusicData.class)))
-                .thenCallRealMethod();
-
-        PagingResult<Music> actual = musicRepository.findByUserId(new User.UserId(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(2, 8, MusicSort.newest));
+        PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Everything, new PagingInfo<MusicSort>(2, 8, MusicSort.newest));
         assertEquals(4, actual.getCount());
         assertEquals(20, actual.getTotalCount());
         assertEquals(3, actual.getTotalPage());
@@ -371,7 +357,7 @@ class MusicRepositoryImplTest {
     }
 
     private void assertEqualsEntityAndModel(MusicEntity entity, Music model){
-        assertEquals(entity.getId(), model.getId().get().getValue());
+        assertEquals(entity.getId(), model.getId().getValue());
         assertEquals(entity.getStatus(), model.getStatus());
         assertEquals(entity.getMusicUrl(), model.getMusicUrl().get().getValue());
         assertEquals(entity.getUserEntity().getId(), model.getUserId().getValue());

@@ -2,13 +2,11 @@ package com.melody.melody.domain.model;
 
 import net.datafaker.Faker;
 
-import java.util.HashMap;
-
 public class TestUserDomainGenerator {
     private static final Faker faker = new Faker();
 
-    public static User.UserId randomUserId(){
-        return new User.UserId(
+    public static Identity randomUserId(){
+        return new Identity(
                 faker.number().numberBetween(33L, 33333L)
         );
     }
@@ -21,8 +19,8 @@ public class TestUserDomainGenerator {
         return User.Email.from(faker.internet().emailAddress());
     }
 
-    public static Password randomPassword(){
-        return new Password(
+    public static User.Password randomPassword(){
+        return new User.Password(
                 faker.internet().password(10, 20, true, true, true)
         );
     }
@@ -31,7 +29,7 @@ public class TestUserDomainGenerator {
         return randomUser(randomUserId());
     }
 
-    public static User randomUser(User.UserId userId){
+    public static User randomUser(Identity userId){
         return User.builder()
                 .id(userId)
                 .nickName(randomNickName())

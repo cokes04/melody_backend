@@ -2,6 +2,7 @@ package com.melody.melody.adapter.security;
 
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.port.out.MusicRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import com.melody.melody.domain.model.User;
@@ -33,8 +34,8 @@ class MusicSecurityExpressionTest {
     @Test
     void isOwner_musicId_ShouldReturnTrue_WhenMusicOwner() {
         Music music = TestMusicDomainGenerator.randomMusic();
-        User.UserId userId = music.getUserId();
-        Music.MusicId musicId = music.getId().get();
+        Identity userId = music.getUserId();
+        Identity musicId = music.getId();
 
         setAuthentication(userId.getValue());
 
@@ -48,7 +49,7 @@ class MusicSecurityExpressionTest {
     @Test
     void isOwner_musicId_ShouldReturnFalse_WhenOtherUser() {
         Music music = TestMusicDomainGenerator.randomMusic();
-        Music.MusicId musicId = music.getId().get();
+        Identity musicId = music.getId();
 
         long userId = 1234567890L;
         assertNotEquals(music.getUserId().getValue(), userId);
@@ -64,7 +65,7 @@ class MusicSecurityExpressionTest {
 
     @Test
     void isOwner_musicId_ShouldReturnTrue_WhenNotFoundMusic() {
-        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(repository.findById(musicId))
                 .thenReturn(Optional.empty());
@@ -77,7 +78,7 @@ class MusicSecurityExpressionTest {
     @Test
     void isOwner_musicId_ShouldReturnFalse_WhenNullAuthentication() {
         Music music = TestMusicDomainGenerator.randomMusic();
-        Music.MusicId musicId = music.getId().get();
+        Identity musicId = music.getId();
 
         when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
@@ -92,7 +93,7 @@ class MusicSecurityExpressionTest {
     @Test
     void isOwner_music_ShouldReturnTrue_WhenMusicOwner() {
         Music music = TestMusicDomainGenerator.randomMusic();
-        User.UserId userId = music.getUserId();
+        Identity userId = music.getUserId();
 
         setAuthentication(userId.getValue());
 
@@ -123,7 +124,7 @@ class MusicSecurityExpressionTest {
     @Test
     void isExist_ShouldReturnTrue_WhenExsistMusic() {
         Music music = TestMusicDomainGenerator.randomMusic();
-        Music.MusicId musicId = music.getId().get();
+        Identity musicId = music.getId();
 
         when(repository.findById(musicId))
                 .thenReturn(Optional.of(music));
@@ -135,7 +136,7 @@ class MusicSecurityExpressionTest {
 
     @Test
     void isExist_ShouldReturnFalse_WhenNotExsistMusic() {
-        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
 
         when(repository.findById(musicId))
                 .thenReturn(Optional.empty());

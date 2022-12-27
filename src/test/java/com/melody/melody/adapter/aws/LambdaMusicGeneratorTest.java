@@ -1,6 +1,6 @@
 package com.melody.melody.adapter.aws;
 
-import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -52,8 +52,8 @@ class LambdaMusicGeneratorTest {
     @Test
     void executeAsync(){
 
-        Music.MusicId musicId = randomMusicId();
-        Emotion emotion = randomEmotion();
+        Identity musicId = randomMusicId();
+        Music.Emotion emotion = randomEmotion();
         int musicLength = randomMusicLength();
         int noise = randomNoise();
 

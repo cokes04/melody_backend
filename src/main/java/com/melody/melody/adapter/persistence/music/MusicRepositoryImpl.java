@@ -9,6 +9,7 @@ import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.MusicErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.User;
 import com.querydsl.core.BooleanBuilder;
@@ -39,18 +40,20 @@ public class MusicRepositoryImpl implements MusicRepository {
     }
 
     @Override
-    public Optional<Music> findById(Music.MusicId musicId) {
+    public Optional<Music> findById(Identity musicId) {
+        long id = musicId.getValue();
+
         MusicData result = select()
-                .where(musicEntity.id.eq(musicId.getValue()))
+                .where(musicEntity.id.eq(id))
                 .fetchOne();
 
         return Optional.ofNullable(result)
-                .filter(m -> !Music.Status.DELETED.equals(m.getStatus()))
+                .filter( m -> !Music.Status.DELETED.equals(m.getStatus()))
                 .map(mapper::toModel);
     }
 
     @Override
-    public PagingResult<Music> findByUserId(User.UserId userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging) {
+    public PagingResult<Music> findByUserId(Identity userId, MusicPublish musicPublish, PagingInfo<MusicSort> musicPaging) {
         BooleanBuilder where = new BooleanBuilder();
         where.and(musicEntity.status.ne(Music.Status.DELETED));
         where.and(musicEntity.userEntity.id.eq(userId.getValue()));
@@ -90,10 +93,10 @@ public class MusicRepositoryImpl implements MusicRepository {
 
         int totalSize = select().where(where).fetch().size();
 
-        return  new PagingResult<Music>(result, result.size(), totalSize, (int)Math.ceil((double) totalSize / musicPaging.getSize()));
+        return new PagingResult<Music>(result, result.size(), totalSize, (int)Math.ceil((double) totalSize / musicPaging.getSize()));
     }
 
-    public void deleteByUserId(User.UserId userId){
+    public void deleteByUserId(Identity userId){
         factory.update(musicEntity)
                 .set(musicEntity.status, Music.Status.DELETED)
                 .where(musicEntity.userEntity.id.eq(userId.getValue()))

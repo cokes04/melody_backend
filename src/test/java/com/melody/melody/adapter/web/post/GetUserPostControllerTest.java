@@ -5,7 +5,6 @@ import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.service.post.GetUserPostService;
 import com.melody.melody.application.service.post.TestPostDetailServiceGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,9 +32,9 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,12 +66,10 @@ class GetUserPostControllerTest {
     @Test
     @WithMockRequester(userId = requesterUserId)
     void getUsersPost_Ok() throws Exception {
-        User.UserId userId = new User.UserId(requesterUserId);
-
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.Everything, new PagingInfo(0, 4, PostSort.newest));
+        GetUserPostService.Command command = new GetUserPostService.Command(requesterUserId, Open.Everything, new PagingInfo(0, 4, PostSort.newest));
         PagingResult<PostDetail> pagingResult = new PagingResult<>(
                 IntStream.range(0, 4)
-                        .mapToObj(i -> TestPostDetailServiceGenerator.randomPostDetail(userId.getValue(), true, false))
+                        .mapToObj(i -> TestPostDetailServiceGenerator.randomPostDetail(requesterUserId, true, false))
                         .collect(Collectors.toList()),
                 4,
                 20,

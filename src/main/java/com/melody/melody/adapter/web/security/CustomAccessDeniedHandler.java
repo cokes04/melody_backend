@@ -6,7 +6,6 @@ import com.melody.melody.adapter.web.exception.ErrorResponse;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.type.UserErrorType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.servlet.server.Encoding;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;

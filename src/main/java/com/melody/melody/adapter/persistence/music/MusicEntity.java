@@ -2,7 +2,6 @@ package com.melody.melody.adapter.persistence.music;
 
 import com.melody.melody.adapter.persistence.post.PostEntity;
 import com.melody.melody.adapter.persistence.user.UserEntity;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.*;
 
@@ -25,7 +24,7 @@ public class MusicEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "EMOTION", nullable = false, columnDefinition = "varchar(16)")
-    private Emotion emotion;
+    private Music.Emotion emotion;
 
     @Column(name = "EXPLANATION", nullable = false)
     private String explanation;

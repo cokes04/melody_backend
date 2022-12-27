@@ -42,7 +42,7 @@ class UserTest {
     void create_ShuoldReturnCreatedUser() {
         String nickName = randomNickName().getValue();
         String email =randomEmail().getValue();
-        Password password =randomPassword();
+        User.Password password =randomPassword();
 
         User actual = User.create(
                 nickName,
@@ -86,7 +86,7 @@ class UserTest {
     void changePassword_ShouldChangePassword_WhenOldPasswordMatches() {
         User user = randomUser();
         String oldRawPassword =  "abcdefg123EWAS";
-        Password newPassword = randomPassword();
+        User.Password newPassword = randomPassword();
 
         when(encrypter.matches(oldRawPassword, user.getPassword()))
                 .thenReturn(true);
@@ -100,7 +100,7 @@ class UserTest {
     void changePassword_ShouldThrowException_WhenOldPasswordNotMatches() {
         User user = randomUser();
         String oldRawPassword =  "abcdefg123EWAS";
-        Password newPassword = randomPassword();
+        User.Password newPassword = randomPassword();
 
         when(encrypter.matches(oldRawPassword, user.getPassword()))
                 .thenReturn(false);
@@ -117,7 +117,7 @@ class UserTest {
         User user = randomUser();
         user.withdraw();
         String oldRawPassword =  "abcdefg123EWAS";
-        Password newPassword = randomPassword();
+        User.Password newPassword = randomPassword();
 
         assertTrue(user.isWithdrawn());
 
@@ -136,7 +136,7 @@ class UserTest {
         user.withdraw();
         assertTrue(user.isWithdrawn());
 
-        eventsMockedStatic.verify(() -> Events.raise(eq(new UserWithdrew(user.getId().get().getValue()))), times(1));
+        eventsMockedStatic.verify(() -> Events.raise(eq(new UserWithdrew(user.getId().getValue()))), times(1));
     }
 
     @Test

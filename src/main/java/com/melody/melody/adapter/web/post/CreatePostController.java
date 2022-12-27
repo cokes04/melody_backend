@@ -5,7 +5,6 @@ import com.melody.melody.adapter.web.post.request.CreatePostRequest;
 import com.melody.melody.adapter.web.security.Requester;
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
 import com.melody.melody.application.service.post.CreatePostService;
-import com.melody.melody.domain.model.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +24,7 @@ public class CreatePostController {
                                     @RequestBody CreatePostRequest request){
         CreatePostService.Command command = request.toCommand(requester.getUserId());
         CreatePostService.Result result = service.execute(command);
-        long postId = result.getPost().getId().map(Post.PostId::getValue).get();
+        long postId = result.getPost().getId().getValue();
 
         return ResponseEntity
                 .created(URI.create("/posts/" + postId))

@@ -5,6 +5,7 @@ import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -23,7 +24,7 @@ public class UpdatePostService implements UseCase<UpdatePostService.Command, Upd
     @PreAuthorize("#post.isOwner(#command.postId)")
     @Override
     public Result execute(Command command) {
-        Post post = repository.findById(command.postId)
+        Post post = repository.findById(Identity.from(command.postId))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(PostErrorType.Not_Found_Post)));
 
         String title = command.getTitle().isPresent() ? command.getTitle().get() : post.getTitle().getValue();
@@ -43,13 +44,13 @@ public class UpdatePostService implements UseCase<UpdatePostService.Command, Upd
 
     @Value
     public static class Command implements UseCase.Command {
-        private final Post.PostId postId;
+        private final long postId;
 
         private final Optional<String> title;
         private final Optional<String> content;
         private final Optional<Boolean> open;
 
-        public Command(Post.PostId postId, String title, String content, Boolean open) {
+        public Command(long postId, String title, String content, Boolean open) {
             this.postId = postId;
             this.title = Optional.ofNullable(title);
             this.content = Optional.ofNullable(content);

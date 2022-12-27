@@ -3,6 +3,7 @@ package com.melody.melody.adapter.cache.post;
 import com.melody.melody.adapter.cache.CacheAdapter;
 import com.melody.melody.adapter.persistence.postdetail.PostTotalSizeCache;
 import com.melody.melody.application.dto.Open;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
@@ -15,7 +16,7 @@ public class PostTotalSizeCacheImpl implements PostTotalSizeCache {
     private final UserPostTotalCache postTotalCache;
 
     @Override
-    public Optional<Long> getTotalSize(User.UserId userId, Open open) {
+    public Optional<Long> getTotalSize(Identity userId, Open open) {
         long userIdValue = userId.getValue();
 
         Long openCount, closeCount;
@@ -40,7 +41,7 @@ public class PostTotalSizeCacheImpl implements PostTotalSizeCache {
     }
 
     @Override
-    public void putTotalSize(User.UserId userId, Open open, long totalSize) {
+    public void putTotalSize(Identity userId, Open open, long totalSize) {
         long userIdValue = userId.getValue();
 
         switch (open){
@@ -53,7 +54,7 @@ public class PostTotalSizeCacheImpl implements PostTotalSizeCache {
     }
 
     @Override
-    public void putDeletedTotalSize(User.UserId userId, long totalSize) {
+    public void putDeletedTotalSize(Identity userId, long totalSize) {
         postTotalCache.put(userId.getValue(), CountInfo.Deleted, totalSize);
     }
 }

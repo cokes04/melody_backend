@@ -5,6 +5,7 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BusinessRuleChecker;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class WithdrawUserService implements UseCase<WithdrawUserService.Command,
     @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        User user = repository.findById(command.getUserId())
+        User user = repository.findById(Identity.from(command.getUserId()))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(UserErrorType.User_Not_Found)));
 
         user.withdraw();
@@ -32,7 +33,7 @@ public class WithdrawUserService implements UseCase<WithdrawUserService.Command,
 
     @Value
     public static class Command implements UseCase.Command{
-        private final User.UserId userId;
+        private final long userId;
     }
 
     @Value

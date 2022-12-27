@@ -3,10 +3,7 @@ package com.melody.melody.adapter.web.restdocs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.aws.AwsErrorType;
-import com.melody.melody.domain.exception.type.DomainErrorType;
-import com.melody.melody.domain.exception.type.MusicErrorType;
-import com.melody.melody.domain.exception.type.PostErrorType;
-import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.exception.type.*;
 import lombok.SneakyThrows;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -104,6 +101,7 @@ public class CreateErrorSnippet {
         put(map, PostErrorType.values());
         put(map, UserErrorType.values());
         put(map, AwsErrorType.values());
+        put(map, CommonErrorType.values());
         map.put("400001", String.format(AwsErrorType.Not_Supported_Media_Type.getMessageFormat(), "image/bmp"));
 
         return map;

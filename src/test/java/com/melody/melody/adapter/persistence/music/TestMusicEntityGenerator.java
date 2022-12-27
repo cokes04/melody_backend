@@ -1,11 +1,7 @@
 package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.adapter.persistence.post.PostEntity;
-import com.melody.melody.adapter.persistence.post.TestPostEntityGenerator;
 import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import net.datafaker.Faker;
@@ -49,6 +45,11 @@ public class TestMusicEntityGenerator {
     }
 
 
+    public static MusicEntity randomNullIdMusicEntity(){
+        LocalDateTime createdDate = LocalDateTime.now().withNano(0);
+        return randomMusicEntity(null, randomStatus(), createdDate, TestUserEntityGenerator.randomUserEntity());
+    }
+
     public static MusicEntity randomMusicEntity(Music.Status status, UserEntity userEntity){
         LocalDateTime createdDate = LocalDateTime.now().withNano(0);
         return randomMusicEntity(randomId(), status, createdDate, userEntity);
@@ -67,9 +68,17 @@ public class TestMusicEntityGenerator {
                 .build();
     }
 
+    public static MusicData randomNullIdMusicData(){
+        return randomMusicData(null);
+    }
+
     public static MusicData randomMusicData(){
+        return randomMusicData(randomId());
+    }
+
+    public static MusicData randomMusicData(Long id){
         return MusicData.builder()
-                .id(randomId())
+                .id(id)
                 .emotion(randomEmotion())
                 .explanation(randomExplanation())
                 .imageUrl(randomImageUrl())
@@ -83,7 +92,7 @@ public class TestMusicEntityGenerator {
         return TestMusicDomainGenerator.randomMusicId().getValue();
     }
 
-    public static Emotion randomEmotion(){
+    public static Music.Emotion randomEmotion(){
         return TestMusicDomainGenerator.randomEmotion();
     }
 

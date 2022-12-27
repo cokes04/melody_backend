@@ -1,7 +1,6 @@
 package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.config.JwtConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +52,6 @@ class LogoutControllerTest {
                 .addFilter(new CharacterEncodingFilter("UTF-8", false, true))
                 .build();
     }
-
 
     @Test
     void logout_200() throws Exception {

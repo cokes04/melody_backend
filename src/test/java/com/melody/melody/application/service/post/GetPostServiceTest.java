@@ -6,6 +6,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +33,8 @@ class GetPostServiceTest {
     @Test
     void excute_ShouldReturnPostDetail() {
         PostDetail postDetail = TestPostDetailServiceGenerator.randomPostDetail();
-        Post.PostId postId = new Post.PostId(postDetail.getId());
-        GetPostService.Command command = new GetPostService.Command(postId);
+        Identity postId = Identity.from(postDetail.getId());
+        GetPostService.Command command = new GetPostService.Command(postId.getValue());
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(postDetail));
@@ -45,8 +46,8 @@ class GetPostServiceTest {
 
     @Test
     void excute_ShouldException_WhenNotExistPost() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
-        GetPostService.Command command = new GetPostService.Command(postId);
+        Identity postId = TestPostDomainGenerator.randomPostId();
+        GetPostService.Command command = new GetPostService.Command(postId.getValue());
 
         when(repository.findById(postId))
                 .thenReturn(Optional.empty());

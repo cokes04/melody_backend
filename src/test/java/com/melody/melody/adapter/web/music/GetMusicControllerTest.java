@@ -2,6 +2,7 @@ package com.melody.melody.adapter.web.music;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.application.service.music.GetMusicService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +55,10 @@ class GetMusicControllerTest {
 
     @Test
     void getMusic_Ok() throws Exception {
-        Music.MusicId musicId = TestMusicDomainGenerator.randomMusicId();
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
         Music music = TestMusicDomainGenerator.randomMusic();
 
-        GetMusicService.Command command = new GetMusicService.Command(musicId);
+        GetMusicService.Command command = new GetMusicService.Command(musicId.getValue());
         GetMusicService.Result result =  new GetMusicService.Result(music);
 
         when(service.execute(eq(command)))

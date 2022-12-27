@@ -4,7 +4,7 @@ import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.application.service.user.ChangePasswordService;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
@@ -35,16 +35,16 @@ public class ChangePasswordServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenUserSelf() {
-        User user = TestUserDomainGenerator.randomUser(new User.UserId(requesterId));
-        User.UserId userId = user.getId().get();
+        User user = TestUserDomainGenerator.randomUser(Identity.from(requesterId));
+        Identity userId = user.getId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        when(passwordEncrypter.matches(any(String.class), any(Password.class)))
+        when(passwordEncrypter.matches(any(String.class), any(User.Password.class)))
                 .thenReturn(true);
 
-        ChangePasswordService.Command command = new ChangePasswordService.Command(userId, "ASkl412dcasi123!@#", "Saklj321@!jdka");
+        ChangePasswordService.Command command = new ChangePasswordService.Command(userId.getValue(), "ASkl412dcasi123!@#", "Saklj321@!jdka");
         service.execute(command);
 
         verify(repository, times(1))
@@ -54,21 +54,21 @@ public class ChangePasswordServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotUserSelf() {
-        User user = TestUserDomainGenerator.randomUser(new User.UserId(requesterId / 3L));
-        User.UserId userId = user.getId().get();
+        User user = TestUserDomainGenerator.randomUser(Identity.from(requesterId / 3L));
+        Identity userId = user.getId();
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        when(passwordEncrypter.matches(any(String.class), any(Password.class)))
+        when(passwordEncrypter.matches(any(String.class), any(User.Password.class)))
                 .thenReturn(true);
 
-        ChangePasswordService.Command command = new ChangePasswordService.Command(userId, "ASdjk2341d$@!", "Saklj321@!jdka");
+        ChangePasswordService.Command command = new ChangePasswordService.Command(userId.getValue(), "ASdjk2341d$@!", "Saklj321@!jdka");
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
 
         verify(repository, times(0))
-                .findById(any(User.UserId.class));
+                .findById(any(Identity.class));
     }
 }

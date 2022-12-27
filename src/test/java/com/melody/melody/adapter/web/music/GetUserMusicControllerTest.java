@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.service.music.GetUserMusicService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,9 +70,9 @@ class GetUserMusicControllerTest {
     @Test
     @WithMockRequester(userId = requesterUserId)
     void getUsersMusic_Ok() throws Exception {
-        User.UserId userId = new User.UserId(requesterUserId);
+        Identity userId = Identity.from(requesterUserId);
         MusicPublish publish = MusicPublish.Published;
-        GetUserMusicService.Command command = new GetUserMusicService.Command(userId, publish, new PagingInfo(0, 4, MusicSort.newest));
+        GetUserMusicService.Command command = new GetUserMusicService.Command(userId.getValue(), publish, new PagingInfo(0, 4, MusicSort.newest));
         PagingResult<Music> pagingResult = new PagingResult<>(
                 IntStream.range(0, 4)
                         .mapToObj(i -> TestMusicDomainGenerator.randomCompletionMusic(userId))

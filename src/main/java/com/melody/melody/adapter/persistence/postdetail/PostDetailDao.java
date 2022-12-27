@@ -6,7 +6,7 @@ import com.melody.melody.application.dto.*;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.PostErrorType;
-import com.melody.melody.domain.model.Emotion;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
@@ -34,7 +34,7 @@ import static com.melody.melody.adapter.persistence.user.QUserEntity.userEntity;
 public class PostDetailDao {
     private final JPAQueryFactory factory;
 
-    public Optional<PostDetail> findById(Post.PostId postId) {
+    public Optional<PostDetail> findById(Identity postId) {
         BooleanBuilder where = new BooleanBuilder();
         where.and(postEntity.deleted.eq(false));
         where.and(postEntity.id.eq(postId.getValue()));
@@ -47,7 +47,7 @@ public class PostDetailDao {
     }
 
 
-    public List<PostDetail> findByUserId(User.UserId userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
+    public List<PostDetail> findByUserId(Identity userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.get(postSort)
                 .map(PostOrderBy::getOrderSpecifier)
                 .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)));
@@ -69,12 +69,12 @@ public class PostDetailDao {
 
     }
 
-    public List<PostDetail> findByUserId(User.UserId userId, Open open, PagingInfo<PostSort> postPaging) {
+    public List<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
         return findByUserId(userId, open, null, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
     }
 
 
-    public long findTotalSizeByUserId(User.UserId userId, Open open){
+    public long findTotalSizeByUserId(Identity userId, Open open){
         BooleanBuilder where = new BooleanBuilder();
         where.and(postEntity.deleted.eq(false));
         where.and(eqOpen(open));
@@ -149,7 +149,7 @@ public class PostDetailDao {
 
         @QueryProjection
         public PostDetailData(Long id, String title, String content, int likeCount, boolean open, boolean deleted, LocalDateTime createdDate,
-                              Long userId, String nickname, Long musicId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status musicStatus) {
+                              Long userId, String nickname, Long musicId, Music.Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status musicStatus) {
             super(id, title, content, likeCount, open, deleted, createdDate, userId, nickname, musicId, emotion, explanation, imageUrl, musicUrl, musicStatus);
         }
     }

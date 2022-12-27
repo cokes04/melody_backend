@@ -1,5 +1,6 @@
 package com.melody.melody.adapter.web.security;
 
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_ShouldSetAuthentication_WhenValidateDAccessToken() throws ServletException, IOException {
         String accessToken = "i_am_accesstoken";
-        User.UserId userId = new User.UserId(5L);
+        Identity userId = Identity.from(5L);
 
         when(request.getHeader(eq(accessTokenName)))
                 .thenReturn(accessToken);
@@ -93,7 +94,7 @@ class JwtAuthenticationFilterTest {
         String refreshToken = "i_am_refreshtoken";
         String newAccessToken = "i_am_new_accesstoken";
 
-        User.UserId userId = new User.UserId(5L);
+        Identity userId = Identity.from(5L);
 
         when(request.getCookies())
                 .thenReturn(new Cookie[]{new Cookie(refreshTokenName, refreshToken)});

@@ -1,20 +1,17 @@
 package com.melody.melody.application.service.music;
 
 import com.melody.melody.application.port.out.MusicRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
+import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static com.melody.melody.domain.model.TestMusicDomainGenerator.*;
 
 class GetMusicServiceTest {
     private GetMusicService service;
@@ -28,14 +25,14 @@ class GetMusicServiceTest {
 
     @Test
     void execute_ShouldReturnMusic() {
-        Music.MusicId id = randomMusicId();
-        Music music = randomMusic();
-        music = insertMusicId(music, id);
-        Music expectedMusic = cloneMusic(music);
-        GetMusicService.Command command = new GetMusicService.Command(id);
+        Identity musicId = TestMusicDomainGenerator.randomMusicId();
+        Music music = TestMusicDomainGenerator.randomMusic();
+        music = TestMusicDomainGenerator.insertMusicId(music, musicId);
+        Music expectedMusic = TestMusicDomainGenerator.cloneMusic(music);
+        GetMusicService.Command command = new GetMusicService.Command(musicId.getValue());
 
 
-        when(repository.findById(eq(id)))
+        when(repository.findById(eq(musicId)))
                 .thenReturn(Optional.of(music));
 
 
@@ -45,7 +42,7 @@ class GetMusicServiceTest {
         assertNotNull((actualMusic = result.getMusic()));
         assertEquals(expectedMusic, actualMusic);
 
-        verify(repository, times(1)).findById(id);
+        verify(repository, times(1)).findById(musicId);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.melody.melody.adapter.cache.post;
 
 import com.melody.melody.application.dto.Open;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void getTotalSize_ShouldReturnTotalSize_WhenEveryting_HaveCloseAndOpen() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Open))
                 .thenReturn(300L);
@@ -42,7 +43,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void get_ShouldReturnNull_WhenEveryting_NotHaveClose() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Open))
                 .thenReturn(100L);
@@ -56,7 +57,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void get_ShouldReturnNull_WhenEveryting_NotHaveOpenKey() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Open))
                 .thenReturn(null);
@@ -71,7 +72,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void getTotalSize_ShouldReturnTotalSize_WhenOnlyOpen_HaveOpen() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Open))
                 .thenReturn(300L);
@@ -83,7 +84,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void getTotalSize_ShouldReturnEmpty_WhenOnlyOpen_NotHaveOpen() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Open))
                 .thenReturn(null);
@@ -94,7 +95,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void getTotalSize_ShouldReturnTotalSize_WhenOnlyClose_HaveClose() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Close))
                 .thenReturn(300L);
@@ -106,7 +107,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void getTotalSize_ShouldReturnEmpty_WhenOnlyClose_NotHaveClose() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         when(cache.get(userId.getValue(), CountInfo.Close))
                 .thenReturn(null);
@@ -117,7 +118,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void putTotalSize_ShouldNotPut_WhenEveryting() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         cacheRepository.putTotalSize(userId, Open.Everything, 2031L);
 
@@ -126,7 +127,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void putTotalSize_ShouldPut_WhenOnlyOpen() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         cacheRepository.putTotalSize(userId, Open.OnlyOpen, 2031L);
 
@@ -135,7 +136,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void putTotalSize_ShouldPut_WhenOnlyClose() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         cacheRepository.putTotalSize(userId, Open.OnlyClose, 2031L);
 
@@ -145,7 +146,7 @@ class PostTotalSizeCacheImplTest {
 
     @Test
     void putDeletedTotalSize_ShouldPut() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
         cacheRepository.putDeletedTotalSize(userId, 2031L);
 

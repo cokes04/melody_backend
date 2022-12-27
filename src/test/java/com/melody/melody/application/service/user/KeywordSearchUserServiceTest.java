@@ -2,11 +2,6 @@ package com.melody.melody.application.service.user;
 
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.out.SearchedUserRepository;
-import com.melody.melody.application.port.out.UserRepository;
-import com.melody.melody.application.service.post.GetUserPostService;
-import com.melody.melody.application.service.post.TestPostDetailServiceGenerator;
-import com.melody.melody.domain.model.TestUserDomainGenerator;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

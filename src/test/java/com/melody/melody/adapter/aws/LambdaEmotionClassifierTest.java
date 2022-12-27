@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.aws.response.EmotionMapping;
 import com.melody.melody.adapter.aws.response.LambdaEmotionClassifitionResponse;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -41,7 +40,7 @@ class LambdaEmotionClassifierTest {
                 .setResponseCode(HttpStatus.OK.value())
         .setBody(
                 objectMapper.writeValueAsString(
-                        LambdaEmotionClassifitionResponse.builder().emotion(EmotionMapping.of(Emotion.RELAXED).getClassification()).build()
+                        LambdaEmotionClassifitionResponse.builder().emotion(EmotionMapping.of(Music.Emotion.RELAXED).getClassification()).build()
                 )
         );
 
@@ -62,7 +61,7 @@ class LambdaEmotionClassifierTest {
     void execute_ShouldReturnEmotion() {
         Music.Explanation caption = new Music.Explanation("안녕하다 행복하다");
 
-        Emotion emotion = classifier.execute(caption);
+        Music.Emotion emotion = classifier.execute(caption);
 
         assertNotNull(emotion);
 

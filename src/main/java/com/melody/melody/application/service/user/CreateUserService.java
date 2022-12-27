@@ -3,7 +3,6 @@ package com.melody.melody.application.service.user;
 import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.application.port.out.UserRepository;
-import com.melody.melody.domain.model.Password;
 import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BusinessRuleChecker;
 import com.melody.melody.domain.rule.EmailIsUnique;
@@ -26,7 +25,7 @@ public class CreateUserService implements UseCase<CreateUserService.Command, Cre
                 new EmailIsUnique(repository, User.Email.from(command.getEmail()))
         );
 
-        Password password = passwordEncrypter.encrypt(command.getPassword());
+        User.Password password = passwordEncrypter.encrypt(command.getPassword());
 
         User user = User.create(
                 command.getNickName(),

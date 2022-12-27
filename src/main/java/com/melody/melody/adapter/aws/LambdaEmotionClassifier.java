@@ -4,7 +4,6 @@ import com.melody.melody.adapter.aws.request.LambdaEmotionclassificationRequest;
 import com.melody.melody.adapter.aws.response.EmotionMapping;
 import com.melody.melody.adapter.aws.response.LambdaEmotionClassifitionResponse;
 import com.melody.melody.application.port.out.EmotionClassifier;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +36,7 @@ public class LambdaEmotionClassifier implements EmotionClassifier {
     }
 
     @Override
-    public Emotion execute(Music.Explanation caption) {
+    public Music.Emotion execute(Music.Explanation caption) {
         LambdaEmotionclassificationRequest request = LambdaEmotionclassificationRequest.builder()
                 .caption(caption.getValue())
                 .build();

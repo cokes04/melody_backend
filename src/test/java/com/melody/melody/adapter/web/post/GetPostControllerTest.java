@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.application.service.post.GetPostService;
 import com.melody.melody.application.service.post.TestPostDetailServiceGenerator;
-import com.melody.melody.domain.model.Post;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,7 +64,7 @@ class GetPostControllerTest {
     void getPost_Ok() throws Exception {
         long postId = 7540201;
 
-        GetPostService.Command command = new GetPostService.Command(new Post.PostId(postId));
+        GetPostService.Command command = new GetPostService.Command(postId);
         when(service.execute(command))
                 .thenReturn(new GetPostService.Result(TestPostDetailServiceGenerator.randomPostDetail()));
 

@@ -1,29 +1,24 @@
 package com.melody.melody.application.service.post;
 
-import com.melody.melody.application.service.music.GenerateMusicService;
+
 import com.melody.melody.domain.model.*;
 import net.datafaker.Faker;
-import org.springframework.core.io.UrlResource;
-
-import java.net.MalformedURLException;
-
-import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusic;
 
 public class TestPostServiceGenerator {
     private static final Faker faker = new Faker();
 
     public static UpdatePostService.Command randomUpdatePostCommand(){
-        return randomUpdatePostService(TestPostDomainGenerator.randomPostId());
+        return randomUpdatePostService(TestPostDomainGenerator.randomPostId().getValue());
     }
 
     public static CreatePostService.Command randomCreatePostCommand(){
         return randomCreatePostCommand(
-                TestUserDomainGenerator.randomUserId(),
-                TestMusicDomainGenerator.randomMusicId()
+                TestUserDomainGenerator.randomUserId().getValue(),
+                TestMusicDomainGenerator.randomMusicId().getValue()
         );
     }
 
-    public static UpdatePostService.Command randomUpdatePostService(Post.PostId postId){
+    public static UpdatePostService.Command randomUpdatePostService(long postId){
         return new UpdatePostService.Command(
                 postId,
                 TestPostDomainGenerator.randomTitle().getValue(),
@@ -32,7 +27,7 @@ public class TestPostServiceGenerator {
         );
     }
 
-    public static CreatePostService.Command randomCreatePostCommand(User.UserId userId, Music.MusicId musicId){
+    public static CreatePostService.Command randomCreatePostCommand(long userId, long musicId){
         return new CreatePostService.Command(
                 userId,
                 musicId,

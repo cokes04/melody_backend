@@ -3,7 +3,7 @@ package com.melody.melody.domain.rule;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -11,7 +11,7 @@ public class PasswordMatches implements BusinessRule {
 
     private final PasswordEncrypter passwordEncrypter;
     private final String raw;
-    private final Password encrypted;
+    private final User.Password encrypted;
 
     @Override
     public void check() throws BreakBusinessRuleException{

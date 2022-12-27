@@ -1,6 +1,5 @@
 package com.melody.melody.adapter.persistence.music;
 
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Builder;
@@ -14,7 +13,7 @@ public class MusicData{
 
     private Long userId;
 
-    private Emotion emotion;
+    private Music.Emotion emotion;
 
     private String explanation;
 
@@ -26,7 +25,7 @@ public class MusicData{
 
     @Builder
     @QueryProjection
-    public MusicData(Long id, Long userId, Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status status) {
+    public MusicData(Long id, Long userId, Music.Emotion emotion, String explanation, String imageUrl, String musicUrl, Music.Status status) {
         this.id = id;
         this.userId = userId;
         this.emotion = emotion;

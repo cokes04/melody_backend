@@ -4,7 +4,7 @@ import com.melody.melody.config.JwtConfig;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.FailedAuthenticationException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.Identity;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,18 +27,18 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createAccessToken(User.UserId id) {
+    public String createAccessToken(Identity userId) {
         return createToken(
-                id,
+                userId,
                 jwtConfig.getAccessToken().getValidMilliSecond(),
                 jwtConfig.getAccessToken().getSecretKey()
         );
     }
 
     @Override
-    public String createRefreshToken(User.UserId id) {
+    public String createRefreshToken(Identity userId) {
         return createToken(
-                id,
+                userId,
                 jwtConfig.getRefreshToken().getValidMilliSecond(),
                 jwtConfig.getRefreshToken().getSecretKey()
         );
@@ -72,12 +72,12 @@ public class JwtTokenProvider implements TokenProvider {
         return false;
     }
 
-    private String createToken(User.UserId id, long validMilliSecond, String secretKey){
+    private String createToken(Identity userId, long validMilliSecond, String secretKey){
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + validMilliSecond);
 
         return Jwts.builder()
-                .setSubject(String.valueOf(id.getValue()))
+                .setSubject(String.valueOf(userId.getValue()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, secretKey)

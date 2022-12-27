@@ -5,6 +5,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,12 +32,12 @@ class UpdatePostServiceTest {
     @Test
     void excute_ShouldReturnUpdatedPost() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
+        Identity postId = post.getId();
 
         Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
         Post.Content expectContent = TestPostDomainGenerator.randomContent();
         boolean open = false;
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), expectContent.getValue(), open);
+        UpdatePostService.Command command = new UpdatePostService.Command(postId.getValue(), expectTitle.getValue(), expectContent.getValue(), open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
@@ -56,12 +57,12 @@ class UpdatePostServiceTest {
 
     @Test
     void excute_ShouldException_WhenPostNotFound() {
-        Post.PostId postId = TestPostDomainGenerator.randomPostId();
+        Identity postId = TestPostDomainGenerator.randomPostId();
 
         String title = TestPostDomainGenerator.randomTitle().getValue();
         String content = TestPostDomainGenerator.randomContent().getValue();
         boolean open = false;
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, title, content, open);
+        UpdatePostService.Command command = new UpdatePostService.Command(postId.getValue(), title, content, open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.empty());
@@ -78,12 +79,12 @@ class UpdatePostServiceTest {
     @Test
     void excute_ShouldNotChangeTitle_WhenEmptyTitle() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
+        Identity postId = post.getId();
 
         Post.Title expectTitle = new Post.Title(post.getTitle().getValue());
         Post.Content expectContent = TestPostDomainGenerator.randomContent();
         boolean open = false;
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, null, expectContent.getValue(), open);
+        UpdatePostService.Command command = new UpdatePostService.Command(postId.getValue(), null, expectContent.getValue(), open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
@@ -103,12 +104,12 @@ class UpdatePostServiceTest {
     @Test
     void excute_ShouldNotChangeContent_WhenEmptyContent() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
+        Identity postId = post.getId();
 
         Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
         Post.Content expectContent = new Post.Content(post.getContent().getValue());
         boolean open = false;
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), null, open);
+        UpdatePostService.Command command = new UpdatePostService.Command(postId.getValue(), expectTitle.getValue(), null, open);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));
@@ -128,11 +129,11 @@ class UpdatePostServiceTest {
     @Test
     void excute_ShouldNotChangeOpen_WhenEmptyOpen() {
         Post post = TestPostDomainGenerator.randomOpenPost();
-        Post.PostId postId = post.getId().get();
+        Identity postId = post.getId();
 
         Post.Title expectTitle = TestPostDomainGenerator.randomTitle();
         Post.Content expectContent = TestPostDomainGenerator.randomContent();
-        UpdatePostService.Command command = new UpdatePostService.Command(postId, expectTitle.getValue(), expectContent.getValue(), null);
+        UpdatePostService.Command command = new UpdatePostService.Command(postId.getValue(), expectTitle.getValue(), expectContent.getValue(), null);
 
         when(repository.findById(postId))
                 .thenReturn(Optional.of(post));

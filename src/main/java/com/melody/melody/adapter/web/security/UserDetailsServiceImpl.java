@@ -2,6 +2,7 @@ package com.melody.melody.adapter.web.security;
 
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,9 +24,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }
 
-    @Cacheable(cacheNames = "userDetails", key = "#id")
-    public UserDetails loadUserById(User.UserId id) throws UsernameNotFoundException {
-        return userRepository.findById(id)
+    @Cacheable(cacheNames = "userDetails", key = "#userId")
+    public UserDetails loadUserById(Identity userId) throws UsernameNotFoundException {
+        return userRepository.findById(userId)
                 .map(UserDetailsImpl::new)
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }

@@ -2,6 +2,7 @@ package com.melody.melody.application.service.post;
 
 import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.port.out.PostRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
@@ -21,11 +22,11 @@ public class CreatePostService implements UseCase<CreatePostService.Command, Cre
     @Override
     public Result execute(Command command) {
         Post post = Post.create(
-                command.userId,
-                command.musicId,
-                command.title,
-                command.content,
-                command.open
+                Identity.from(command.getUserId()),
+                Identity.from(command.getUserId()),
+                command.getTitle(),
+                command.getContent(),
+                command.isOpen()
         );
 
         return new Result(repository.save(post));
@@ -33,8 +34,8 @@ public class CreatePostService implements UseCase<CreatePostService.Command, Cre
 
     @Value
     public static class Command implements UseCase.Command {
-        private final User.UserId userId;
-        private final Music.MusicId musicId;
+        private final long userId;
+        private final long musicId;
 
         private final String title;
         private final String content;

@@ -5,6 +5,7 @@ import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.type.MusicErrorType;
 import com.melody.melody.domain.exception.NotFoundException;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -22,14 +23,14 @@ public class GetMusicService implements UseCase<GetMusicService.Command, GetMusi
     @PostAuthorize("#music.isOwner(returnObject.music)")
     @Override
     public Result execute(Command command) {
-        return musicRepository.findById(command.musicId)
+        return musicRepository.findById(Identity.from(command.getMusicId()))
                 .map(Result::new)
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
     }
 
     @Value
     public static class Command implements UseCase.Command {
-        private final Music.MusicId musicId;
+        private final long musicId;
 
     }
 

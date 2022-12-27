@@ -3,6 +3,7 @@ package com.melody.melody.application.service.music;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.in.UseCase;
 import com.melody.melody.application.port.out.MusicRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,14 @@ public class GetUserMusicService implements UseCase<GetUserMusicService.Command,
     @PreAuthorize("#user.isMe(#command.userId)")
     @Override
     public Result execute(Command command) {
-        PagingResult<Music> pagingResult = musicRepository.findByUserId(command.userId, command.musicPublishing, command.musicPaging);
+        PagingResult<Music> pagingResult = musicRepository.findByUserId(Identity.from(command.userId), command.getMusicPublishing(), command.getMusicPaging());
 
         return new Result(pagingResult);
     }
 
     @Value
     public static class Command implements UseCase.Command {
-        private final User.UserId userId;
+        private final long userId;
         private final MusicPublish musicPublishing;
         private final PagingInfo<MusicSort> musicPaging;
     }

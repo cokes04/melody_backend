@@ -7,6 +7,7 @@ import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.PostErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,12 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
     private final PostTotalSizeCache totalSizeCache;
 
     @Override
-    public Optional<PostDetail> findById(Post.PostId postId) {
+    public Optional<PostDetail> findById(Identity postId) {
         return dao.findById(postId);
     }
 
     @Override
-    public PagingResult<PostDetail> findByUserId(User.UserId userId, Open open, PagingInfo<PostSort> postPaging) {
+    public PagingResult<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
         long totalSize = getTotalSize(userId, open);
         List<PostDetail> list = getPostDetailList(userId, open, postPaging);
 
@@ -37,11 +38,11 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
         return  (int)Math.ceil((double) totalSize / pageSize);
     }
 
-    private List<PostDetail> getPostDetailList(User.UserId userId, Open open, PagingInfo<PostSort> postPaging){
+    private List<PostDetail> getPostDetailList(Identity userId, Open open, PagingInfo<PostSort> postPaging){
         return dao.findByUserId(userId, open, postPaging);
     }
 
-    private long getTotalSize(User.UserId userId, Open open){
+    private long getTotalSize(Identity userId, Open open){
         Optional<Long> optional = totalSizeCache.getTotalSize(userId, open);
 
         if (optional.isPresent())
@@ -53,7 +54,7 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
         return getTotalSizeFromDao(userId, open, true);
     }
 
-    private long getTotalSizeFromDao(User.UserId userId, Open open, boolean putCache){
+    private long getTotalSizeFromDao(Identity userId, Open open, boolean putCache){
         long totalSize = dao.findTotalSizeByUserId(userId, open);
         if (putCache)
             totalSizeCache.putTotalSize(userId, open, totalSize);

@@ -9,7 +9,6 @@ import com.melody.melody.application.dto.MusicPublish;
 import com.melody.melody.application.dto.MusicSort;
 import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.service.music.GetUserMusicService;
-import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @RequiredArgsConstructor
 @WebAdapter
@@ -26,7 +26,7 @@ public class GetUserMusicController {
     private final GetUserMusicService service;
 
     @GetMapping(value = "/users/{userId}/music")
-    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@NotNull @PathVariable("userId") User.UserId userId,
+    public ResponseEntity<PageResponse<MusicResponse>> getUsersMusic(@NotNull @Positive @PathVariable("userId") long userId,
                                                                      @NotNull @RequestParam("publish") MusicPublish publish,
                                                                      MusicPagingRequest paging){
         PagingInfo<MusicSort> musicPaging = paging.toPagingInfo();

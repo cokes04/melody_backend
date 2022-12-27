@@ -3,8 +3,6 @@ package com.melody.melody.adapter.web.post.request;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.melody.melody.adapter.web.converter.YNToBooleanConverter;
 import com.melody.melody.application.service.post.CreatePostService;
-import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.User;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -29,8 +27,8 @@ public class CreatePostRequest {
 
     public CreatePostService.Command toCommand(long userId){
         return new CreatePostService.Command(
-                new User.UserId(userId),
-                new Music.MusicId(musicId),
+                userId,
+                musicId,
                 title,
                 content,
                 open

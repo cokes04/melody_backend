@@ -14,8 +14,8 @@ class MusicTest {
 
     @Test
     public void generate_ReturnCreatedMusic(){
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
-        Emotion emotion = randomEmotion();
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        Music.Emotion emotion = randomEmotion();
         Music.Explanation explanation = randomExplanation();
         Music.ImageUrl imageUrl = randomImageUrl();
 
@@ -47,7 +47,7 @@ class MusicTest {
 
     @Test
     void completeGeneration_ShouldThrowException_WhenCompletion() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Music music = randomCompletionMusic(userId);
         Music.MusicUrl musicUrl = randomMusicUrl();
 
@@ -60,7 +60,7 @@ class MusicTest {
 
     @Test
     void completeGeneration_ShouldThrowException_WhenDeleted() {
-        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
         Music music = randomDeletedMusic(userId);
         Music.MusicUrl musicUrl = randomMusicUrl();
 

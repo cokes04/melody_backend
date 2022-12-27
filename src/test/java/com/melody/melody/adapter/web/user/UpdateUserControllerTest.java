@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.melody.melody.adapter.security.WithMockRequester;
 import com.melody.melody.adapter.web.user.request.UpdateUserRequest;
 import com.melody.melody.application.service.user.UpdateUserService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,11 +66,11 @@ class UpdateUserControllerTest {
     @Test
     @WithMockRequester(userId = requesterUserId)
     void updateUser_Ok() throws Exception{
-        User.UserId userId = new User.UserId(requesterUserId);
+        Identity userId = Identity.from(requesterUserId);
         User user = TestUserDomainGenerator.randomUser(userId);
 
         UpdateUserRequest request = TestUserWebGenerator.randomUpdateUserRequest();
-        UpdateUserService.Command command = new UpdateUserService.Command(userId, request.getNickName());
+        UpdateUserService.Command command = new UpdateUserService.Command(userId.getValue(), request.getNickName());
         UpdateUserService.Result result = new UpdateUserService.Result(user);
 
         when(service.execute(eq(command)))

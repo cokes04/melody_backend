@@ -5,14 +5,12 @@ import net.datafaker.Faker;
 public class TestMusicDomainGenerator {
     private static final Faker faker = new Faker();
 
-    public static Music.MusicId randomMusicId(){
-        return new Music.MusicId(
-                faker.number().numberBetween(1L, Long.MAX_VALUE)
-        );
+    public static Identity randomMusicId(){
+        return Identity.from(faker.number().numberBetween(1L, Long.MAX_VALUE));
     }
 
-    public static Emotion randomEmotion(){
-        return faker.options().option(Emotion.class);
+    public static Music.Emotion randomEmotion(){
+        return faker.options().option(Music.Emotion.class);
     }
 
     public static Music.Explanation randomExplanation(){
@@ -46,11 +44,15 @@ public class TestMusicDomainGenerator {
         );
     }
 
+    public static Music randomEmptyIdentityMusic(){
+        return randomMusic(Identity.empty(), TestUserDomainGenerator.randomUserId(), Music.Status.COMPLETION, randomMusicUrl());
+    }
+
     public static Music randomMusic(){
         return randomMusic(randomMusicId(), TestUserDomainGenerator.randomUserId(), Music.Status.COMPLETION, randomMusicUrl());
     }
 
-    public static Music randomCompletionMusic(User.UserId userId){
+    public static Music randomCompletionMusic(Identity userId){
         return randomMusic(randomMusicId(), userId, Music.Status.COMPLETION, randomMusicUrl());
     }
 
@@ -58,7 +60,7 @@ public class TestMusicDomainGenerator {
         return randomProgressMusic(TestUserDomainGenerator.randomUserId());
     }
 
-    public static Music randomProgressMusic(User.UserId userId){
+    public static Music randomProgressMusic(Identity userId){
         return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS, null);
     }
 
@@ -66,10 +68,10 @@ public class TestMusicDomainGenerator {
         return randomDeletedMusic(TestUserDomainGenerator.randomUserId());
     }
 
-    public static Music randomDeletedMusic(User.UserId userId){
+    public static Music randomDeletedMusic(Identity userId){
         return randomMusic(randomMusicId(), userId, Music.Status.DELETED, randomMusicUrl());
     }
-    public static Music randomMusic(Music.MusicId musicId, User.UserId userId, Music.Status status, Music.MusicUrl musicUrl){
+    public static Music randomMusic(Identity musicId, Identity userId, Music.Status status, Music.MusicUrl musicUrl){
         return Music.builder()
                 .id(musicId)
                 .userId(userId)
@@ -84,7 +86,7 @@ public class TestMusicDomainGenerator {
     public static Music cloneMusic(Music music){
         return Music.builder()
                 .userId(music.getUserId())
-                .id(music.getId().orElse(null))
+                .id(music.getId())
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())
@@ -93,7 +95,7 @@ public class TestMusicDomainGenerator {
                 .build();
     }
 
-    public static Music insertMusicId(Music music, Music.MusicId musicId){
+    public static Music insertMusicId(Music music, Identity musicId){
         return Music.builder()
                 .id(musicId)
                 .userId(music.getUserId())

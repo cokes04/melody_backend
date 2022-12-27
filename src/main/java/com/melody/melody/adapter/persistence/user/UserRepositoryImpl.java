@@ -2,6 +2,7 @@ package com.melody.melody.adapter.persistence.user;
 
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.application.port.out.UserRepository;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +29,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> findById(User.UserId id) {
-        return jpaRepository.findById(id.getValue())
+    public Optional<User> findById(Identity userId) {
+        return jpaRepository.findById(userId.getValue())
                 .filter(u -> !u.isWithdrawn())
                 .map(userMapper::toModel);
     }

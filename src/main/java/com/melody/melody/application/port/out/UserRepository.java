@@ -1,5 +1,6 @@
 package com.melody.melody.application.port.out;
 
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import org.springframework.data.domain.PageRequest;
 
@@ -10,7 +11,7 @@ public interface UserRepository {
 
     Optional<User> findByEmail(User.Email email);
 
-    Optional<User> findById(User.UserId id);
+    Optional<User> findById(Identity id);
 
     boolean existsByEmail(User.Email email);
 }

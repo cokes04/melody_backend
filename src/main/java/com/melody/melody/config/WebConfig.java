@@ -16,10 +16,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new BooleanToYNConverter());
 
-        registry.addConverter(new StringToPostIdConverter());
-        registry.addConverter(new StringToMusicIdConverter());
-        registry.addConverter(new StringToUserIdConverter());
-
         registry.addConverter(new StringToPostSortConverter());
         registry.addConverter(new StringToMusicSortConverter());
         registry.addConverter(new StringToMusicPublishConverter());

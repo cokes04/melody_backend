@@ -6,7 +6,6 @@ import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.application.service.post.GetUserPostService;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,20 +29,18 @@ public class GetUserPostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenPostOwner() {
-        User.UserId userId = new User.UserId(requesterId);
         PagingInfo<PostSort> pagingInfo = new PagingInfo<>(0, 10, PostSort.oldest);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.Everything, pagingInfo);
+        GetUserPostService.Command command = new GetUserPostService.Command(requesterId, Open.Everything, pagingInfo);
         service.execute(command);
     }
 
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldPass_WhenNotPostOwnerAndOpenPost() {
-        User.UserId userId = new User.UserId((requesterId / 13) + 37);
         PagingInfo<PostSort> pagingInfo = new PagingInfo<>(0, 10, PostSort.oldest);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.OnlyOpen, pagingInfo);
+        GetUserPostService.Command command = new GetUserPostService.Command((requesterId / 13) + 37, Open.OnlyOpen, pagingInfo);
         service.execute(command);
 
     }
@@ -52,10 +49,9 @@ public class GetUserPostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotPostOwnerAndEverytionPost() {
-        User.UserId userId = new User.UserId((requesterId / 13) + 37);
         PagingInfo<PostSort> pagingInfo = new PagingInfo<>(0, 10, PostSort.oldest);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.Everything, pagingInfo);
+        GetUserPostService.Command command = new GetUserPostService.Command((requesterId / 13) + 37, Open.Everything, pagingInfo);
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);
     }
@@ -64,10 +60,9 @@ public class GetUserPostServicePermissionCheckTest {
     @Test
     @WithMockRequester(userId = requesterId)
     void excute_ShouldBlock_WhenNotPostOwnerAndClosePost() {
-        User.UserId userId = new User.UserId((requesterId / 13) + 37);
         PagingInfo<PostSort> pagingInfo = new PagingInfo<>(0, 10, PostSort.oldest);
 
-        GetUserPostService.Command command = new GetUserPostService.Command(userId, Open.OnlyClose, pagingInfo);
+        GetUserPostService.Command command = new GetUserPostService.Command((requesterId / 13) + 37, Open.OnlyClose, pagingInfo);
 
         assertThatThrownBy(() -> service.execute(command))
                 .isInstanceOf(AccessDeniedException.class);

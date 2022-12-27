@@ -1,13 +1,10 @@
 package com.melody.melody.adapter.web.security;
 
 import com.melody.melody.application.port.out.UserRepository;
-import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.DomainException;
-import com.melody.melody.domain.exception.FailedAuthenticationException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
-import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -68,12 +65,12 @@ class UserDetailsServiceImplTest {
     @Test
     void loadUserById_ShouldReturnUserDetails() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId id = user.getId().get();
+        Identity userId = user.getId();
 
-        when(userRepository.findById(id))
+        when(userRepository.findById(userId))
                 .thenReturn(Optional.of(user));
 
-        UserDetails actual = userDetailsServiceImpl.loadUserById(id);
+        UserDetails actual = userDetailsServiceImpl.loadUserById(userId);
 
         assertEquals(user.getEmail().getValue(), actual.getUsername());
         assertEquals(user.getPassword().getEncryptedString(), actual.getPassword());
@@ -86,12 +83,12 @@ class UserDetailsServiceImplTest {
 
     @Test
     void loadUserById_ShouldThrowException_WhenNotFoundId() {
-        User.UserId id = TestUserDomainGenerator.randomUserId();
+        Identity userId = TestUserDomainGenerator.randomUserId();
 
-        when(userRepository.findById(id))
+        when(userRepository.findById(userId))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy( () -> userDetailsServiceImpl.loadUserById(id))
+        assertThatThrownBy( () -> userDetailsServiceImpl.loadUserById(userId))
                 .isInstanceOf(UsernameNotFoundException.class)
                 .hasMessage(UserErrorType.Authentication_Failed.getMessageFormat());
 

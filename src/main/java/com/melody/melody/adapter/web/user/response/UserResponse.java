@@ -15,7 +15,7 @@ public class UserResponse {
 
     public static UserResponse to(User user){
         return UserResponse.builder()
-                .userId(user.getId().map(User.UserId::getValue).orElse(-1L))
+                .userId(user.getId().getValue())
                 .nickName(user.getNickName().getValue())
                 .email(user.getEmail().getValue())
                 .build();

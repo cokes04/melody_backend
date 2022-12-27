@@ -2,10 +2,7 @@ package com.melody.melody.adapter.aws;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.aws.response.EmotionMapping;
-import com.melody.melody.adapter.aws.response.LambdaEmotionClassifitionResponse;
 import com.melody.melody.adapter.aws.response.LambdaImageCaptioningResponse;
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.TestMusicDomainGenerator;
 import okhttp3.mockwebserver.Dispatcher;

@@ -1,14 +1,7 @@
 package com.melody.melody.application.service.user;
 
-import com.melody.melody.application.service.music.GenerateMusicService;
-import com.melody.melody.domain.model.Password;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import net.datafaker.Faker;
-import org.springframework.core.io.UrlResource;
-
-import java.net.MalformedURLException;
-
-import static com.melody.melody.domain.model.TestMusicDomainGenerator.randomMusic;
 
 public class TestUserServiceGenerator {
     private static final Faker faker = new Faker();

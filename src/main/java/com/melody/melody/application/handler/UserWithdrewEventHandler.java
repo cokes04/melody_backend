@@ -4,6 +4,7 @@ import com.melody.melody.application.port.in.EventHandler;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.domain.event.UserWithdrew;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -24,7 +25,7 @@ public class UserWithdrewEventHandler implements EventHandler<UserWithdrew> {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void handle(UserWithdrew event) {
-        User.UserId userId = new User.UserId(event.getUserId());
+        Identity userId = Identity.from(event.getUserId());
         postRepository.deleteByUserId(userId);
         musicRepository.deleteByUserId(userId);
     }

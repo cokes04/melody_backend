@@ -1,6 +1,7 @@
 package com.melody.melody.adapter.web.user;
 
 import com.melody.melody.application.service.user.WithdrawUserService;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,8 +59,7 @@ class WithdrawUserControllerTest {
     @Test
     void withdraw_200() throws Exception {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
-        WithdrawUserService.Command command = new WithdrawUserService.Command(userId);
+        WithdrawUserService.Command command = new WithdrawUserService.Command(user.getId().getValue());
 
         when(service.execute(command))
                 .thenReturn(new WithdrawUserService.Result(user));
@@ -76,7 +76,7 @@ class WithdrawUserControllerTest {
                         .toString());
 
         this.mockMvc.perform(
-                delete("/users/{userId}", userId.getValue())
+                delete("/users/{userId}", user.getId().getValue())
                         .header(HttpHeaders.AUTHORIZATION, "header.payload.signature")
         )
                 .andDo(print())

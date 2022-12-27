@@ -1,14 +1,12 @@
 package com.melody.melody.adapter.web.security;
 
-import com.melody.melody.domain.model.User;
+import com.melody.melody.domain.model.Identity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -38,9 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = getAccessTokenToRequest(request);
 
         if ( StringUtils.hasText(accessToken) && jwtTokenProvider.validateAccessToken(accessToken) ){
-            User.UserId userId = new User.UserId(
-                    jwtTokenProvider.getIdToAcessToken(accessToken)
-            );
+            Identity userId = Identity.from(jwtTokenProvider.getIdToAcessToken(accessToken));
+
             UserDetails userDetails = userDetailsService.loadUserById(userId);
             setAuthentication(request, userDetails);
 
@@ -48,9 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String refreshToken = getRefreshTokenToRequest(request);
 
             if ( StringUtils.hasText(refreshToken) && jwtTokenProvider.validateRefreshToken(refreshToken)) {
-                User.UserId userId = new User.UserId(
-                        jwtTokenProvider.getIdToRefreshToken(refreshToken)
-                );
+                Identity userId = Identity.from(jwtTokenProvider.getIdToRefreshToken(refreshToken));
 
                 String newAccessToken = jwtTokenProvider.createAccessToken(userId);
                 response.setHeader(accessTokenName, newAccessToken);

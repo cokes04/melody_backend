@@ -1,6 +1,7 @@
 package com.melody.melody.adapter.security;
 
 import com.melody.melody.adapter.web.security.UserDetailsImpl;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class UserSecurityExpressionTest {
 
     @Test
     void isMe_ShouldReturnTrue_WhenEqualsUserId() {
-        User.UserId userId = new User.UserId(5L);
+        Identity userId = Identity.from(5L);
 
         assertEquals(authenticUserId, userId.getValue());
         boolean actual = expression.isMe(userId);
@@ -35,7 +36,7 @@ class UserSecurityExpressionTest {
 
     @Test
     void isMe_ShouldReturnFalse_WhenNotEqualsUserId() {
-        User.UserId userId = new User.UserId(10L);
+        Identity userId = Identity.from(10L);
 
         assertNotEquals(authenticUserId, userId.getValue());
         boolean actual = expression.isMe(userId);
@@ -44,7 +45,7 @@ class UserSecurityExpressionTest {
 
     @Test
     void isMe_ShouldReturnFalse_WhenNullAuthentication() {
-        User.UserId userId = new User.UserId(10L);
+        Identity userId = Identity.from(10L);
         expression.setAuthentication(null);
 
         boolean actual = expression.isMe(userId);

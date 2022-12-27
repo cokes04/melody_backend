@@ -5,6 +5,7 @@ import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.NotFoundException;
 import com.melody.melody.domain.exception.type.UserErrorType;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +31,9 @@ class UpdateUserServiceTest {
     @Test
     void excute_ShouldReturnUpdatedUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         String newNickName = TestUserDomainGenerator.randomNickName().getValue();
-        UpdateUserService.Command command = new UpdateUserService.Command(userId, newNickName);
+        UpdateUserService.Command command = new UpdateUserService.Command(userId.getValue(), newNickName);
 
         when(repository.findById(userId))
                 .thenReturn(Optional.of(user));
@@ -49,9 +50,9 @@ class UpdateUserServiceTest {
     @Test
     void excute_ShouldException_WhenNotFoundUser() {
         User user = TestUserDomainGenerator.randomUser();
-        User.UserId userId = user.getId().get();
+        Identity userId = user.getId();
         String newNickName = TestUserDomainGenerator.randomNickName().getValue();
-        UpdateUserService.Command command = new UpdateUserService.Command(userId, newNickName);
+        UpdateUserService.Command command = new UpdateUserService.Command(userId.getValue(), newNickName);
 
         when(repository.findById(userId))
                 .thenReturn(Optional.empty());

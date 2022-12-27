@@ -1,8 +1,6 @@
 package com.melody.melody.adapter.persistence.user;
 
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.Password;
+import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +11,10 @@ public class UserMapper {
 
     User toModel(UserEntity entity){
         return User.builder()
-                .id(new User.UserId(entity.getId()))
+                .id(entity.getId() == null ? Identity.empty() : Identity.from(entity.getId()))
                 .nickName(new User.NickName(entity.getNickName()))
                 .email(new User.Email(entity.getEmail()))
-                .password(new Password(entity.getPassword()))
+                .password(new User.Password(entity.getPassword()))
                 .withdrawn(entity.isWithdrawn())
                 .build();
     }
@@ -25,7 +23,7 @@ public class UserMapper {
         LocalDateTime now = LocalDateTime.now();
 
         return UserEntity.builder()
-                .id(user.getId().map(User.UserId::getValue).orElse(null))
+                .id(user.getId().isEmpty() ? null : user.getId().getValue())
                 .nickName(user.getNickName().getValue())
                 .email(user.getEmail().getValue())
                 .password(user.getPassword().getEncryptedString())

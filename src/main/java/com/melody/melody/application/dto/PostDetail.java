@@ -1,6 +1,5 @@
 package com.melody.melody.application.dto;
 
-import com.melody.melody.domain.model.Emotion;
 import com.melody.melody.domain.model.Music;
 import lombok.*;
 
@@ -35,7 +34,7 @@ public class PostDetail {
 
     private Long musicId;
 
-    private Emotion emotion;
+    private Music.Emotion emotion;
 
     private String explanation;
 

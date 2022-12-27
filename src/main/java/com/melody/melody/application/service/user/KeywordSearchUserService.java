@@ -19,7 +19,7 @@ public class KeywordSearchUserService implements UseCase<KeywordSearchUserServic
 
     @Override
     public Result execute(Command command) {
-        return new Result(repository.search(command.keyword, command.pagingInfo));
+        return new Result(repository.search(command.getKeyword(), command.getPagingInfo()));
     }
 
     @Value
