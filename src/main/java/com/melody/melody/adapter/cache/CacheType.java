@@ -14,6 +14,14 @@ public enum CacheType {
             3 * 60,
             null,
             1000
+    ),
+
+    UserPostTotal(
+            Provider.Caffeine,
+            "userPostTotal",
+            10 * 60,
+            null,
+            4000
     );
 
     private final Provider provider;

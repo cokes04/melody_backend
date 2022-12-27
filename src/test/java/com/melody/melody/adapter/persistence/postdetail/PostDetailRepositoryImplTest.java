@@ -1,265 +1,265 @@
 package com.melody.melody.adapter.persistence.postdetail;
 
-import com.melody.melody.adapter.persistence.PersistenceTestConfig;
-import com.melody.melody.adapter.persistence.music.MusicEntity;
-import com.melody.melody.adapter.persistence.post.PostEntity;
-import com.melody.melody.adapter.persistence.post.TestPostEntityGenerator;
-import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
-import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.application.dto.*;
-import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
+import org.mockito.Mockito;
 
-import javax.persistence.EntityManager;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@DataJpaTest
-@Import(PersistenceTestConfig.class)
+
 class PostDetailRepositoryImplTest {
-
     private PostDetailRepositoryImpl repository;
-
-    @Autowired
-    private JPAQueryFactory jpaQueryFactory;
-
-    @Autowired
-    private TestEntityManager em;
+    private PostDetailDao dao;
+    private PostTotalSizeCache totalSizeCache;
 
     @BeforeEach
     void setUp() {
-        repository = new PostDetailRepositoryImpl(jpaQueryFactory);
-    }
+        dao = Mockito.mock(PostDetailDao.class);
+        totalSizeCache = Mockito.mock(PostTotalSizeCache.class);
+        repository = new PostDetailRepositoryImpl(dao, totalSizeCache);
 
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void findById_ShouldReturnPostDetail() {
-        PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
-        Post.PostId postId = new Post.PostId(savedPostEntity.getId());
-
-        Optional<PostDetail> optional = repository.findById(postId);
-        assertTrue(optional.isPresent());
-
-        PostDetail actual = optional.get();
-        assertEqualsEntityAndDetail(savedPostEntity, actual);
     }
 
     @Test
-    void findById_ShouldReturnEmpty_WhenUnSavedPost() {
+    void findById_ShouldRunDao() {
         Post.PostId postId = TestPostDomainGenerator.randomPostId();
-        assertNull(em.find(PostEntity.class, postId.getValue()));
 
-        Optional<PostDetail> optional = repository.findById(postId);
-        assertTrue(optional.isEmpty());
+        repository.findById(postId);
+
+        verify(dao, times(1))
+                .findById(postId);
+        verifyNoInteractions(totalSizeCache);
     }
 
     @Test
-    void findById_ShouldReturnEmpty_WhenDeletedPost() {
-        PostEntity savedPostEntity = TestPostEntityGenerator.saveRandomPostEntity(em, true, false);
-        Post.PostId postId = new Post.PostId(savedPostEntity.getId());
-
-        savedPostEntity.setDeleted(true);
-        em.persist(savedPostEntity);
-        assertTrue(em.find(PostEntity.class, savedPostEntity.getId()).isDeleted());
-
-        Optional<PostDetail> optional = repository.findById(postId);
-        assertTrue(optional.isEmpty());
-    }
-
-    @Test
-    void findByUserId_ShuoldReturnList_WhenEverythingOpen() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
-
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(9, actual.getCount());
-        actual.getList()
-                .forEach( p -> {
-                    if(p.isOpen())
-                        assertEqualsEntityAndDetail(openPostMap.get(p.getId()), p);
-                    else
-                        assertEqualsEntityAndDetail(closePostMap.get(p.getId()), p);
-                });
-    }
-
-    @Test
-    void findByUserId_ShuoldReturnOpenList_WhenOnlyOpen() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
-
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyOpen, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(6, actual.getCount());
-        actual.getList().forEach( p -> assertEqualsEntityAndDetail(openPostMap.get(p.getId()), p));
-        assertEquals(0, actual.getList().stream().filter( p -> closePostMap.containsKey(p.getId())).count());
-    }
-
-    @Test
-    void findByUserId_ShuoldReturnCloseList_WhenOnlyClose() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> openPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
-        Map<Long, PostEntity> closePostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 3);
-
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.OnlyClose, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(3, actual.getCount());
-        actual.getList().forEach( p -> assertEqualsEntityAndDetail(closePostMap.get(p.getId()), p));
-        assertEquals(0, actual.getList().stream().filter( p -> openPostMap.containsKey(p.getId())).count());
-    }
-
-
-    @Test
-    void findByUserId_ShuoldReturnExcludeDeletedPost_WhenUserHaveDeletedPost() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> postMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 6);
-        Map<Long, PostEntity> deletedPostMap = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,true, 3);
-
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(6, actual.getCount());
-        actual.getList().forEach( p -> assertEqualsEntityAndDetail(postMap.get(p.getId()), p));
-        assertEquals(0, actual.getList().stream().filter( p -> deletedPostMap.containsKey(p.getId())).count());
-    }
-
-    @Test
-    void findByUserId_ShuoldReturnEmptyList_WhenNotExistUser() {
+    void findByUserId_ShouldGetTotalSizeInCache_WhenEveryting_EverytingTotalSizeInCache() {
         User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.Everything;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        PagingResult<PostDetail> actual = repository.findByUserId(userId, Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(0, actual.getCount());
+        when(totalSizeCache.getTotalSize(userId, Open.Everything))
+                .thenReturn(Optional.of(777L));
+
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(777L, result.getTotalCount());
+        assertEquals(78, result.getTotalPage());
+
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), any(Open.class), anyLong());
+        verify(dao, times(0)).findTotalSizeByUserId(eq(userId), any(Open.class));
     }
 
     @Test
-    void findByUserId_ShuoldReturnEmptyList_WhenUserNotHavePost() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        User.UserId userId = new User.UserId(userEntity.getId());
+    void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_EmptyCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.Everything;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        PagingResult<PostDetail> actual = repository.findByUserId(userId, Open.Everything, new PagingInfo<PostSort>(0, 9, PostSort.newest));
-        assertEquals(0, actual.getCount());
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyOpen))
+                .thenReturn(444L);
+
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyClose))
+                .thenReturn(222L);
+
+        when(totalSizeCache.getTotalSize(eq(userId), any(Open.class)))
+                .thenReturn(Optional.empty());
+
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(666L, result.getTotalCount());
+        assertEquals(67, result.getTotalPage());
+
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.Everything), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyOpen), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyClose), anyLong());
+
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.Everything);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyOpen);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyClose);
     }
 
     @Test
-    void findByUserId_ShuoldReturnNewestSortedList_WhenNewestSort() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
+    void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_OnlyOpenTotalSizeInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.Everything;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        List<PostEntity> sortedList = map.values().stream()
-                .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? -1 : 1)
-                .limit(8)
-                .collect(Collectors.toList());
+        when(totalSizeCache.getTotalSize(userId, Open.Everything))
+                .thenReturn(Optional.empty());
 
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.newest));
-        assertEquals(8, actual.getCount());
-        for (int i = 0; i < 8; i++){
-            assertEqualsEntityAndDetail(sortedList.get(i), actual.getList().get(i));
-        }
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyOpen))
+                .thenReturn(Optional.of(111L));
+
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyClose))
+                .thenReturn(Optional.empty());
+
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyClose))
+                .thenReturn(222L);
+
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(333L, result.getTotalCount());
+        assertEquals(34, result.getTotalPage());
+
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.Everything), anyLong());
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.OnlyOpen), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyClose), anyLong());
+
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.Everything);
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.OnlyOpen);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyClose);
     }
 
     @Test
-    void findByUserId_ShuoldReturnOldestSortedList_WhenOldestSort() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
+    void findByUserId_ShouldRunDaoAndUpdateCache_WhenEveryting_OnlyCloseTotalSizeInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.Everything;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        List<PostEntity> sortedList = map.values().stream()
-                .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
-                .limit(8)
-                .collect(Collectors.toList());
+        when(totalSizeCache.getTotalSize(userId, Open.Everything))
+                .thenReturn(Optional.empty());
 
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(0, 8, PostSort.oldest));
-        assertEquals(8, actual.getCount());
-        assertEquals(20, actual.getTotalCount());
-        assertEquals(3, actual.getTotalPage());
-        for (int i = 0; i < 8; i++){
-            assertEqualsEntityAndDetail(sortedList.get(i), actual.getList().get(i));
-        }
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyOpen))
+                .thenReturn(Optional.empty());
+
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyClose))
+                .thenReturn(Optional.of(111L));
+
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyOpen))
+                .thenReturn(222L);
+
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(333L, result.getTotalCount());
+        assertEquals(34, result.getTotalPage());
+
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.Everything), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyOpen), anyLong());
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.OnlyClose), anyLong());
+
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.Everything);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyOpen);
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.OnlyClose);
     }
 
     @Test
-    void findByUserId_ShuoldReturnSecondList_WhenSecondPage() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
+    void findByUserId_ShouldGetTotalSizeInCache_WhenOnlyClose_OnlyCloseTotalSizeInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.OnlyClose;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        List<PostEntity> sortedList = map.values().stream()
-                .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
-                .skip(8)
-                .limit(8)
-                .collect(Collectors.toList());
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyClose))
+                .thenReturn(Optional.of(111L));
 
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(1, 8, PostSort.oldest));
-        assertEquals(8, actual.getCount());
-        assertEquals(20, actual.getTotalCount());
-        assertEquals(3, actual.getTotalPage());
-        for (int i = 0; i < 8; i++){
-            assertEqualsEntityAndDetail(sortedList.get(i), actual.getList().get(i));
-        }
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(111L, result.getTotalCount());
+        assertEquals(12, result.getTotalPage());
+
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), any(Open.class), anyLong());
+        verify(dao, times(0)).findTotalSizeByUserId(eq(userId), any(Open.class));
+    }
+
+
+    @Test
+    void findByUserId_ShouldRunDaoAndUpdateCache_WhenOnlyClose_OnlyCloseTotalSizeNotInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.OnlyClose;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
+
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyClose))
+                .thenReturn(Optional.empty());
+
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyClose))
+                .thenReturn(111L);
+
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(111L, result.getTotalCount());
+        assertEquals(12, result.getTotalPage());
+
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.Everything), anyLong());
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.OnlyOpen), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyClose), anyLong());
+
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.Everything);
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.OnlyOpen);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyClose);
     }
 
     @Test
-    void findByUserId_ShuoldReturnLastList_WhenLastPage() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> map = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
+    void findByUserId_ShouldGetTotalSizeInCache_WhenOnlyOpen_OnlyOpenTotalSizeInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.OnlyOpen;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        List<PostEntity> sortedList = map.values().stream()
-                .sorted( (a, b) -> a.getCreatedDate().isBefore(b.getCreatedDate()) ? 1 : -1)
-                .skip(16)
-                .limit(8)
-                .collect(Collectors.toList());
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyOpen))
+                .thenReturn(Optional.of(111L));
 
-        PagingResult<PostDetail> actual = repository.findByUserId(new User.UserId(userEntity.getId()), Open.Everything, new PagingInfo<PostSort>(2, 8, PostSort.oldest));
-        assertEquals(4, actual.getCount());
-        assertEquals(20, actual.getTotalCount());
-        assertEquals(3, actual.getTotalPage());
-        for (int i = 0; i < 4; i++){
-            assertEqualsEntityAndDetail(sortedList.get(i), actual.getList().get(i));
-        }
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(111L, result.getTotalCount());
+        assertEquals(12, result.getTotalPage());
+
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), any(Open.class), anyLong());
+        verify(dao, times(0)).findTotalSizeByUserId(eq(userId), any(Open.class));
     }
 
-    void assertEqualsEntityAndDetail(PostEntity entity, PostDetail detail){
-        assertEquals(entity.getId(), detail.getId());
-        assertEquals(entity.getTitle(), detail.getTitle());
-        assertEquals(entity.getContent(), detail.getContent());
-        assertEquals(entity.getLikeCount(), detail.getLikeCount());
-        assertEquals(entity.isOpen(), detail.isOpen());
-        assertEquals(entity.isDeleted(), detail.isDeleted());
-        assertTime(entity.getCreatedDate(), detail.getCreatedDate());
+    @Test
+    void findByUserId_ShouldRunDaoAndUpdateCache_WhenOnlyOpen_OnlyOpenTotalSizeNotInCache() {
+        User.UserId userId = TestUserDomainGenerator.randomUserId();
+        Open open = Open.OnlyOpen;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        assertEquals(entity.getMusicEntity().getEmotion(), detail.getEmotion());
-        assertEquals(entity.getMusicEntity().getExplanation(), detail.getExplanation());
-        assertEquals(entity.getMusicEntity().getImageUrl(), detail.getImageUrl());
-        assertEquals(entity.getMusicEntity().getId(), detail.getMusicId());
-        assertEquals(entity.getMusicEntity().getMusicUrl(), detail.getMusicUrl());
-        assertEquals(entity.getMusicEntity().getStatus(), detail.getMusicStatus());
+        when(totalSizeCache.getTotalSize(userId, Open.OnlyOpen))
+                .thenReturn(Optional.empty());
 
-        assertEquals(entity.getUserEntity().getId(), detail.getUserId());
-        assertEquals(entity.getUserEntity().getNickName(), detail.getNickname());
-    }
+        when(dao.findTotalSizeByUserId(userId, Open.OnlyOpen))
+                .thenReturn(111L);
 
-    void assertTime(LocalDateTime expect, LocalDateTime actual){
-        assertEquals(expect.getYear(), actual.getYear());
-        assertEquals(expect.getMonth(), actual.getMonth());
-        assertEquals(expect.getDayOfMonth(), actual.getDayOfMonth());
-        assertEquals(expect.getHour(), actual.getHour());
-        assertEquals(expect.getMinute(), actual.getMinute());
-        assertEquals(expect.getSecond(), actual.getSecond());
+        PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
+        assertEquals(111L, result.getTotalCount());
+        assertEquals(12, result.getTotalPage());
+
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.Everything);
+        verify(totalSizeCache, times(1)).getTotalSize(userId, Open.OnlyOpen);
+        verify(totalSizeCache, times(0)).getTotalSize(userId, Open.OnlyClose);
+
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.Everything), anyLong());
+        verify(totalSizeCache, times(1)).putTotalSize(eq(userId), eq(Open.OnlyOpen), anyLong());
+        verify(totalSizeCache, times(0)).putTotalSize(eq(userId), eq(Open.OnlyClose), anyLong());
+
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.Everything);
+        verify(dao, times(1)).findTotalSizeByUserId(userId, Open.OnlyOpen);
+        verify(dao, times(0)).findTotalSizeByUserId(userId, Open.OnlyClose);
     }
 }

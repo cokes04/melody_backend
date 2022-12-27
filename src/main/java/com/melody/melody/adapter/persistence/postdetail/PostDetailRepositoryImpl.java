@@ -9,96 +9,61 @@ import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Post;
 import com.melody.melody.domain.model.User;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.melody.melody.adapter.persistence.post.QPostEntity.*;
-import static com.melody.melody.adapter.persistence.music.QMusicEntity.*;
-import static com.melody.melody.adapter.persistence.user.QUserEntity.*;
-
 @PersistenceAdapter
 @RequiredArgsConstructor
 public class PostDetailRepositoryImpl implements PostDetailRepository {
-    private final JPAQueryFactory factory;
+    private final PostDetailDao dao;
+    private final PostTotalSizeCache totalSizeCache;
 
     @Override
     public Optional<PostDetail> findById(Post.PostId postId) {
-        BooleanBuilder where = new BooleanBuilder();
-        where.and(postEntity.deleted.eq(false));
-        where.and(postEntity.id.eq(postId.getValue()));
-
-        PostDetail postDetail = select()
-                .where(where)
-                .fetchOne();
-
-        return Optional.ofNullable(postDetail);
+        return dao.findById(postId);
     }
 
+    @Override
     public PagingResult<PostDetail> findByUserId(User.UserId userId, Open open, PagingInfo<PostSort> postPaging) {
-        BooleanBuilder where = new BooleanBuilder();
-        where.and(postEntity.deleted.eq(false));
-        where.and(eqOpen(open));
-        where.and(postEntity.userEntity.id.eq(userId.getValue()));
+        long totalSize = getTotalSize(userId, open);
+        List<PostDetail> list = getPostDetailList(userId, open, postPaging);
 
-        List<? extends PostDetail> result = select()
-                .where(where)
-                .orderBy(PostOrderBy
-                        .get(postPaging.getSorting())
-                        .map(PostOrderBy::getOrderSpecifier)
-                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)))
-                )
-                .offset(postPaging.getPage() * postPaging.getSize())
-                .limit(postPaging.getSize())
-                .fetch();
-
-        int totalSize = factory
-                .selectFrom(postEntity)
-                .where(where)
-                .fetch().size();
-
-        return  new PagingResult<PostDetail>((List<PostDetail>) result, result.size(), totalSize, (int)Math.ceil((double) totalSize / postPaging.getSize()));
-
+        return new PagingResult(list, list.size(), totalSize, getTotalPage(totalSize, postPaging.getSize()));
     }
 
-    private BooleanExpression eqOpen(Open open){
-        switch (open){
-            case OnlyOpen:
-                return postEntity.open.eq(true);
-            case OnlyClose:
-                return postEntity.open.eq(false);
-            default:
-                return null;
-        }
+    private int getTotalPage(long totalSize, long pageSize){
+        return  (int)Math.ceil((double) totalSize / pageSize);
     }
 
-    private JPAQuery<PostDetailData> select(){
-        return factory.select(
-                new QPostDetailData(
-                        postEntity.id,
-                        postEntity.title,
-                        postEntity.content,
-                        postEntity.likeCount,
-                        postEntity.open,
-                        postEntity.deleted,
-                        postEntity.createdDate,
-                        userEntity.id,
-                        userEntity.nickName,
-                        musicEntity.id,
-                        musicEntity.emotion,
-                        musicEntity.explanation,
-                        musicEntity.imageUrl,
-                        musicEntity.musicUrl,
-                        musicEntity.status
-                )
-        )
-                .from(postEntity)
-                .leftJoin(postEntity.musicEntity, musicEntity)
-                .leftJoin(postEntity.userEntity, userEntity);
+    private List<PostDetail> getPostDetailList(User.UserId userId, Open open, PagingInfo<PostSort> postPaging){
+        return dao.findByUserId(userId, open, postPaging);
+    }
+
+    private long getTotalSize(User.UserId userId, Open open){
+        Optional<Long> optional = totalSizeCache.getTotalSize(userId, open);
+
+        if (optional.isPresent())
+            return optional.get();
+
+        if (Open.Everything.equals(open))
+            return getTotalSize(userId, Open.OnlyOpen) + getTotalSize(userId, Open.OnlyClose);
+
+        return getTotalSizeFromDao(userId, open, true);
+    }
+
+    private long getTotalSizeFromDao(User.UserId userId, Open open, boolean putCache){
+        long totalSize = dao.findTotalSizeByUserId(userId, open);
+        if (putCache)
+            totalSizeCache.putTotalSize(userId, open, totalSize);
+        return totalSize;
+    }
+
+    private boolean isASC(PostSort postSort){
+        return PostOrderBy.get(postSort)
+                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)))
+                .getOrderSpecifier()
+                .isAscending();
     }
 }

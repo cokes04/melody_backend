@@ -1,5 +1,6 @@
-package com.melody.melody.adapter.cache;
+package com.melody.melody.adapter.cache.userdetails;
 
+import com.melody.melody.adapter.cache.CacheType;
 import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class CacheRemover {
+public class UserDetailsCacheEventHandler {
     private final CacheManager cacheManager;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

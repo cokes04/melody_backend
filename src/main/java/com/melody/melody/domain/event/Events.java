@@ -9,7 +9,7 @@ public class Events {
     private static ApplicationEventPublisher applicationEventPublisher;
 
     public Events(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+        Events.applicationEventPublisher = applicationEventPublisher;
     }
 
     public static void raise(Event event) {
