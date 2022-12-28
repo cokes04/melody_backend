@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @RequiredArgsConstructor
@@ -17,12 +18,18 @@ public class UserPostTotalCache {
     @Nullable
     public Long get(long userId, CountInfo info) {
         String key = getKey(userId, info);
-        return getValue(key);
+        AtomicLong value = getValue(key);
+        return Objects.isNull(value) ? null : value.get();
     }
 
     public void put(long userId, CountInfo info, long value){
         String key = getKey(userId, info);
-        putValue(key, value);
+        AtomicLong existingValue = getValue(key);
+
+        if (Objects.isNull(existingValue))
+            putValue(key, new AtomicLong(value));
+        else
+            existingValue.set(value);
     }
 
     public void increase(long userId, CountInfo countInfo){
@@ -34,29 +41,27 @@ public class UserPostTotalCache {
     }
 
     public void update(long userId, @Nullable CountInfo previous, @Nullable CountInfo after){
+
         if (Objects.nonNull(previous)){
             String previousKey = getKey(userId, previous);
-            Long previousValue = getValue(previousKey);
+            AtomicLong previousValue = getValue(previousKey);
 
-            if (Objects.nonNull(previousValue)){
-                putValue(previousKey, previousValue - 1);
-            }
+            if (Objects.nonNull(previousValue))
+                previousValue.decrementAndGet();
         }
 
         if (Objects.nonNull(after)){
             String afterKey = getKey(userId, after);
-            Long afterValue = getValue(afterKey);
+            AtomicLong afterValue = getValue(afterKey);
 
-            if (Objects.nonNull(afterValue)){
-                putValue(afterKey, afterValue + 1);
-            }
+            if (Objects.nonNull(afterValue))
+                afterValue.incrementAndGet();
         }
     }
 
     public void removeUser(long userId){
-        remove(userId, CountInfo.Open);
-        remove(userId, CountInfo.Close);
-        remove(userId, CountInfo.Deleted);
+        for (CountInfo countInfo : CountInfo.values())
+            remove(userId, countInfo);
     }
 
     public void remove(long userId, CountInfo countInfo){
@@ -72,11 +77,13 @@ public class UserPostTotalCache {
                 .toString();
     }
 
-    private Long getValue(String key){
-        return getCache().get(key, Long.class);
+    @Nullable
+    private AtomicLong getValue(String key){
+        // 원본 객체 반환
+        return getCache().get(key, AtomicLong.class);
     }
 
-    private void putValue(String key, long value){
+    private void putValue(String key, AtomicLong value){
         getCache().put(key, value);
     }
 
@@ -88,5 +95,4 @@ public class UserPostTotalCache {
     private Cache getCache(){
         return cacheManager.getCache(CacheType.UserPostTotal.getCacheName());
     }
-
 }
