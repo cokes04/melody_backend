@@ -1,35 +1,30 @@
 package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.event.Events;
-import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.DomainException;
 import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.rule.BreakBusinessRuleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import static com.melody.melody.domain.model.TestUserDomainGenerator.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
-import static com.melody.melody.domain.model.TestUserDomainGenerator.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 class UserTest {
 
-    private PasswordEncrypter encrypter;
     private MockedStatic<Events> eventsMockedStatic;
 
 
     @BeforeEach
     void setUp() {
-        encrypter = Mockito.mock(PasswordEncrypter.class);
         eventsMockedStatic = Mockito.mockStatic(Events.class);
     }
 
@@ -85,44 +80,23 @@ class UserTest {
     @Test
     void changePassword_ShouldChangePassword_WhenOldPasswordMatches() {
         User user = randomUser();
-        String oldRawPassword =  "abcdefg123EWAS";
         User.Password newPassword = randomPassword();
 
-        when(encrypter.matches(oldRawPassword, user.getPassword()))
-                .thenReturn(true);
-
-        user.changePassword(encrypter, oldRawPassword, newPassword);
+        user.changePassword(newPassword);
 
         assertEquals(user.getPassword(), newPassword);
-    }
-
-    @Test
-    void changePassword_ShouldThrowException_WhenOldPasswordNotMatches() {
-        User user = randomUser();
-        String oldRawPassword =  "abcdefg123EWAS";
-        User.Password newPassword = randomPassword();
-
-        when(encrypter.matches(oldRawPassword, user.getPassword()))
-                .thenReturn(false);
-
-        assertException(
-                () -> user.changePassword(encrypter, oldRawPassword, newPassword),
-                BreakBusinessRuleException.class,
-                DomainError.of(UserErrorType.Passwod_Not_Matches)
-        );
     }
 
     @Test
     void changePassword_ShouldThrowException_WhenWithdawn() {
         User user = randomUser();
         user.withdraw();
-        String oldRawPassword =  "abcdefg123EWAS";
         User.Password newPassword = randomPassword();
 
         assertTrue(user.isWithdrawn());
 
         assertException(
-                () -> user.changePassword(encrypter, oldRawPassword, newPassword),
+                () -> user.changePassword(newPassword),
                 InvalidStatusException.class,
                 DomainError.of(UserErrorType.User_Already_Withdawn_Status)
         );

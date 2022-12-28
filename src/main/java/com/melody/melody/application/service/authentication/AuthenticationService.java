@@ -31,7 +31,7 @@ public class AuthenticationService implements UseCase<AuthenticationService.Comm
                 );
 
         this.checkRule(
-                new PasswordMatches(passwordEncrypter, command.password, user.getPassword()),
+                PasswordMatches.create(passwordEncrypter, command.password, user.getPassword()),
                 () -> new FailedAuthenticationException(DomainError.of(UserErrorType.Authentication_Failed))
         );
 

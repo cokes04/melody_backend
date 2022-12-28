@@ -50,7 +50,7 @@ public class PostDetailDao {
     public List<PostDetail> findByUserId(Identity userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.get(postSort)
                 .map(PostOrderBy::getOrderSpecifier)
-                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)));
+                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invalid_Post_Sort)));
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(postEntity.deleted.eq(false));

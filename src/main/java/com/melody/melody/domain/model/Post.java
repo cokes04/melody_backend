@@ -1,14 +1,15 @@
 package com.melody.melody.domain.model;
 
-import com.melody.melody.domain.event.*;
+import com.melody.melody.domain.event.Events;
+import com.melody.melody.domain.event.PostCreated;
+import com.melody.melody.domain.event.PostDeleted;
+import com.melody.melody.domain.event.PostOpenChanged;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import io.netty.util.internal.StringUtil;
 import lombok.*;
-
-import java.util.Optional;
 
 @AllArgsConstructor
 @Builder
@@ -111,7 +112,7 @@ public class Post {
 
         public static Title from(String title){
             if (StringUtil.isNullOrEmpty(title) || title.length() > maxLength)
-                throw new InvalidArgumentException(DomainError.of(PostErrorType.Post_Title_Length_Limit_Exceeded));
+                throw new InvalidArgumentException(DomainError.of(PostErrorType.Post_Title_Over_Length_Limit));
 
             return new Title(title);
         }
@@ -127,7 +128,7 @@ public class Post {
             content = content == null ? "" : content;
 
             if (content.length() > maxLength)
-                throw new InvalidArgumentException(DomainError.of(PostErrorType.Post_Content_Length_Limit_Exceeded));
+                throw new InvalidArgumentException(DomainError.of(PostErrorType.Post_Content_Over_Length_Limit));
 
             return new Content(content);
         }

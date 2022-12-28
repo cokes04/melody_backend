@@ -9,6 +9,7 @@ import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import com.melody.melody.domain.rule.BusinessRuleChecker;
+import com.melody.melody.domain.rule.PasswordMatches;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +30,12 @@ public class ChangePasswordService implements UseCase<ChangePasswordService.Comm
                 .orElseThrow(() -> new NotFoundException(DomainError.of(UserErrorType.User_Not_Found)));
 
         User.Password newPassword = passwordEncrypter.encrypt(command.getNewPassword());
-        user.changePassword(passwordEncrypter, command.getOldPassword(), newPassword);
+
+        this.checkRule(
+                PasswordMatches.create(passwordEncrypter, command.getOldPassword(), user.getPassword())
+        );
+
+        user.changePassword(newPassword);
 
         return new Result(repository.save(user));
     }

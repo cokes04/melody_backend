@@ -30,7 +30,7 @@ class EmailIsUniqueTest {
         when(repository.existsByEmail(email))
                 .thenReturn(false);
 
-        new EmailIsUnique(repository, email).check();
+        EmailIsUnique.create(repository, email).check();
 
         verify(repository, times(1))
                 .existsByEmail(email);
@@ -44,7 +44,7 @@ class EmailIsUniqueTest {
                 .thenReturn(true);
 
         assertException(
-                () -> new EmailIsUnique(repository, email).check(),
+                () -> EmailIsUnique.create(repository, email).check(),
                 BreakBusinessRuleException.class,
                 DomainError.of(UserErrorType.Email_Already_Used)
         );

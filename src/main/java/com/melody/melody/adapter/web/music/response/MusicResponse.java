@@ -35,7 +35,7 @@ public class MusicResponse {
                 .imageUrl(music.getImageUrl().getValue())
                 .explanation(music.getExplanation().getValue())
                 .emotion(music.getEmotion())
-                .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
+                .musicUrl(music.getMusicUrl().isEmpty() ? null : music.getMusicUrl().getValue())
                 .status(music.getStatus())
                 .build();
     }

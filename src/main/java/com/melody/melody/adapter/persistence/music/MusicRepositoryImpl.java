@@ -82,7 +82,7 @@ public class MusicRepositoryImpl implements MusicRepository {
                 .orderBy(MusicOrderBy
                         .get(musicPaging.getSorting())
                         .map(MusicOrderBy::getOrderSpecifier)
-                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(MusicErrorType.Invailid_Music_Sort)))
+                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(MusicErrorType.Invalid_Music_Sort)))
                 )
                 .offset(musicPaging.getPage() * musicPaging.getSize())
                 .limit(musicPaging.getSize())

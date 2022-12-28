@@ -359,7 +359,7 @@ class MusicRepositoryImplTest {
     private void assertEqualsEntityAndModel(MusicEntity entity, Music model){
         assertEquals(entity.getId(), model.getId().getValue());
         assertEquals(entity.getStatus(), model.getStatus());
-        assertEquals(entity.getMusicUrl(), model.getMusicUrl().get().getValue());
+        assertEquals(entity.getMusicUrl(), model.getMusicUrl().getValue());
         assertEquals(entity.getUserEntity().getId(), model.getUserId().getValue());
         assertEquals(entity.getImageUrl(), model.getImageUrl().getValue());
         assertEquals(entity.getExplanation(), model.getExplanation().getValue());

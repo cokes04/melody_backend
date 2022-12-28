@@ -63,7 +63,7 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
 
     private boolean isASC(PostSort postSort){
         return PostOrderBy.get(postSort)
-                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invailid_Post_Sort)))
+                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invalid_Post_Sort)))
                 .getOrderSpecifier()
                 .isAscending();
     }

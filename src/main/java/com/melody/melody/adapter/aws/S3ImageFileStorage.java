@@ -48,7 +48,7 @@ public class S3ImageFileStorage implements ImageFileStorage {
             );
         }
 
-        return new Music.ImageUrl(
+        return Music.ImageUrl.from(
                 amazonS3.getUrl(bucketName, fileName).toString()
         );
     }

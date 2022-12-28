@@ -1,17 +1,14 @@
 package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.event.Events;
-import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.domain.event.UserWithdrew;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.UserErrorType;
-import com.melody.melody.domain.rule.PasswordMatches;
 import io.netty.util.internal.StringUtil;
 import lombok.*;
 
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 @AllArgsConstructor
@@ -47,11 +44,9 @@ public class User {
         this.nickName = NickName.from(nickName);
     }
 
-    public void changePassword(PasswordEncrypter encrypter, String oldRawPassword, Password newPassword){
+    public void changePassword(Password newPassword){
         if (isWithdrawn())
             throw new InvalidStatusException(DomainError.of(UserErrorType.User_Already_Withdawn_Status));
-
-        new PasswordMatches(encrypter, oldRawPassword, this.password).check();
 
         this.password = newPassword;
     }
@@ -73,7 +68,7 @@ public class User {
 
         public static NickName from(String nickName){
             if (StringUtil.isNullOrEmpty(nickName) || nickName.length() > maxLength)
-                throw new InvalidArgumentException(DomainError.of(UserErrorType.NickName_Length_Limit_Exceeded));
+                throw new InvalidArgumentException(DomainError.of(UserErrorType.User_NickName_Over_Length_Limit));
 
             return new NickName(nickName);
         }

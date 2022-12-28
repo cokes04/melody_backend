@@ -13,9 +13,9 @@ public enum UserErrorType implements DomainErrorType{
     User_Already_Withdawn_Status("100004", "회원은 이미 탈퇴 상태입니다."),
     Authentication_Failed("100005", "인증에 실패하였습니다."),
     Not_Permission("100006", "접근 권한이 존재하지 않습니다."),
-    NickName_Length_Limit_Exceeded("100007", "닉네임 길이 제한을 초과하였습니다."),
+    User_NickName_Over_Length_Limit("100007", "닉네임 길이 제한을 초과하였습니다."),
     Invalid_Email_Format("100008", "올바르지 않은 이메일 형식입니다."),
-    Invailid_User_Sort("100009", "유저 정렬 기준이 올바르지 않습니다.");
+    Invalid_User_Sort("100009", "유저 정렬 기준이 올바르지 않습니다.");
 
     private final String code;
     private final String messageFormat;

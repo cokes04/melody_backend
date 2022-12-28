@@ -1,6 +1,5 @@
 package com.melody.melody.domain.event;
 
-import com.melody.melody.domain.model.User;
 import lombok.Value;
 
 @Value

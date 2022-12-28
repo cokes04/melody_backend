@@ -1,6 +1,5 @@
 package com.melody.melody.domain.event;
 
-import com.melody.melody.domain.event.Event;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 

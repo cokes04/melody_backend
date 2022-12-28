@@ -30,11 +30,7 @@ class PasswordMatchesTest {
         when(encrypter.matches(eq(raw), eq(encrypterd)))
                 .thenReturn(true);
 
-        new PasswordMatches(
-                encrypter,
-                raw,
-                encrypterd
-        ).check();
+        PasswordMatches.create(encrypter, raw, encrypterd).check();
     }
 
     @Test
@@ -46,11 +42,7 @@ class PasswordMatchesTest {
                 .thenReturn(false);
 
         assertException(
-                () -> new PasswordMatches(
-                        encrypter,
-                        raw,
-                        encrypted
-                ).check()
+                () -> PasswordMatches.create(encrypter, raw, encrypted).check()
                 , BreakBusinessRuleException.class,
                 DomainError.of(UserErrorType.Passwod_Not_Matches)
         );

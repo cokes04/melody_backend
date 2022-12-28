@@ -1,8 +1,10 @@
 package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.exception.DomainError;
+import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.InvalidStatusException;
 import com.melody.melody.domain.exception.type.MusicErrorType;
+import io.netty.util.internal.StringUtil;
 import lombok.*;
 
 import java.util.Optional;
@@ -35,7 +37,7 @@ public class Music {
                 emotion,
                 explanation,
                 imageUrl,
-                null,
+                MusicUrl.empty(),
                 Status.PROGRESS
                 );
     }
@@ -56,23 +58,55 @@ public class Music {
         this.status = Status.DELETED;
     }
 
-    public Optional<MusicUrl> getMusicUrl(){
-        return Optional.ofNullable(this.musicUrl);
-    }
 
     @Value
     public static class Explanation{
+        private static final int maxLength = 1000;
+
         private final String value;
+
+        public static Explanation from(String explanation){
+            if (StringUtil.isNullOrEmpty(explanation))
+                throw new InvalidArgumentException(DomainError.of(MusicErrorType.Not_Exist_Music_Explanation));
+
+            if (explanation.length() > maxLength)
+                explanation = explanation.substring(maxLength);
+
+            return new Explanation(explanation);
+        }
     }
 
     @Value
     public static class ImageUrl{
         private final String value;
+
+        public static ImageUrl from(String imageUrl){
+            if (StringUtil.isNullOrEmpty(imageUrl))
+                throw new InvalidArgumentException(DomainError.of(MusicErrorType.Not_Exist_ImageUrl));
+
+            return new ImageUrl(imageUrl);
+        }
     }
 
     @Value
     public static class MusicUrl{
         private final String value;
+
+        public static MusicUrl from(String musicUrl){
+            if (StringUtil.isNullOrEmpty(musicUrl))
+                throw new InvalidArgumentException(DomainError.of(MusicErrorType.Not_Exist_MusicUrl));
+
+            return new MusicUrl(musicUrl);
+        }
+
+        public static MusicUrl empty(){
+            return new MusicUrl("");
+        }
+
+        public boolean isEmpty(){
+            return "".equals(value);
+        }
+
     }
 
     public enum Status {

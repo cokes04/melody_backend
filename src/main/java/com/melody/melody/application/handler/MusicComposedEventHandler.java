@@ -30,7 +30,7 @@ public class MusicComposedEventHandler implements EventHandler<MusicComposed> {
         Music music = repository.findById(Identity.from(event.getMusicId()))
                 .orElseThrow(() -> new NotFoundException(DomainError.of(MusicErrorType.Not_Found_Music)));
 
-        music.completeGeneration(new Music.MusicUrl(event.getMusicUrl()));
+        music.completeGeneration(Music.MusicUrl.from(event.getMusicUrl()));
 
         repository.save(music);
     }

@@ -20,13 +20,13 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music.ImageUrl randomImageUrl(){
-        return new Music.ImageUrl(
+        return Music.ImageUrl.from(
                 faker.internet().url()
         );
     }
 
     public static Music.MusicUrl randomMusicUrl(){
-        return new Music.MusicUrl(
+        return Music.MusicUrl.from(
                 faker.internet().url()
         );
     }
@@ -61,7 +61,7 @@ public class TestMusicDomainGenerator {
     }
 
     public static Music randomProgressMusic(Identity userId){
-        return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS, null);
+        return randomMusic(randomMusicId(), userId, Music.Status.PROGRESS, Music.MusicUrl.empty());
     }
 
     public static Music randomDeletedMusic(){
@@ -91,7 +91,7 @@ public class TestMusicDomainGenerator {
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())
                 .status(music.getStatus())
-                .musicUrl(music.getMusicUrl().orElse(null))
+                .musicUrl(music.getMusicUrl())
                 .build();
     }
 
@@ -103,7 +103,7 @@ public class TestMusicDomainGenerator {
                 .explanation(music.getExplanation())
                 .imageUrl(music.getImageUrl())
                 .status(music.getStatus())
-                .musicUrl(music.getMusicUrl().orElse(null))
+                .musicUrl(music.getMusicUrl())
                 .build();
     }
 }

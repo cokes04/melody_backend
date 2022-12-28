@@ -20,7 +20,6 @@ class MusicResponseTest {
         assertEquals(music.getId().getValue(), musicResponse.getMusicId());
         assertEquals(music.getUserId().getValue(), musicResponse.getUserId());
         assertEquals(music.getStatus(), musicResponse.getStatus());
-        assertTrue(music.getMusicUrl().isPresent());
-        assertEquals(music.getMusicUrl().get().getValue(), musicResponse.getMusicUrl());
+        assertEquals(music.getMusicUrl().getValue(), musicResponse.getMusicUrl());
     }
 }

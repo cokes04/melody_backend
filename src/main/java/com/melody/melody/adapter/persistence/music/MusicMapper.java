@@ -41,7 +41,7 @@ public class MusicMapper {
                 .emotion(music.getEmotion())
                 .explanation(music.getExplanation().getValue())
                 .imageUrl(music.getImageUrl().getValue())
-                .musicUrl(music.getMusicUrl().map(Music.MusicUrl::getValue).orElse(null))
+                .musicUrl(music.getMusicUrl().isEmpty() ? null : music.getMusicUrl().getValue())
                 .status(music.getStatus())
                 .createdDate(LocalDateTime.now())
                 .userEntity(UserEntity.builder().id(music.getUserId().getValue()).build())

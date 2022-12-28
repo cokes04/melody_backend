@@ -30,7 +30,7 @@ public class SearchedUserRepositoryImpl implements SearchedUserRepository {
                 .orderBy(UserOrderBy
                         .get(userPaging.getSorting())
                         .map(UserOrderBy::getOrderSpecifier)
-                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(UserErrorType.Invailid_User_Sort)))
+                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(UserErrorType.Invalid_User_Sort)))
                 )
                 .offset(userPaging.getPage() * userPaging.getSize())
                 .limit(userPaging.getSize())

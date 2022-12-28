@@ -22,7 +22,7 @@ public class CreateUserService implements UseCase<CreateUserService.Command, Cre
     public Result execute(Command command) {
 
         this.checkRule(
-                new EmailIsUnique(repository, User.Email.from(command.getEmail()))
+                EmailIsUnique.create(repository, User.Email.from(command.getEmail()))
         );
 
         User.Password password = passwordEncrypter.encrypt(command.getPassword());

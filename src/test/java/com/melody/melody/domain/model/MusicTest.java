@@ -40,8 +40,7 @@ class MusicTest {
         music.completeGeneration(musicUrl);
 
         assertEquals(Music.Status.COMPLETION, music.getStatus());
-        assertTrue(music.getMusicUrl().isPresent());
-        assertEquals(musicUrl, music.getMusicUrl().get());
+        assertEquals(musicUrl, music.getMusicUrl());
 
     }
 

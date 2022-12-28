@@ -26,7 +26,7 @@ public class MusicEntity {
     @Column(name = "EMOTION", nullable = false, columnDefinition = "varchar(16)")
     private Music.Emotion emotion;
 
-    @Column(name = "EXPLANATION", nullable = false)
+    @Column(name = "EXPLANATION", nullable = false, columnDefinition = "varchar(512)")
     private String explanation;
 
     @Column(name = "IMAGE_URL", nullable = false, unique = true)

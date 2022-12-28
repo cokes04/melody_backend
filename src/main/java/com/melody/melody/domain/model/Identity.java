@@ -2,7 +2,6 @@ package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
-
 import com.melody.melody.domain.exception.type.CommonErrorType;
 import lombok.Value;
 
