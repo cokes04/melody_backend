@@ -1,9 +1,6 @@
 package com.melody.melody.domain.model;
 
 import com.melody.melody.domain.event.Events;
-import com.melody.melody.domain.event.PostCreated;
-import com.melody.melody.domain.event.PostDeleted;
-import com.melody.melody.domain.event.PostOpenChanged;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.InvalidStatusException;
@@ -34,13 +31,6 @@ public class Post {
     private Identity musicId;
 
     public static Post create(Identity userId, Identity musicId, String title, String content, boolean open){
-        Events.raise(
-                new PostCreated(
-                        userId.getValue(),
-                        open
-                )
-        );
-
         return Post.builder()
                 .id(Identity.empty())
                 .title(Title.from(title))
@@ -69,25 +59,11 @@ public class Post {
     public void open(){
         this.open = true;
 
-        Events.raise(
-                new PostOpenChanged(
-                        this.id.getValue(),
-                        this.userId.getValue(),
-                        this.open
-                )
-        );
     }
 
     public void close(){
         this.open = false;
 
-        Events.raise(
-                new PostOpenChanged(
-                        this.id.getValue(),
-                        this.userId.getValue(),
-                        this.open
-                )
-        );
     }
 
     public void delete(){
@@ -95,13 +71,7 @@ public class Post {
             throw new InvalidStatusException(DomainError.of(PostErrorType.Post_Already_Deleted));
 
         this.deleted = true;
-        Events.raise(
-                new PostDeleted(
-                        this.id.getValue(),
-                        this.userId.getValue(),
-                        this.open
-                        )
-        );
+
     }
 
     @Value

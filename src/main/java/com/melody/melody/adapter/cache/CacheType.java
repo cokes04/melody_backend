@@ -16,13 +16,21 @@ public enum CacheType {
             1000
     ),
 
-    UserPostTotal(
+    UserPostSize(
             Provider.Caffeine,
-            "userPostTotal",
+            "userPostSize",
             10 * 60,
             null,
             4000
-    );
+    ),
+
+    UserPostPage(
+            Provider.Caffeine,
+            "userPostPage",
+            10 * 60,
+            null,
+            12000
+    ),;
 
     private final Provider provider;
     private final String cacheName;

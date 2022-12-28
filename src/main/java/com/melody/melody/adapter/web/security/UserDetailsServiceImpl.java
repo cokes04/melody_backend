@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(()-> new UsernameNotFoundException(UserErrorType.Authentication_Failed.getMessageFormat()));
     }
 
-    @Cacheable(cacheNames = "userDetails", key = "#userId")
+    @Cacheable(cacheNames = "userDetails", key = "#userId.value", condition = "!#userId.isEmpty()")
     public UserDetails loadUserById(Identity userId) throws UsernameNotFoundException {
         return userRepository.findById(userId)
                 .map(UserDetailsImpl::new)

@@ -5,6 +5,8 @@ import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Optional;
 
@@ -15,6 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
     private final UserMapper userMapper;
 
     @Override
+    @CacheEvict(cacheNames = "userDetails", key = "#user.id.value")
     public User save(User user) {
         UserEntity entity = userMapper.toEntity(user);
         entity = jpaRepository.save(entity);

@@ -2,6 +2,7 @@ package com.melody.melody;
 
 import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.adapter.persistence.music.MusicJpaRepository;
+import com.melody.melody.adapter.persistence.post.PostDao;
 import com.melody.melody.adapter.persistence.post.PostEntity;
 import com.melody.melody.adapter.persistence.post.PostJpaRepository;
 import com.melody.melody.adapter.persistence.postdetail.PostDetailDao;
@@ -25,7 +26,7 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@Profile("dev123")
+@Profile("dev")
 public class Runner implements ApplicationRunner {
     private final UserJpaRepository userJpaRepository;
     private final MusicJpaRepository musicJpaRepository;
@@ -33,6 +34,7 @@ public class Runner implements ApplicationRunner {
     private final PasswordEncrypter encrypter;
 
     private final PostDetailDao postDetailDao;
+    private final PostDao postDao;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -100,9 +102,9 @@ public class Runner implements ApplicationRunner {
                 new PagingInfo<PostSort>(0, 20, PostSort.newest)
         );
 
-        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.OnlyClose);
-        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.OnlyOpen);
-        postDetailDao.findTotalSizeByUserId(Identity.from(user.getId()), Open.Everything);
+        postDao.findSize(Identity.from(user.getId()), Open.OnlyClose, null);
+        postDao.findSize(Identity.from(user.getId()), Open.OnlyOpen, null);
+        postDao.findSize(Identity.from(user.getId()), Open.Everything, null);
     }
 
     private boolean randomOpen(Random random){

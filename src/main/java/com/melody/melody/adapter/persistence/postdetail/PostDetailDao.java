@@ -2,6 +2,8 @@ package com.melody.melody.adapter.persistence.postdetail;
 
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.adapter.persistence.post.PostOrderBy;
+import com.melody.melody.adapter.persistence.post.PostQuerySupport;
+import com.melody.melody.adapter.persistence.post.SizeInfo;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
@@ -17,6 +19,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDateTime;
@@ -46,7 +50,6 @@ public class PostDetailDao {
         return Optional.ofNullable(postDetail);
     }
 
-
     public List<PostDetail> findByUserId(Identity userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.get(postSort)
                 .map(PostOrderBy::getOrderSpecifier)
@@ -54,7 +57,7 @@ public class PostDetailDao {
 
         BooleanBuilder where = new BooleanBuilder();
         where.and(postEntity.deleted.eq(false));
-        where.and(eqOpen(open));
+        where.and(PostQuerySupport.eqOpen(open));
         where.and(nextPostId(firstPostId, orderSpecifier));
         where.and(postEntity.userEntity.id.eq(userId.getValue()));
 
@@ -71,22 +74,6 @@ public class PostDetailDao {
 
     public List<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
         return findByUserId(userId, open, null, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
-    }
-
-
-    public long findTotalSizeByUserId(Identity userId, Open open){
-        BooleanBuilder where = new BooleanBuilder();
-        where.and(postEntity.deleted.eq(false));
-        where.and(eqOpen(open));
-        where.and(postEntity.userEntity.id.eq(userId.getValue()));
-
-        Long result = factory
-                .select(postEntity.count())
-                .from(postEntity)
-                .where(where)
-                .fetchOne();
-
-        return result == null ? 0 : result;
     }
 
     private BooleanExpression nextPostId(Long postId, OrderSpecifier orderSpecifier){
@@ -107,17 +94,6 @@ public class PostDetailDao {
             return null;
 
         return postEntity.id.loe(postId);
-    }
-
-    private BooleanExpression eqOpen(Open open){
-        switch (open){
-            case OnlyOpen:
-                return postEntity.open.eq(true);
-            case OnlyClose:
-                return postEntity.open.eq(false);
-            default:
-                return null;
-        }
     }
 
     private JPAQuery<PostDetailData> select(){

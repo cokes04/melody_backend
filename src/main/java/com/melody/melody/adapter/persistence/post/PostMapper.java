@@ -3,9 +3,7 @@ package com.melody.melody.adapter.persistence.post;
 import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.domain.model.Identity;
-import com.melody.melody.domain.model.Music;
 import com.melody.melody.domain.model.Post;
-import com.melody.melody.domain.model.User;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

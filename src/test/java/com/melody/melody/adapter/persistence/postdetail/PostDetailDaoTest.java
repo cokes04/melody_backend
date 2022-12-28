@@ -251,69 +251,6 @@ class PostDetailDaoTest {
         }
     }
 
-    @Test
-    void findTotalSizeByUserId_ShouldReturnEverythingSiseExcludeDeleted_WhenHaveDeletedPost() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 10, 10);
-
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,true, 5, 10);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,true, 4, 10);
-
-        em.flush();
-        em.clear();
-
-        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.Everything);
-        assertEquals(30, actual);
-    }
-
-    @Test
-    void findTotalSizeByUserId_ShouldReturnEverythingSise_WhenEverything() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 10, 10);
-
-        em.flush();
-        em.clear();
-
-        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.Everything);
-        assertEquals(30, actual);
-    }
-
-    @Test
-    void findTotalSizeByUserId_ShouldReturnOpenSise_WhenOnlyOpen() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 10, 10);
-
-        em.flush();
-        em.clear();
-
-        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.OnlyOpen);
-        assertEquals(20, actual);
-    }
-
-    @Test
-    void findTotalSizeByUserId_ShouldReturnCloseSise_WhenClose() {
-        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true,false, 20, 10);
-        TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, false,false, 10, 10);
-
-        em.flush();
-        em.clear();
-
-        long actual = dao.findTotalSizeByUserId(Identity.from(userEntity.getId()), Open.OnlyClose);
-        assertEquals(10, actual);
-    }
-
-    @Test
-    void findTotalSizeByUserId_ShouldReturnZero_WhenNotExistUser() {
-        Identity userId = TestUserDomainGenerator.randomUserId();
-
-        long actual = dao.findTotalSizeByUserId(userId, Open.OnlyClose);
-        assertEquals(0, actual);
-    }
-
     void assertEqualsEntityAndDetail(PostEntity entity, PostDetail detail){
         assertEquals(entity.getId(), detail.getId());
         assertEquals(entity.getTitle(), detail.getTitle());
