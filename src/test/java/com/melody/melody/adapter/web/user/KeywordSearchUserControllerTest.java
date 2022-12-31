@@ -1,7 +1,7 @@
 package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.security.TokenProvider;
+import com.melody.melody.adapter.web.security.TokenValidater;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.service.user.KeywordSearchUserService;
 import com.melody.melody.application.service.user.TestSearchedUserServiceGenerator;
@@ -24,7 +24,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
@@ -49,7 +48,7 @@ class KeywordSearchUserControllerTest {
     private KeywordSearchUserService searchUserService;
 
     @MockBean
-    private TokenProvider tokenProvider;
+    private TokenValidater tokenValidater;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,

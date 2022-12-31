@@ -26,7 +26,7 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile("dev1")
 public class Runner implements ApplicationRunner {
     private final UserJpaRepository userJpaRepository;
     private final MusicJpaRepository musicJpaRepository;

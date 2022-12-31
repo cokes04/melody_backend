@@ -1,11 +1,12 @@
 package com.melody.melody.adapter.web.security;
 
+import com.melody.melody.adapter.web.user.CookieSupporter;
 import com.melody.melody.domain.model.Identity;
-import com.melody.melody.domain.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,16 +19,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 class JwtAuthenticationFilterTest {
 
     private JwtAuthenticationFilter filter;
 
-    private JwtTokenProvider jwtTokenProvider;
+    private TokenValidater tokenValidater;
+    private TokenIssuanceService tokenIssuanceService;
     private UserDetailsServiceImpl userDetailsService;
+    private CookieSupporter cookieSupporter;
 
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -38,10 +43,12 @@ class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        jwtTokenProvider = Mockito.mock(JwtTokenProvider.class);
+        tokenValidater = Mockito.mock(TokenValidater.class);
         userDetailsService = Mockito.mock(UserDetailsServiceImpl.class);
+        tokenIssuanceService = Mockito.mock(JwtTokenIssuanceService.class);
+        cookieSupporter = Mockito.mock(CookieSupporter.class);
 
-        filter = new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
+        filter = new JwtAuthenticationFilter(tokenValidater, tokenIssuanceService, userDetailsService, cookieSupporter);
         ReflectionTestUtils.setField(filter, "accessTokenName", accessTokenName);
         ReflectionTestUtils.setField(filter, "refreshTokenName", refreshTokenName);
 
@@ -56,20 +63,20 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void doFilterInternal_ShouldSetAuthentication_WhenValidateDAccessToken() throws ServletException, IOException {
+    void doFilterInternal_ShouldSetAuthentication_WhenValidatedAccessToken() throws ServletException, IOException {
         String accessToken = "i_am_accesstoken";
         Identity userId = Identity.from(5L);
 
-        when(request.getHeader(eq(accessTokenName)))
+        when(request.getHeader(accessTokenName))
                 .thenReturn(accessToken);
 
-        when(jwtTokenProvider.validateAccessToken(eq(accessToken)))
+        when(tokenValidater.validateAccessToken(accessToken))
                 .thenReturn(true);
 
-        when(jwtTokenProvider.getIdToAcessToken(accessToken))
+        when(tokenValidater.getIdToAcessToken(accessToken))
                 .thenReturn(userId.getValue());
 
-        when(userDetailsService.loadUserById(eq(userId)))
+        when(userDetailsService.loadUserById(userId))
                 .thenReturn(Mockito.mock(UserDetails.class));
 
         filter.doFilterInternal(
@@ -82,40 +89,47 @@ class JwtAuthenticationFilterTest {
         assertNotNull(authentication.getPrincipal());
         assertTrue(authentication.isAuthenticated());
 
-        verify(request, times(1)).getHeader(eq(accessTokenName));
-        verify(jwtTokenProvider, times(1)).validateAccessToken(eq(accessToken));
-        verify(jwtTokenProvider, times(1)).getIdToAcessToken(eq(accessToken));
-        verify(userDetailsService, times(1)).loadUserById(eq(userId));
+        verify(request, times(1)).getHeader(accessTokenName);
+        verify(tokenValidater, times(1)).validateAccessToken(accessToken);
+        verify(tokenValidater, times(1)).getIdToAcessToken(accessToken);
+        verify(userDetailsService, times(1)).loadUserById(userId);
     }
 
     @Test
-    void doFilterInternal_ShouldSetAuthentication_And_CreateAccessToken_WhenNotValidateAccessToken_And_ValidateRefreshToken() throws ServletException, IOException {
+    void doFilterInternal_ShouldSetAuthentication_AndCreateAccessToken_AndCreateRefreshToken_WhenNotValidatedAccessToken_AndValidatedRefreshToken() throws ServletException, IOException {
         String notValidatedAccessToken = "i_am_accesstoken";
-        String refreshToken = "i_am_refreshtoken";
+        String validatedRefreshToken = "i_am_refreshtoken";
+
         String newAccessToken = "i_am_new_accesstoken";
+        String newRefreshToken = "i_am_new_refreshtoken";
+        String newRefreshTokenCookie = "i_am_new_refreshtoken_cookie";
 
         Identity userId = Identity.from(5L);
 
-        when(request.getCookies())
-                .thenReturn(new Cookie[]{new Cookie(refreshTokenName, refreshToken)});
-
-        when(request.getHeader(eq(accessTokenName)))
+        when(request.getHeader(accessTokenName))
                 .thenReturn(notValidatedAccessToken);
 
-        when(jwtTokenProvider.validateAccessToken(eq(notValidatedAccessToken)))
+        when(request.getCookies())
+                .thenReturn(new Cookie[]{new Cookie(refreshTokenName, validatedRefreshToken)});
+
+        when(tokenValidater.validateAccessToken(notValidatedAccessToken))
                 .thenReturn(false);
 
-        when(jwtTokenProvider.validateRefreshToken(eq(refreshToken)))
+        when(tokenValidater.validateRefreshToken(validatedRefreshToken))
                 .thenReturn(true);
 
-        when(jwtTokenProvider.getIdToRefreshToken(refreshToken))
+        when(tokenValidater.getIdToRefreshToken(validatedRefreshToken))
                 .thenReturn(userId.getValue());
 
-        when(jwtTokenProvider.createAccessToken(eq(userId)))
-                .thenReturn(newAccessToken);
+        when(tokenIssuanceService.validateAndIssuance(userId, validatedRefreshToken))
+                .thenReturn(new Token(userId, newRefreshToken, newAccessToken, LocalDateTime.now()));
 
-        when(userDetailsService.loadUserById(eq(userId)))
+        when(userDetailsService.loadUserById(userId))
                 .thenReturn(Mockito.mock(UserDetails.class));
+
+
+        when(cookieSupporter.getRefreshTokenCookie(newRefreshToken))
+                .thenReturn(newRefreshTokenCookie);
 
         filter.doFilterInternal(
                 request,
@@ -128,34 +142,37 @@ class JwtAuthenticationFilterTest {
         assertTrue(authentication.isAuthenticated());
 
         verify(request, times(1)).getCookies();
-        verify(request, times(1)).getHeader(eq(accessTokenName));
+        verify(request, times(1)).getHeader(accessTokenName);
 
-        verify(response, times(1)).setHeader(eq(accessTokenName), eq(newAccessToken));
+        verify(response, times(1)).setHeader(accessTokenName, newAccessToken);
+        verify(response, times(1)).setHeader(eq(HttpHeaders.SET_COOKIE), anyString());
 
-        verify(jwtTokenProvider, times(1)).validateAccessToken(eq(notValidatedAccessToken));
-        verify(jwtTokenProvider, times(1)).validateRefreshToken(eq(refreshToken));
+        verify(cookieSupporter, times(1)).getRefreshTokenCookie(newRefreshToken);
 
-        verify(jwtTokenProvider, times(1)).getIdToRefreshToken(eq(refreshToken));
-        verify(jwtTokenProvider, times(1)).createAccessToken(eq(userId));
+        verify(tokenValidater, times(1)).validateAccessToken(notValidatedAccessToken);
+        verify(tokenValidater, times(1)).validateRefreshToken(validatedRefreshToken);
 
-        verify(userDetailsService, times(1)).loadUserById(eq(userId));
+        verify(tokenValidater, times(1)).getIdToRefreshToken(validatedRefreshToken);
+        verify(tokenIssuanceService, times(1)).validateAndIssuance(userId, validatedRefreshToken);
+
+        verify(userDetailsService, times(1)).loadUserById(userId);
     }
 
     @Test
-    void doFilterInternal_ShouldDoNothing_WhenNoValidateAccessToken_And_NotValidateRefreshToken() throws ServletException, IOException {
+    void doFilterInternal_ShouldDoNothing_WhenNotValidatedAccessToken_AndNotValidatedRefreshToken() throws ServletException, IOException {
         String notValidatedAccessToken = "i_am_not_validated_accesstoken";
         String notValidatedRefreshToken = "i_am_not_validated_refreshtoken";
 
         when(request.getCookies())
                 .thenReturn(new Cookie[]{new Cookie(refreshTokenName, notValidatedRefreshToken)});
 
-        when(request.getHeader(eq(accessTokenName)))
+        when(request.getHeader(accessTokenName))
                 .thenReturn(notValidatedAccessToken);
 
-        when(jwtTokenProvider.validateAccessToken(eq(notValidatedAccessToken)))
+        when(tokenValidater.validateAccessToken(notValidatedAccessToken))
                 .thenReturn(false);
 
-        when(jwtTokenProvider.validateRefreshToken(eq(notValidatedRefreshToken)))
+        when(tokenValidater.validateRefreshToken(notValidatedRefreshToken))
                 .thenReturn(false);
 
 
@@ -169,9 +186,9 @@ class JwtAuthenticationFilterTest {
         assertNull(authentication);
 
         verify(request, times(1)).getCookies();
-        verify(request, times(1)).getHeader(eq(accessTokenName));
+        verify(request, times(1)).getHeader(accessTokenName);
 
-        verify(jwtTokenProvider, times(1)).validateAccessToken(eq(notValidatedAccessToken));
-        verify(jwtTokenProvider, times(1)).validateRefreshToken(eq(notValidatedRefreshToken));
+        verify(tokenValidater, times(1)).validateAccessToken(notValidatedAccessToken);
+        verify(tokenValidater, times(1)).validateRefreshToken(notValidatedRefreshToken);
     }
 }

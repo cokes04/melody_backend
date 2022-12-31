@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum SizeInfo {
-        Open(false),Close(false), Deleted(true);
+        Open(false),
+        Close(false);
 
         private final boolean deleted;
 }

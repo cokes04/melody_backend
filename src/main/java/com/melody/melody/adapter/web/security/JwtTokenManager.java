@@ -7,13 +7,15 @@ import com.melody.melody.domain.exception.type.UserErrorType;
 import com.melody.melody.domain.model.Identity;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
-public class JwtTokenProvider implements TokenProvider {
+@Qualifier("jwtTokenManager")
+public class JwtTokenManager implements TokenValidater, TokenIssuancer {
     private final JwtConfig jwtConfig;
 
     @Override
@@ -27,7 +29,17 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createAccessToken(Identity userId) {
+    public boolean validateAccessToken(String accessToken) {
+        return validateToken(accessToken, jwtConfig.getAccessToken().getSecretKey());
+    }
+
+    @Override
+    public boolean validateRefreshToken(String refreshToken) {
+        return validateToken(refreshToken, jwtConfig.getRefreshToken().getSecretKey());
+    }
+
+    @Override
+    public String issuanceAccessToken(Identity userId) {
         return createToken(
                 userId,
                 jwtConfig.getAccessToken().getValidMilliSecond(),
@@ -36,22 +48,12 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     @Override
-    public String createRefreshToken(Identity userId) {
+    public String issuanceRefreshToken(Identity userId) {
         return createToken(
                 userId,
                 jwtConfig.getRefreshToken().getValidMilliSecond(),
                 jwtConfig.getRefreshToken().getSecretKey()
         );
-    }
-
-    @Override
-    public boolean validateAccessToken(String accessToken) {
-        return validateToken(accessToken, jwtConfig.getAccessToken().getSecretKey());
-    }
-
-    @Override
-    public boolean validateRefreshToken(String refreshToken) {
-        return validateToken(refreshToken, jwtConfig.getRefreshToken().getSecretKey());
     }
 
     private boolean validateToken(String token, String secretKey) {

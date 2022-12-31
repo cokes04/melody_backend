@@ -3,15 +3,15 @@ package com.melody.melody.adapter.persistence.postdetail;
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.adapter.persistence.post.PostOrderBy;
 import com.melody.melody.adapter.persistence.post.PostQuerySupport;
-import com.melody.melody.adapter.persistence.post.SizeInfo;
-import com.melody.melody.application.dto.*;
+import com.melody.melody.application.dto.Open;
+import com.melody.melody.application.dto.PagingInfo;
+import com.melody.melody.application.dto.PostDetail;
+import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.domain.exception.DomainError;
 import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.Post;
-import com.melody.melody.domain.model.User;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.OrderSpecifier;
@@ -19,14 +19,14 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.melody.melody.adapter.persistence.music.QMusicEntity.musicEntity;
 import static com.melody.melody.adapter.persistence.post.QPostEntity.postEntity;
@@ -50,6 +50,17 @@ public class PostDetailDao {
         return Optional.ofNullable(postDetail);
     }
 
+    public List<PostDetail> findByIds(Set<Long> postIds) {
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(postEntity.deleted.eq(false));
+        where.and(postEntity.id.in(postIds));
+
+        List<? extends PostDetail> result = select()
+                .where(where)
+                .fetch();
+
+        return (List<PostDetail>) result;
+    }
     public List<PostDetail> findByUserId(Identity userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.get(postSort)
                 .map(PostOrderBy::getOrderSpecifier)

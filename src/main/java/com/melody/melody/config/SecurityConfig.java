@@ -1,16 +1,13 @@
 package com.melody.melody.config;
 
 import com.melody.melody.adapter.web.security.*;
+import com.melody.melody.adapter.web.user.CookieSupporter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,16 +20,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
     private CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private JwtTokenManager jwtTokenManager;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
+
+    @Autowired
+    private JwtTokenIssuanceService tokenIssuanceService;
+
+    @Autowired
+    private CookieSupporter cookieSupporter;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -41,7 +45,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(){
-        return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
+        return new JwtAuthenticationFilter(jwtTokenManager, tokenIssuanceService, userDetailsService, cookieSupporter);
     }
 
     @Bean

@@ -10,14 +10,15 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class JwtTokenProviderTest {
-    private JwtTokenProvider provider;
+class JwtTokenManagerTest {
+    private JwtTokenManager manager;
     private JwtConfig jwtConfig;
 
     @BeforeEach
     void setUp() {
+
         jwtConfig = Mockito.mock(JwtConfig.class);
-        provider = new JwtTokenProvider(jwtConfig);
+        manager = new JwtTokenManager(jwtConfig);
     }
 
     @Test
@@ -26,12 +27,11 @@ class JwtTokenProviderTest {
                 .thenReturn(getAccessTokenConfig());
 
         Identity userId = Identity.from(50L);
-        String accessToken = provider.createAccessToken(userId);
+        String accessToken = manager.issuanceAccessToken(userId);
 
-        long id = provider.getIdToAcessToken(accessToken);
+        long id = manager.getIdToAcessToken(accessToken);
         assertEquals(userId.getValue(), id);
     }
-
 
     @Test
     void getIdToRefreshTsoken_ShouldReturnId() {
@@ -39,11 +39,73 @@ class JwtTokenProviderTest {
                 .thenReturn(getRefreshTokenConfig());
 
         Identity userId = Identity.from(50L);
-        String accessToken = provider.createRefreshToken(userId);
+        String accessToken = manager.issuanceRefreshToken(userId);
 
-        long id = provider.getIdToRefreshToken(accessToken);
+        long id = manager.getIdToRefreshToken(accessToken);
         assertEquals(userId.getValue(), id);
     }
+
+    @Test
+    void validateAccessToken_ShuoldReturnTrue() {
+        JwtConfig.Token token = getAccessTokenConfig();
+
+        when(jwtConfig.getAccessToken())
+                .thenReturn(token);
+
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String refreshToken = manager.issuanceAccessToken(userId);
+
+        boolean actual = manager.validateAccessToken(refreshToken);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    void validateAccessToken_ShuoldReturnFalse_WhenCounterfeitAccessToken() {
+        JwtConfig.Token token = getAccessTokenConfig();
+
+        when(jwtConfig.getAccessToken())
+                .thenReturn(token);
+
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String counterfeitAccessToken = manager.issuanceAccessToken(userId) + "위조";
+
+        boolean actual = manager.validateAccessToken(counterfeitAccessToken);
+
+        assertFalse(actual);
+    }
+
+    @Test
+    void validateRefreshToken_ShuoldReturnTrue() {
+        JwtConfig.Token token = getRefreshTokenConfig();
+
+        when(jwtConfig.getRefreshToken())
+                .thenReturn(token);
+
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String refreshToken = manager.issuanceRefreshToken(userId);
+
+        boolean actual = manager.validateRefreshToken(refreshToken);
+
+        assertTrue(actual);
+    }
+
+    @Test
+    void validateRefreshToken_ShuoldReturnFalse_WhenCounterfeitRefreshToken() {
+        JwtConfig.Token token = getRefreshTokenConfig();
+
+        when(jwtConfig.getRefreshToken())
+                .thenReturn(token);
+
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        String counterfeitRefreshToken = manager.issuanceRefreshToken(userId) + "위조";
+
+        boolean actual = manager.validateRefreshToken(counterfeitRefreshToken);
+
+        assertFalse(actual);
+    }
+
+
 
     @Test
     void createAccessToken_ShuoldReturnAccessToken() {
@@ -52,7 +114,7 @@ class JwtTokenProviderTest {
                 .thenReturn(token);
 
         Identity userId = TestUserDomainGenerator.randomUserId();
-        String accessToken = provider.createAccessToken(userId);
+        String accessToken = manager.issuanceAccessToken(userId);
 
         assertNotNull(accessToken);
 
@@ -66,69 +128,9 @@ class JwtTokenProviderTest {
                 .thenReturn(token);
 
         Identity userId = TestUserDomainGenerator.randomUserId();
-        String accessToken = provider.createRefreshToken(userId);
+        String accessToken = manager.issuanceRefreshToken(userId);
 
         assertNotNull(accessToken);
-    }
-
-    @Test
-    void validateAccessToken_ShuoldReturnTrue() {
-        JwtConfig.Token token = getAccessTokenConfig();
-
-        when(jwtConfig.getAccessToken())
-                .thenReturn(token);
-
-        Identity userId = TestUserDomainGenerator.randomUserId();
-        String refreshToken = provider.createAccessToken(userId);
-
-        boolean actual = provider.validateAccessToken(refreshToken);
-
-        assertTrue(actual);
-    }
-
-    @Test
-    void validateAccessToken_ShuoldReturnFalse_WhenCounterfeitAccessToken() {
-        JwtConfig.Token token = getAccessTokenConfig();
-
-        when(jwtConfig.getAccessToken())
-                .thenReturn(token);
-
-        Identity userId = TestUserDomainGenerator.randomUserId();
-        String counterfeitAccessToken = provider.createAccessToken(userId) + "위조";
-
-        boolean actual = provider.validateAccessToken(counterfeitAccessToken);
-
-        assertFalse(actual);
-    }
-
-    @Test
-    void validateRefreshToken_ShuoldReturnTrue() {
-        JwtConfig.Token token = getRefreshTokenConfig();
-
-        when(jwtConfig.getRefreshToken())
-                .thenReturn(token);
-
-        Identity userId = TestUserDomainGenerator.randomUserId();
-        String refreshToken = provider.createRefreshToken(userId);
-
-        boolean actual = provider.validateRefreshToken(refreshToken);
-
-        assertTrue(actual);
-    }
-
-    @Test
-    void validateRefreshToken_ShuoldReturnFalse_WhenCounterfeitRefreshToken() {
-        JwtConfig.Token token = getRefreshTokenConfig();
-
-        when(jwtConfig.getRefreshToken())
-                .thenReturn(token);
-
-        Identity userId = TestUserDomainGenerator.randomUserId();
-        String counterfeitRefreshToken = provider.createRefreshToken(userId) + "위조";
-
-        boolean actual = provider.validateRefreshToken(counterfeitRefreshToken);
-
-        assertFalse(actual);
     }
 
 

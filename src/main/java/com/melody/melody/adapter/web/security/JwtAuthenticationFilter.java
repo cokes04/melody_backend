@@ -1,8 +1,10 @@
 package com.melody.melody.adapter.web.security;
 
+import com.melody.melody.adapter.web.user.CookieSupporter;
 import com.melody.melody.domain.model.Identity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +23,10 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenValidater tokenValidater;
+    private final TokenIssuanceService issuanceService;
     private final UserDetailsServiceImpl userDetailsService;
+    private final CookieSupporter cookieSupporter;
 
     @Value(value = "${app.jwt.accessToken.name}")
     private String accessTokenName;
@@ -35,8 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String accessToken = getAccessTokenToRequest(request);
 
-        if ( StringUtils.hasText(accessToken) && jwtTokenProvider.validateAccessToken(accessToken) ){
-            Identity userId = Identity.from(jwtTokenProvider.getIdToAcessToken(accessToken));
+        // 유효한 accessToken O
+        if ( StringUtils.hasText(accessToken) && tokenValidater.validateAccessToken(accessToken) ){
+            Identity userId = Identity.from(tokenValidater.getIdToAcessToken(accessToken));
 
             UserDetails userDetails = userDetailsService.loadUserById(userId);
             setAuthentication(request, userDetails);
@@ -44,11 +49,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }else {
             String refreshToken = getRefreshTokenToRequest(request);
 
-            if ( StringUtils.hasText(refreshToken) && jwtTokenProvider.validateRefreshToken(refreshToken)) {
-                Identity userId = Identity.from(jwtTokenProvider.getIdToRefreshToken(refreshToken));
+            // 유효한 refreshToken O
+            if ( StringUtils.hasText(refreshToken) && tokenValidater.validateRefreshToken(refreshToken)) {
+                Identity userId = Identity.from(tokenValidater.getIdToRefreshToken(refreshToken));
 
-                String newAccessToken = jwtTokenProvider.createAccessToken(userId);
-                response.setHeader(accessTokenName, newAccessToken);
+                String idAddress = request.getRemoteAddr();
+                Token token = issuanceService.validateAndIssuance(userId, refreshToken);
+
+                response.setHeader(accessTokenName, token.getAccessToken());
+                response.setHeader(HttpHeaders.SET_COOKIE, cookieSupporter.getRefreshTokenCookie(token.getRefreshToken()));
 
                 UserDetails userDetails = userDetailsService.loadUserById(userId);
                 setAuthentication(request, userDetails);

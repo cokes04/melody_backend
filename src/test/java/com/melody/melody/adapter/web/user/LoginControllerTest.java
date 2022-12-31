@@ -1,7 +1,8 @@
 package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.security.TokenProvider;
+import com.melody.melody.adapter.web.security.Token;
+import com.melody.melody.adapter.web.security.TokenIssuanceService;
 import com.melody.melody.adapter.web.user.request.LoginRequest;
 import com.melody.melody.application.service.authentication.AuthenticationService;
 import com.melody.melody.domain.model.Identity;
@@ -26,6 +27,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -47,7 +50,7 @@ class LoginControllerTest {
     private AuthenticationService authenticationService;
 
     @MockBean
-    private TokenProvider tokenProvider;
+    private TokenIssuanceService tokenIssuanceService;
 
     @MockBean
     private CookieSupporter cookieSupporter;
@@ -82,11 +85,8 @@ class LoginControllerTest {
         when(authenticationService.execute( any(AuthenticationService.Command.class) ))
                 .thenReturn( new AuthenticationService.Result(user) );
 
-        when(tokenProvider.createAccessToken(userId))
-                .thenReturn("header.accessTokenClaim.signature");
-
-        when(tokenProvider.createRefreshToken(userId))
-                .thenReturn(refreshToken);
+        when(tokenIssuanceService.issuance(userId))
+                .thenReturn( new Token(userId, "header.refreshTokenClaim.signature", "header.accessTokenClaim.signature", LocalDateTime.now()) );
 
         when(cookieSupporter.getRefreshTokenCookie(anyString()))
                 .thenReturn(ResponseCookie
@@ -103,7 +103,6 @@ class LoginControllerTest {
                 post("/login")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-
         )
                 .andExpect(status().isOk())
                 .andDo(

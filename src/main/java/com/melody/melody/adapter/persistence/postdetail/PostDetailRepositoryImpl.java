@@ -29,7 +29,7 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
     @Override
     public PagingResult<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
         long totalSize = getTotalSize(userId, open);
-        List<PostDetail> list = postDetailDao.findByUserId(userId, open, postPaging);
+        List<PostDetail> list = getPage(userId, open, postPaging);
 
         return new PagingResult<PostDetail>(list, list.size(), totalSize, getTotalPage(totalSize, postPaging.getSize()));
     }
@@ -55,4 +55,12 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
         return (int)Math.ceil((double) totalSize / pageSize);
     }
 
+    private List<PostDetail> getPage(Identity userId, Open open, PagingInfo<PostSort> postPaging){
+        return postDetailDao.findByUserId(userId, open, postPaging);
+        /*
+        List<PostDao.PageStatistic> pageStatistics = postDao.findPageStatistics(userId, postPaging.getSize(), postPaging.getSorting());
+
+        return null;
+        */
+    }
 }

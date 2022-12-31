@@ -1,7 +1,7 @@
 package com.melody.melody.adapter.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.melody.melody.adapter.web.security.TokenProvider;
+import com.melody.melody.adapter.web.security.TokenValidater;
 import com.melody.melody.application.service.user.GetUserService;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
@@ -44,7 +44,7 @@ class GetUserControllerTest {
     private GetUserService service;
 
     @MockBean
-    private TokenProvider tokenProvider;
+    private TokenValidater tokenValidater;
 
     @BeforeEach
     public void BeforeEach(WebApplicationContext webApplicationContext,
