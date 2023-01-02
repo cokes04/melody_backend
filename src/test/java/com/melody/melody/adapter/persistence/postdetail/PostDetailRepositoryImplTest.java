@@ -1,7 +1,9 @@
 package com.melody.melody.adapter.persistence.postdetail;
 
-import com.melody.melody.adapter.persistence.post.PostDao;
-import com.melody.melody.adapter.persistence.post.SizeInfo;
+import com.melody.melody.adapter.persistence.post.size.PostSizeDao;
+import com.melody.melody.adapter.persistence.post.size.SizeInfo;
+import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationDao;
+import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationInfo;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
@@ -10,19 +12,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class PostDetailRepositoryImplTest {
     private PostDetailRepositoryImpl repository;
     private PostDetailDao detailDao;
-    private PostDao postDao;
+    private PostPaginationDao postPaginationDao;
+    private PostSizeDao sizeDao;
 
     @BeforeEach
     void setUp() {
         detailDao = Mockito.mock(PostDetailDao.class);
-        postDao = Mockito.mock(PostDao.class);
-        repository = new PostDetailRepositoryImpl(detailDao, postDao);
+        sizeDao = Mockito.mock(PostSizeDao.class);
+        postPaginationDao = Mockito.mock(PostPaginationDao.class);
+        repository = new PostDetailRepositoryImpl(detailDao, postPaginationDao, sizeDao);
 
     }
 
@@ -42,18 +48,24 @@ class PostDetailRepositoryImplTest {
         Open open = Open.Everything;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        when(postDao.findSize(userId, Open.OnlyOpen, SizeInfo.Open))
+        when(sizeDao.findSize(userId, SizeInfo.Open))
                 .thenReturn(444L);
 
-        when(postDao.findSize(userId, Open.OnlyClose, SizeInfo.Close))
+        when(sizeDao.findSize(userId, SizeInfo.Close))
                 .thenReturn(222L);
+
+        when(postPaginationDao.find(userId, open, pagingInfo))
+                .thenReturn(emptyPostPaginationInfo());
+
+        when(detailDao.findByUserId(eq(userId), eq(open), anyLong(), anyBoolean(), anyLong(), anyInt(), any(PostSort.class)))
+                .thenReturn(new ArrayList<>());
 
         PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
         assertEquals(666L, result.getTotalCount());
         assertEquals(67, result.getTotalPage());
 
-        verify(postDao, times(1)).findSize(userId, Open.OnlyOpen, SizeInfo.Open);
-        verify(postDao, times(1)).findSize(userId, Open.OnlyClose, SizeInfo.Close);
+        verify(sizeDao, times(1)).findSize(userId, SizeInfo.Open);
+        verify(sizeDao, times(1)).findSize(userId, SizeInfo.Close);
     }
 
     @Test
@@ -62,15 +74,22 @@ class PostDetailRepositoryImplTest {
         Open open = Open.OnlyClose;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        when(postDao.findSize(userId, Open.OnlyClose, SizeInfo.Close))
+        when(sizeDao.findSize(userId, SizeInfo.Close))
                 .thenReturn(111L);
+
+        when(postPaginationDao.find(userId, open, pagingInfo))
+                .thenReturn(emptyPostPaginationInfo());
+
+        when(detailDao.findByUserId(eq(userId), eq(open), anyLong(), anyBoolean(), anyLong(), anyInt(), any(PostSort.class)))
+                .thenReturn(new ArrayList<>());
+
 
         PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
         assertEquals(111L, result.getTotalCount());
         assertEquals(12, result.getTotalPage());
 
-        verify(postDao, times(0)).findSize(userId, Open.OnlyOpen, SizeInfo.Open);
-        verify(postDao, times(1)).findSize(userId, Open.OnlyClose, SizeInfo.Close);
+        verify(sizeDao, times(0)).findSize(userId, SizeInfo.Open);
+        verify(sizeDao, times(1)).findSize(userId, SizeInfo.Close);
     }
 
     @Test
@@ -79,14 +98,26 @@ class PostDetailRepositoryImplTest {
         Open open = Open.OnlyOpen;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 10, PostSort.newest);
 
-        when(postDao.findSize(userId, Open.OnlyOpen, SizeInfo.Open))
+        when(sizeDao.findSize(userId, SizeInfo.Open))
                 .thenReturn(111L);
+
+        when(postPaginationDao.find(userId, open, pagingInfo))
+                .thenReturn(emptyPostPaginationInfo());
+
+        when(detailDao.findByUserId(eq(userId), eq(open), anyLong(), anyBoolean(), anyLong(), anyInt(), any(PostSort.class)))
+                .thenReturn(new ArrayList<>());
 
         PagingResult<PostDetail> result = repository.findByUserId(userId, open, pagingInfo);
         assertEquals(111L, result.getTotalCount());
         assertEquals(12, result.getTotalPage());
 
-        verify(postDao, times(1)).findSize(userId, Open.OnlyOpen, SizeInfo.Open);
-        verify(postDao, times(0)).findSize(userId, Open.OnlyClose, SizeInfo.Close);
+        verify(sizeDao, times(1)).findSize(userId, SizeInfo.Open);
+        verify(sizeDao, times(0)).findSize(userId, SizeInfo.Close);
+    }
+
+
+    private PostPaginationInfo emptyPostPaginationInfo(){
+        return PostPaginationInfo.builder()
+                .build();
     }
 }

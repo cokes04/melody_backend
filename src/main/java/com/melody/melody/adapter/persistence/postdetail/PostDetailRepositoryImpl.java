@@ -1,16 +1,14 @@
 package com.melody.melody.adapter.persistence.postdetail;
 
 import com.melody.melody.adapter.persistence.PersistenceAdapter;
-import com.melody.melody.adapter.persistence.post.PostDao;
-import com.melody.melody.adapter.persistence.post.SizeInfo;
+import com.melody.melody.adapter.persistence.post.size.PostSizeDao;
+import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationDao;
+import com.melody.melody.adapter.persistence.post.size.SizeInfo;
+import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationInfo;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.application.port.out.PostDetailRepository;
-import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.InvalidArgumentException;
-import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Identity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +17,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostDetailRepositoryImpl implements PostDetailRepository {
     private final PostDetailDao postDetailDao;
-    private final PostDao postDao;
+    private final PostPaginationDao postPaginationDao;
+    private final PostSizeDao sizeDao;
 
     @Override
     public Optional<PostDetail> findById(Identity postId) {
@@ -35,32 +34,26 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
     }
 
     private long getTotalSize(Identity userId, Open open){
-        switch (open){
-            case Everything:
-                return postDao.findSize(userId, Open.OnlyOpen, SizeInfo.Open)
-                    + postDao.findSize(userId, Open.OnlyClose, SizeInfo.Close);
+        if (Open.Everything.equals(open))
+            return sizeDao.findSize(userId, SizeInfo.Open) + sizeDao.findSize(userId,  SizeInfo.Close);
 
-            case OnlyOpen:
-                return postDao.findSize(userId, Open.OnlyOpen, SizeInfo.Open);
+        return sizeDao.findSize(userId, SizeInfo.getOrElseThrow(open));
+    }
 
-            case OnlyClose:
-                return postDao.findSize(userId, Open.OnlyClose, SizeInfo.Close);
+    private List<PostDetail> getPage(Identity userId, Open open, PagingInfo<PostSort> postPaging){
+        PostPaginationInfo postPaginationInfo = postPaginationDao.find(userId, open, postPaging);
 
-            default:
-                throw new InvalidArgumentException(DomainError.of(PostErrorType.Invalid_Open));
-        }
+        return postDetailDao.findByUserId(
+                userId,
+                open,
+                postPaginationInfo.getStartPostId(),
+                postPaginationInfo.isStartInclude(),
+                postPaginationInfo.getOffset(),
+                postPaging.getSize(), postPaging.getSorting()
+        );
     }
 
     private int getTotalPage(long totalSize, long pageSize){
         return (int)Math.ceil((double) totalSize / pageSize);
-    }
-
-    private List<PostDetail> getPage(Identity userId, Open open, PagingInfo<PostSort> postPaging){
-        return postDetailDao.findByUserId(userId, open, postPaging);
-        /*
-        List<PostDao.PageStatistic> pageStatistics = postDao.findPageStatistics(userId, postPaging.getSize(), postPaging.getSorting());
-
-        return null;
-        */
     }
 }

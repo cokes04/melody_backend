@@ -1,40 +1,31 @@
 package com.melody.melody.adapter.persistence.postdetail;
 
-import com.melody.melody.adapter.persistence.PersistenceAdapter;
 import com.melody.melody.adapter.persistence.post.PostOrderBy;
 import com.melody.melody.adapter.persistence.post.PostQuerySupport;
 import com.melody.melody.application.dto.Open;
 import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostDetail;
 import com.melody.melody.application.dto.PostSort;
-import com.melody.melody.domain.exception.DomainError;
-import com.melody.melody.domain.exception.InvalidArgumentException;
-import com.melody.melody.domain.exception.type.PostErrorType;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.melody.melody.adapter.persistence.music.QMusicEntity.musicEntity;
 import static com.melody.melody.adapter.persistence.post.QPostEntity.postEntity;
 import static com.melody.melody.adapter.persistence.user.QUserEntity.userEntity;
 
-@PersistenceAdapter
+@Repository
 @RequiredArgsConstructor
-@Primary
 public class PostDetailDao {
     private final JPAQueryFactory factory;
 
@@ -50,27 +41,15 @@ public class PostDetailDao {
         return Optional.ofNullable(postDetail);
     }
 
-    public List<PostDetail> findByIds(Set<Long> postIds) {
-        BooleanBuilder where = new BooleanBuilder();
-        where.and(postEntity.deleted.eq(false));
-        where.and(postEntity.id.in(postIds));
 
-        List<? extends PostDetail> result = select()
-                .where(where)
-                .fetch();
-
-        return (List<PostDetail>) result;
-    }
-    public List<PostDetail> findByUserId(Identity userId, Open open, Long firstPostId, long offset, int size, PostSort postSort){
-        OrderSpecifier orderSpecifier = PostOrderBy.get(postSort)
-                .map(PostOrderBy::getOrderSpecifier)
-                .orElseThrow(() -> new InvalidArgumentException(DomainError.of(PostErrorType.Invalid_Post_Sort)));
+    public List<PostDetail> findByUserId(Identity userId, Open open, Long startId, boolean startIdInclude, long offset, int size, PostSort postSort){
+        OrderSpecifier orderSpecifier = PostOrderBy.getOrElseThrow(postSort).getOrderSpecifier();
 
         BooleanBuilder where = new BooleanBuilder();
-        where.and(postEntity.deleted.eq(false));
+        where.and(PostQuerySupport.eqDeleted(false));
         where.and(PostQuerySupport.eqOpen(open));
-        where.and(nextPostId(firstPostId, orderSpecifier));
-        where.and(postEntity.userEntity.id.eq(userId.getValue()));
+        where.and(PostQuerySupport.eqUserId(userId.getValue()));
+        where.and(startIdInclude ? PostQuerySupport.startPostId(startId, orderSpecifier) : PostQuerySupport.nextPostId(startId, orderSpecifier));
 
         List<? extends PostDetail> result = select()
                 .where(where)
@@ -84,27 +63,7 @@ public class PostDetailDao {
     }
 
     public List<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
-        return findByUserId(userId, open, null, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
-    }
-
-    private BooleanExpression nextPostId(Long postId, OrderSpecifier orderSpecifier){
-        if (orderSpecifier.isAscending())
-            return goePostId(postId);
-        return loePostId(postId);
-    }
-
-    private BooleanExpression goePostId(Long postId){
-        if (Objects.isNull(postId))
-            return null;
-
-        return postEntity.id.goe(postId);
-    }
-
-    private BooleanExpression loePostId(Long postId){
-        if (Objects.isNull(postId))
-            return null;
-
-        return postEntity.id.loe(postId);
+        return findByUserId(userId, open, null, false, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
     }
 
     private JPAQuery<PostDetailData> select(){

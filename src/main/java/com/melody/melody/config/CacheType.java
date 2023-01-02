@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.cache;
+package com.melody.melody.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

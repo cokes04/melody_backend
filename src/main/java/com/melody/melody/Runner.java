@@ -2,9 +2,9 @@ package com.melody.melody;
 
 import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.adapter.persistence.music.MusicJpaRepository;
-import com.melody.melody.adapter.persistence.post.PostDao;
 import com.melody.melody.adapter.persistence.post.PostEntity;
 import com.melody.melody.adapter.persistence.post.PostJpaRepository;
+import com.melody.melody.adapter.persistence.post.size.PostSizeDao;
 import com.melody.melody.adapter.persistence.postdetail.PostDetailDao;
 import com.melody.melody.adapter.persistence.user.UserEntity;
 import com.melody.melody.adapter.persistence.user.UserJpaRepository;
@@ -14,7 +14,6 @@ import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
-import com.melody.melody.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -26,7 +25,7 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@Profile("dev1")
+@Profile("dev")
 public class Runner implements ApplicationRunner {
     private final UserJpaRepository userJpaRepository;
     private final MusicJpaRepository musicJpaRepository;
@@ -34,8 +33,9 @@ public class Runner implements ApplicationRunner {
     private final PasswordEncrypter encrypter;
 
     private final PostDetailDao postDetailDao;
-    private final PostDao postDao;
+    private final PostSizeDao sizeDao;
 
+    // test data
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LocalDateTime now = LocalDateTime.now();
@@ -102,9 +102,9 @@ public class Runner implements ApplicationRunner {
                 new PagingInfo<PostSort>(0, 20, PostSort.newest)
         );
 
-        postDao.findSize(Identity.from(user.getId()), Open.OnlyClose, null);
-        postDao.findSize(Identity.from(user.getId()), Open.OnlyOpen, null);
-        postDao.findSize(Identity.from(user.getId()), Open.Everything, null);
+        sizeDao.findSize(Identity.from(user.getId()), Open.OnlyClose);
+        sizeDao.findSize(Identity.from(user.getId()), Open.OnlyOpen);
+        sizeDao.findSize(Identity.from(user.getId()), Open.Everything);
     }
 
     private boolean randomOpen(Random random){

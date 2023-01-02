@@ -1,7 +1,6 @@
 package com.melody.melody.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.melody.melody.adapter.cache.CacheType;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.CompositeCacheManager;

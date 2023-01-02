@@ -1,6 +1,9 @@
 package com.melody.melody.adapter.persistence.post;
 
 import com.melody.melody.application.dto.PostSort;
+import com.melody.melody.domain.exception.DomainError;
+import com.melody.melody.domain.exception.InvalidArgumentException;
+import com.melody.melody.domain.exception.type.PostErrorType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.DateTimePath;
@@ -27,4 +30,8 @@ public enum  PostOrderBy {
         return Optional.empty();
     }
 
+    public static PostOrderBy getOrElseThrow(PostSort postSort){
+        return get(postSort)
+                .orElseThrow( () -> new InvalidArgumentException(DomainError.of(PostErrorType.Invalid_Post_Sort)));
+    }
 }
