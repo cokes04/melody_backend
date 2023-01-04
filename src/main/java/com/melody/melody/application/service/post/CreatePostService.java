@@ -23,7 +23,7 @@ public class CreatePostService implements UseCase<CreatePostService.Command, Cre
     public Result execute(Command command) {
         Post post = Post.create(
                 Identity.from(command.getUserId()),
-                Identity.from(command.getUserId()),
+                Identity.from(command.getMusicId()),
                 command.getTitle(),
                 command.getContent(),
                 command.isOpen()

@@ -212,21 +212,12 @@ class MusicRepositoryImplTest {
 
         musicEntities
                 .stream()
-                .limit(2)
-                .forEach(m -> {
-                    TestPostEntityGenerator.saveRandomPostEntity(em, true, true, LocalDateTime.now(), userEntity, m);
-                    unPublishedIdSet.add(m.getId());
-                });
-
-        musicEntities
-                .stream()
-                .skip(2)
                 .limit(3)
                 .forEach(m -> TestPostEntityGenerator.saveRandomPostEntity(em, true, false, LocalDateTime.now(), userEntity, m));
 
         musicEntities
                 .stream()
-                .skip(5)
+                .skip(3)
                 .forEach(m -> unPublishedIdSet.add(m.getId()));
 
         em.flush();

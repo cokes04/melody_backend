@@ -2,8 +2,8 @@ package com.melody.melody.adapter.persistence.postdetail;
 
 import com.melody.melody.adapter.persistence.post.size.PostSizeDao;
 import com.melody.melody.adapter.persistence.post.size.SizeInfo;
-import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationDao;
-import com.melody.melody.adapter.persistence.post.postPagination.PostPaginationInfo;
+import com.melody.melody.adapter.persistence.post.pagination.PostPaginationDao;
+import com.melody.melody.adapter.persistence.post.pagination.PostPagination;
 import com.melody.melody.application.dto.*;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestPostDomainGenerator;
@@ -116,8 +116,8 @@ class PostDetailRepositoryImplTest {
     }
 
 
-    private PostPaginationInfo emptyPostPaginationInfo(){
-        return PostPaginationInfo.builder()
+    private PostPagination emptyPostPaginationInfo(){
+        return PostPagination.builder()
                 .build();
     }
 }

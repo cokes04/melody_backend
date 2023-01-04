@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.persistence.post.postPagination;
+package com.melody.melody.adapter.persistence.post.pagination;
 
 import com.melody.melody.adapter.persistence.PersistenceTestConfig;
 import com.melody.melody.adapter.persistence.post.PostEntity;
@@ -54,10 +54,10 @@ class PostPaginationDaoTest {
         Open open = Open.OnlyOpen;
         PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(0, 20, PostSort.newest);
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
-        assertNull(postPaginationInfo.getStartPostId());
-        assertEquals(0, postPaginationInfo.getOffset());
-        assertFalse(postPaginationInfo.isStartInclude());
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
+        assertNull(postPagination.getStartPostId());
+        assertEquals(0, postPagination.getOffset());
+        assertFalse(postPagination.isStartInclude());
 
     }
 
@@ -70,8 +70,8 @@ class PostPaginationDaoTest {
         when(cache.get(userId, SizeInfo.Open, true, 270))
                 .thenReturn(
                         UserPostPaginationCache.Result.builder()
-                                .postPaginationInfo(
-                                        PostPaginationInfo.builder()
+                                .postPagination(
+                                        PostPagination.builder()
                                                 .startPostId(999L)
                                                 .offset(10)
                                                 .startInclude(false)
@@ -81,63 +81,63 @@ class PostPaginationDaoTest {
                                 .build()
                 );
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
 
-        assertEquals(999L, postPaginationInfo.getStartPostId());
-        assertEquals(10, postPaginationInfo.getOffset());
-        assertFalse(postPaginationInfo.isStartInclude());
+        assertEquals(999L, postPagination.getStartPostId());
+        assertEquals(10, postPagination.getOffset());
+        assertFalse(postPagination.isStartInclude());
 
     }
 
     @Test
-    void find_ShouldReturnPostPaginationInfo_WhenInCache_AndNeededPages1_AndASC() {
+    void find_ShouldReturnPostPaginationInfo_WhenInCache_AndNeededPages6_AndASC() {
         UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
-        Map<Long, PostEntity> postEntitys = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true, false, 100, 1);
+        Map<Long, PostEntity> postEntitys = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true, false, 300, 1);
 
         em.flush();
         em.clear();
 
         Identity userId = Identity.from(userEntity.getId());
         Open open = Open.OnlyOpen;
-        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(2, 25, PostSort.newest);
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(10, 20, PostSort.newest);
 
         List<Long> idList = postEntitys.keySet().stream()
                 .sorted(Long::compareTo)
                 .collect(Collectors.toList());
 
 
-        when(cache.get(userId, SizeInfo.Open, true, 50))
+        when(cache.get(userId, SizeInfo.Open, true, 200)) // want index 9 // get index 3
                 .thenReturn(
                         UserPostPaginationCache.Result.builder()
-                                .postPaginationInfo(
-                                        PostPaginationInfo.builder()
-                                                .startPostId(idList.get((0 + 1) * 20 - 1))
-                                                .offset(30)
+                                .postPagination(
+                                        PostPagination.builder()
+                                                .startPostId(idList.get((3 + 1) * 20 - 1))
+                                                .offset(120)
                                                 .startInclude(false)
                                                 .build()
                                 )
-                                .neededPages(1)
+                                .neededPages(6)
                                 .build()
                 );
 
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
 
-        assertEquals(idList.get(50), postPaginationInfo.getStartPostId());
-        assertEquals(0, postPaginationInfo.getOffset());
-        assertTrue(postPaginationInfo.isStartInclude());
-
-        verify(cache, times(1))
-                .get(userId, SizeInfo.Open, true, 50);
+        assertEquals(idList.get(200), postPagination.getStartPostId());
+        assertEquals(0, postPagination.getOffset());
+        assertTrue(postPagination.isStartInclude());
 
         verify(cache, times(1))
-                .put(eq(userId), eq(SizeInfo.Open), eq(true), eq(50L - 30L),
-                        eq(idList.stream().skip(50 - 30).limit(30 + 1).collect(Collectors.toList()))
+                .get(userId, SizeInfo.Open, true, 200);
+
+        verify(cache, times(1))
+                .put(eq(userId), eq(SizeInfo.Open), eq(true), eq(200L - 120L),
+                        eq(idList.stream().skip(200 - 120).limit(120 + 1).collect(Collectors.toList()))
                 );
     }
 
     @Test
-    void find_ShouldReturnPostPaginationInfo_WhenNotInCache_AndASC() {
+    void find_ShouldReturnPostPaginationInfo_WhenNotInCache_AndNeededPages2_AndASC() {
         UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
         Map<Long, PostEntity> postEntitys = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true, false, 100, 1);
 
@@ -156,8 +156,8 @@ class PostPaginationDaoTest {
         when(cache.get(userId, SizeInfo.Open, true, 50))
                 .thenReturn(
                         UserPostPaginationCache.Result.builder()
-                                .postPaginationInfo(
-                                        PostPaginationInfo.builder()
+                                .postPagination(
+                                        PostPagination.builder()
                                                 .startPostId(null)
                                                 .offset(50)
                                                 .startInclude(false)
@@ -168,19 +168,14 @@ class PostPaginationDaoTest {
                 );
 
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
 
-        assertEquals(idList.get(50), postPaginationInfo.getStartPostId());
-        assertEquals(0, postPaginationInfo.getOffset());
-        assertTrue(postPaginationInfo.isStartInclude());
+        assertNull(postPagination.getStartPostId());
+        assertEquals(50, postPagination.getOffset());
+        assertFalse(postPagination.isStartInclude());
 
         verify(cache, times(1))
                 .get(userId, SizeInfo.Open, true, 50);
-
-        verify(cache, times(1))
-                .put(eq(userId), eq(SizeInfo.Open), eq(true), eq(0L),
-                        eq(idList.stream().limit(51).collect(Collectors.toList()))
-                );
     }
 
     @Test
@@ -203,8 +198,8 @@ class PostPaginationDaoTest {
         when(cache.get(userId, SizeInfo.Open, false, 50)) // want index 1 -> get index 1
                 .thenReturn(
                         UserPostPaginationCache.Result.builder()
-                                .postPaginationInfo(
-                                        PostPaginationInfo.builder()
+                                .postPagination(
+                                        PostPagination.builder()
                                                 .startPostId(idList.get((1 + 1) * 20 - 1))
                                                 .offset(10)
                                                 .startInclude(false)
@@ -215,11 +210,11 @@ class PostPaginationDaoTest {
                 );
 
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
         
-        assertEquals(idList.get(40 - 1), postPaginationInfo.getStartPostId());
-        assertEquals(10, postPaginationInfo.getOffset());
-        assertFalse(postPaginationInfo.isStartInclude());
+        assertEquals(idList.get(40 - 1), postPagination.getStartPostId());
+        assertEquals(10, postPagination.getOffset());
+        assertFalse(postPagination.isStartInclude());
 
         verify(cache, times(1))
                 .get(userId, SizeInfo.Open, false, 50);
@@ -245,8 +240,8 @@ class PostPaginationDaoTest {
         when(cache.get(userId, SizeInfo.Open, false, 225)) // want index 10 // get index 6
                 .thenReturn(
                         UserPostPaginationCache.Result.builder()
-                                .postPaginationInfo(
-                                        PostPaginationInfo.builder()
+                                .postPagination(
+                                        PostPagination.builder()
                                                 .startPostId(idList.get((6 + 1) * 20 - 1))
                                                 .offset(85)
                                                 .startInclude(false)
@@ -256,11 +251,11 @@ class PostPaginationDaoTest {
                                 .build()
                 );
 
-        PostPaginationInfo postPaginationInfo = dao.find(userId, open, pagingInfo);
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
 
-        assertEquals(idList.get(225), postPaginationInfo.getStartPostId());
-        assertEquals(0, postPaginationInfo.getOffset());
-        assertTrue(postPaginationInfo.isStartInclude());
+        assertEquals(idList.get(225), postPagination.getStartPostId());
+        assertEquals(0, postPagination.getOffset());
+        assertTrue(postPagination.isStartInclude());
 
         verify(cache, times(1))
                 .get(userId, SizeInfo.Open, false, 225);
@@ -270,4 +265,44 @@ class PostPaginationDaoTest {
                         eq(idList.stream().skip(225 - 85).limit(85 + 1).collect(Collectors.toList()))
                 );
     }
+
+    @Test
+    void find_ShouldReturnPostPaginationInfo_WhenNotInCache_LessSelectResults() {
+        UserEntity userEntity = TestUserEntityGenerator.saveRandomUserEntity(em);
+        Map<Long, PostEntity> postEntitys = TestPostEntityGenerator.saveRandomPostEntitys(em, userEntity, true, false, 70, 1);
+
+        em.flush();
+        em.clear();
+
+        Identity userId = Identity.from(userEntity.getId());
+        Open open = Open.OnlyOpen;
+        PagingInfo<PostSort> pagingInfo = new PagingInfo<PostSort>(4, 20, PostSort.newest);
+
+        List<Long> idList = postEntitys.keySet().stream()
+                .sorted(Long::compareTo)
+                .collect(Collectors.toList());
+
+        when(cache.get(userId, SizeInfo.Open, true, 80)) // want index 1 // get index null
+                .thenReturn(
+                        UserPostPaginationCache.Result.builder()
+                                .postPagination(
+                                        PostPagination.builder()
+                                                .startPostId(null)
+                                                .offset(80)
+                                                .startInclude(false)
+                                                .build()
+                                )
+                                .neededPages(4)
+                                .build()
+                );
+
+
+        PostPagination postPagination = dao.find(userId, open, pagingInfo);
+
+        assertEquals(idList.get(69), postPagination.getStartPostId());
+        assertEquals(11, postPagination.getOffset());
+        assertTrue(postPagination.isStartInclude());
+
+    }
+    
 }

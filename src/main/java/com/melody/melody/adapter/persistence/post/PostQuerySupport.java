@@ -18,6 +18,8 @@ public class PostQuerySupport {
 
     @Nullable
     public static BooleanExpression eqOpen(@Nullable Open open){
+        if (Objects.isNull(open)) return null;
+
         switch (open){
             case OnlyOpen:
                 return postEntity.open.eq(true);

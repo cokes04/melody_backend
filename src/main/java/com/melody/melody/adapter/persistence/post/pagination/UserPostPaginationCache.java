@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.persistence.post.postPagination;
+package com.melody.melody.adapter.persistence.post.pagination;
 
 import com.melody.melody.adapter.persistence.post.size.SizeInfo;
 import com.melody.melody.config.CacheType;
@@ -12,7 +12,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class UserPostPaginationCache {
 
     private final int initialUnit = 20;
     private final int initialIndexCount = 20;
+    private final int maxIndex = 299;
 
     public Result get(Identity userId, SizeInfo sizeInfo, boolean asc, int offset) {
         long userIdValue = userId.getValue();
@@ -31,19 +35,10 @@ public class UserPostPaginationCache {
         Long value;
 
         Integer initialIndex = getIndexFromPostNum(offset);
-        if (Objects.isNull(initialIndex)) {
-            return Result.builder()
-                    .postPaginationInfo(
-                            PostPaginationInfo.builder()
-                                    .startPostId(null)
-                                    .startInclude(false)
-                                    .offset(offset)
-                                    .build()
-                    )
-                    .neededPages(0)
-                    .build();
-        }
+        if (Objects.isNull(initialIndex))
+            return Result.empty(offset, 0);
 
+        initialIndex = Math.min(initialIndex, maxIndex);
         int index = initialIndex;
         while (index >= 0){
             key = getKey(userIdValue, sizeInfo, asc, index);
@@ -51,8 +46,8 @@ public class UserPostPaginationCache {
 
             if (value != null){
                 return Result.builder()
-                        .postPaginationInfo(
-                                PostPaginationInfo.builder()
+                        .postPagination(
+                                PostPagination.builder()
                                         .startPostId(value)
                                         .startInclude(false)
                                         .offset(offset - getPostNumFromIndex(index))
@@ -65,16 +60,7 @@ public class UserPostPaginationCache {
             index -= 1;
         }
 
-        return Result.builder()
-                .postPaginationInfo(
-                        PostPaginationInfo.builder()
-                                .startPostId(null)
-                                .startInclude(false)
-                                .offset(offset)
-                                .build()
-                )
-                .neededPages(initialIndex)
-                .build();
+        return Result.empty(offset, initialIndex);
     }
 
     public void put(Identity userId, SizeInfo sizeInfo, boolean asc, long offset, List<Long> idList){
@@ -105,7 +91,7 @@ public class UserPostPaginationCache {
             lastKeyIndex = getLastIndex(part);
             for (; keyIndex <= lastKeyIndex; keyIndex++) {
                 idIndex += unit;
-                if (idIndex >= idList.size())
+                if (idIndex >= idList.size() || keyIndex > maxIndex)
                     break escape;
 
                 key = getKey(userIdValue, sizeInfo, asc, keyIndex);
@@ -115,6 +101,63 @@ public class UserPostPaginationCache {
             part += 1;
         }
     }
+
+    public void evict(Identity userId){
+        evict(userId, SizeInfo.Open);
+        evict(userId, SizeInfo.Close);
+    }
+
+
+    public void evict(Identity userId, boolean asc){
+        evict(userId, SizeInfo.Open, asc);
+        evict(userId, SizeInfo.Close, asc);
+    }
+
+
+    public void evict(Identity userId, Identity postId){
+        evict(userId, SizeInfo.Open, true, postId);
+        evict(userId, SizeInfo.Open, false, postId);
+        evict(userId, SizeInfo.Close, true, postId);
+        evict(userId, SizeInfo.Close, false, postId);
+        }
+
+    public void evict(Identity userId, SizeInfo sizeInfo, boolean asc){
+        Cache cache = getPageInfoCache();
+        String key;
+
+        for (int i = 0; i <= maxIndex; i++){
+            key = getKey(userId.getValue(), sizeInfo, asc, i);
+            cache.evict(key);
+        }
+    }
+
+    private void evict(Identity userId, SizeInfo sizeInfo){
+        evict(userId, sizeInfo, true);
+        evict(userId, sizeInfo, false);
+    }
+
+    public void evict(Identity userId, SizeInfo sizeInfo, boolean asc, Identity postId){
+        Cache cache = getPageInfoCache();
+        com.github.benmanes.caffeine.cache.Cache<String, Long> caffeinCache =
+                (com.github.benmanes.caffeine.cache.Cache<String, Long>) getPageInfoCache().getNativeCache();
+
+        List<String> keys = IntStream.range(0, maxIndex+1)
+                .mapToObj(i -> getKey(userId.getValue(), sizeInfo, asc, i))
+                .collect(Collectors.toList());
+
+        Map<String, Long> map = caffeinCache.getAllPresent(keys);
+
+        Long postIdValue = postId.getValue(), value;
+        for (Map.Entry<String, Long> entry : map.entrySet()){
+            value = entry.getValue();
+
+            if ((asc && value >= postIdValue)
+                    || (!asc && value <= postIdValue)) {
+                cache.evict(entry.getKey());
+            }
+        }
+    }
+
 
     private String getKey(long userId, SizeInfo sizeInfo, boolean asc, int index){
         return new StringBuilder()
@@ -191,7 +234,7 @@ public class UserPostPaginationCache {
             lastIndex = getLastIndex(part);
             if (index > lastIndex) {
                 postCount += getPostCount(part);
-                index -= (lastIndex + 1);
+                index -= getIndexCount(part);
                 part += 1;
                 continue;
             }
@@ -200,11 +243,25 @@ public class UserPostPaginationCache {
         }
     }
 
+
     @Value
     @Builder
     public static class Result{
-        PostPaginationInfo postPaginationInfo;
+        PostPagination postPagination;
         int neededPages;
+
+        public static Result empty(int offset, int neededPages){
+            return Result.builder()
+                    .postPagination(
+                            PostPagination.builder()
+                                    .startPostId(null)
+                                    .startInclude(false)
+                                    .offset(offset)
+                                    .build()
+                    )
+                    .neededPages(neededPages)
+                    .build();
+        }
     }
 
     /*
@@ -235,7 +292,5 @@ public class UserPostPaginationCache {
           index range = 140 ~ 299
           post count = 25600
           post range = 8400 ~ 33999
-
-        * part 4 ...
     */
 }

@@ -1,4 +1,4 @@
-package com.melody.melody.adapter.persistence.post.postPagination;
+package com.melody.melody.adapter.persistence.post.pagination;
 
 import com.melody.melody.adapter.persistence.post.PostOrderBy;
 import com.melody.melody.adapter.persistence.post.PostQuerySupport;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.melody.melody.adapter.persistence.post.QPostEntity.postEntity;
 
@@ -27,11 +28,11 @@ public class PostPaginationDao {
     private final JPAQueryFactory factory;
     private final UserPostPaginationCache userCache;
 
-    private final int selectCriteria = 1;
+    private final int selectCriteria = 3;
 
-    public PostPaginationInfo find(Identity userId, Open open, PagingInfo<PostSort> pagingInfo){
+    public PostPagination find(Identity userId, Open open, PagingInfo<PostSort> pagingInfo){
         if (isFirstPage(pagingInfo))
-            return new PostPaginationInfo(null, false, 0);
+            return new PostPagination(null, false, 0);
 
         if (Open.Everything.equals(open))
             return findEverything(userId, pagingInfo);
@@ -42,22 +43,23 @@ public class PostPaginationDao {
         UserPostPaginationCache.Result cachceResult = userCache.get(userId, sizeInfo, asc, offset);
 
         if (cachceResult.getNeededPages() < selectCriteria)
-            return cachceResult.getPostPaginationInfo();
+            return cachceResult.getPostPagination();
 
-        Long startId = cachceResult.getPostPaginationInfo().getStartPostId();
-        long cacheOffset = cachceResult.getPostPaginationInfo().getOffset();
+        Long startId = cachceResult.getPostPagination().getStartPostId();
+        long cacheOffset = cachceResult.getPostPagination().getOffset();
 
-        List<Long> list = findInternal(userId, open, startId, cachceResult.getPostPaginationInfo().isStartInclude(),cacheOffset + 1, pagingInfo.getSorting());
+        List<Long> list = findInternal(userId, open, startId, cachceResult.getPostPagination().isStartInclude(),cacheOffset + 1, pagingInfo.getSorting());
         userCache.put(userId, sizeInfo, asc, offset - cacheOffset, list);
 
-        return PostPaginationInfo.builder()
+        long resultOffset = (cacheOffset + 1) - list.size();
+        return PostPagination.builder()
                 .startPostId(list.get(list.size()-1))
                 .startInclude(true)
-                .offset(0)
+                .offset(resultOffset)
                 .build();
     }
 
-    private PostPaginationInfo findEverything(Identity userId, PagingInfo<PostSort> pagingInfo){
+    private PostPagination findEverything(Identity userId, PagingInfo<PostSort> pagingInfo){
         boolean asc = PostOrderBy.getOrElseThrow(pagingInfo.getSorting()).getOrderSpecifier().isAscending();
         long limit = pagingInfo.getPage() * pagingInfo.getSize() + 1;
         List<PostInfo> postInfoList = findInternal(userId, null, false, limit, pagingInfo.getSorting());
@@ -74,10 +76,10 @@ public class PostPaginationDao {
         userCache.put(userId, SizeInfo.Open, asc, 0, openIdList);
         userCache.put(userId, SizeInfo.Close, asc, 0, closeIdList);
 
-        return PostPaginationInfo.builder()
+        return PostPagination.builder()
                 .startPostId(postInfoList.get(postInfoList.size()-1).postId)
                 .startInclude(true)
-                .offset(0)
+                .offset(limit - postInfoList.size())
                 .build();
     }
 

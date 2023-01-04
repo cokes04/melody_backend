@@ -45,6 +45,6 @@ public class PostEntity {
     @JoinColumn(name = "MUSIC_ID", nullable = false, unique = true)
     private MusicEntity musicEntity;
 
-    @JoinColumn(name = "CREATED_DATE", nullable = false, updatable = false)
+    @Column(name = "CREATED_DATE", nullable = false, updatable = false)
     private LocalDateTime createdDate;
 }

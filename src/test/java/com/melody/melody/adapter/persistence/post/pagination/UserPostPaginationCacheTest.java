@@ -1,8 +1,9 @@
-package com.melody.melody.adapter.persistence.post.postPagination;
+package com.melody.melody.adapter.persistence.post.pagination;
 
 import com.melody.melody.adapter.persistence.post.size.SizeInfo;
 import com.melody.melody.config.CacheType;
 import com.melody.melody.domain.model.Identity;
+import com.melody.melody.domain.model.TestPostDomainGenerator;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,9 @@ import org.mockito.Mockito;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import javax.transaction.NotSupportedException;
+import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,9 +22,10 @@ class UserPostPaginationCacheTest {
     private UserPostPaginationCache paginationInfoCache;
     private CacheManager cacheManager;
     private Cache cache;
-
+    private com.github.benmanes.caffeine.cache.Cache<String, Long> caffeinCache;
     @BeforeEach
     void setUp() {
+        caffeinCache = Mockito.mock(com.github.benmanes.caffeine.cache.Cache.class);
         cache = Mockito.mock(Cache.class);
         cacheManager = Mockito.mock(CacheManager.class);
         paginationInfoCache = new UserPostPaginationCache(cacheManager);
@@ -33,7 +35,7 @@ class UserPostPaginationCacheTest {
     }
 
     @Test
-    void get_ShouldGetOffset4_When444Offset_And_HaveIndex20() {
+    void get_ShouldReturnOffset4_When444Offset_And_HaveIndex20() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
@@ -42,13 +44,13 @@ class UserPostPaginationCacheTest {
 
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 444);
 
-        assertEquals(4, result.getPostPaginationInfo().getOffset());
-        assertEquals(888L, result.getPostPaginationInfo().getStartPostId());
+        assertEquals(4, result.getPostPagination().getOffset());
+        assertEquals(888L, result.getPostPagination().getStartPostId());
         assertEquals(0, result.getNeededPages());
     }
 
     @Test
-    void get_ShouldGetOffset64_When444Offset_And_HaveIndex18() {
+    void get_ShouldReturnOffset64_When444Offset_And_HaveIndex18() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
@@ -57,27 +59,26 @@ class UserPostPaginationCacheTest {
 
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 444);
 
-        assertEquals(64, result.getPostPaginationInfo().getOffset());
-        assertEquals(888L, result.getPostPaginationInfo().getStartPostId());
+        assertEquals(64, result.getPostPagination().getOffset());
+        assertEquals(888L, result.getPostPagination().getStartPostId());
         assertEquals(2, result.getNeededPages());
     }
 
     @Test
-    void get_ShouldNull_When444Offset_And_NotHaveIndex() {
+    void get_ShouldReturn444Offset_When444Offset_And_NotHaveIndex() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
-
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 444);
 
-        assertEquals(444, result.getPostPaginationInfo().getOffset());
-        assertNull(result.getPostPaginationInfo().getStartPostId());
+        assertEquals(444, result.getPostPagination().getOffset());
+        assertNull(result.getPostPagination().getStartPostId());
         assertEquals(20, result.getNeededPages());
 
     }
 
     @Test
-    void get_ShouldGetOffset5_When25Offset_And_HaveIndex0() {
+    void get_ShouldReturnOffset5_When25Offset_And_HaveIndex0() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
@@ -86,13 +87,13 @@ class UserPostPaginationCacheTest {
 
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 25);
 
-        assertEquals(5, result.getPostPaginationInfo().getOffset());
-        assertEquals(888L, result.getPostPaginationInfo().getStartPostId());
+        assertEquals(5, result.getPostPagination().getOffset());
+        assertEquals(888L, result.getPostPagination().getStartPostId());
         assertEquals(0, result.getNeededPages());
     }
 
     @Test
-    void get_ShouldGetOffset0_When20Offset_And_HaveIndex0() {
+    void get_ShouldReturnOffset0_When20Offset_And_HaveIndex0() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
@@ -101,13 +102,13 @@ class UserPostPaginationCacheTest {
 
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 20);
 
-        assertEquals(0, result.getPostPaginationInfo().getOffset());
-        assertEquals(888L, result.getPostPaginationInfo().getStartPostId());
+        assertEquals(0, result.getPostPagination().getOffset());
+        assertEquals(888L, result.getPostPagination().getStartPostId());
         assertEquals(0, result.getNeededPages());
     }
 
     @Test
-    void get_ShouldGet15Offest_When15Offset() {
+    void get_ShouldReturn15Offest_When15Offset() {
         Identity userId = TestUserDomainGenerator.randomUserId();
         SizeInfo sizeInfo = SizeInfo.Open;
 
@@ -115,9 +116,26 @@ class UserPostPaginationCacheTest {
                 .thenReturn(5L);
 
         UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 15);
-        assertEquals(15, result.getPostPaginationInfo().getOffset());
-        assertNull(result.getPostPaginationInfo().getStartPostId());
+        assertEquals(15, result.getPostPagination().getOffset());
+        assertNull(result.getPostPagination().getStartPostId());
         assertEquals(0, result.getNeededPages());
+    }
+
+    @Test
+    void get_ShouldReturnMaxIndexOffest_WhenOffsetBeyondMaxIndex() {
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        SizeInfo sizeInfo = SizeInfo.Open;
+
+        when(cache.get(getKey(userId.getValue(), sizeInfo, true, 299), Long.class))
+                .thenReturn(5L);
+
+        UserPostPaginationCache.Result result = paginationInfoCache.get(userId, sizeInfo, true, 34000 + 1000);
+        assertEquals(1000, result.getPostPagination().getOffset());
+        assertEquals(5L, result.getPostPagination().getStartPostId());
+        assertEquals(0, result.getNeededPages());
+
+        verify(cache, times(1))
+                .get(anyString(), eq(Long.class));
     }
 
     @Test
@@ -157,6 +175,123 @@ class UserPostPaginationCacheTest {
     }
 
 
+    @Test
+    void put_ShouldPutNotDataInCache_WhenIdListBeyondMaxIndex() {
+        List<Long> idList = getIdList(1000, true);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        SizeInfo sizeInfo = SizeInfo.Open;
+
+        paginationInfoCache.put(userId, sizeInfo, true, 34000, idList);
+
+        verify(cache, times(0))
+                .put(anyString(), anyLong());
+    }
+
+    @Test
+    void put_ShouldPutPartDataInCache_WhenIdListIncludMaxIndex() {
+        List<Long> idList = getIdList(1000, true);
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        SizeInfo sizeInfo = SizeInfo.Open;
+
+        paginationInfoCache.put(userId, sizeInfo, true, 33999, idList);
+
+        verify(cache, times(1))
+                .put(anyString(), anyLong());
+    }
+
+    @Test
+    void evict_userId_ShouldEvictEveryUserPagination() {
+        Identity userId = TestUserDomainGenerator.randomUserId();
+
+        paginationInfoCache.evict(userId);
+
+        List<String> keyRegexList = List.of(
+                getKey(userId.getValue(), SizeInfo.Open, true, null) + "\\d+",
+                getKey(userId.getValue(), SizeInfo.Open, false, null) + "\\d+",
+                getKey(userId.getValue(), SizeInfo.Close, true, null) + "\\d+",
+                getKey(userId.getValue(), SizeInfo.Close, false, null) + "\\d+"
+        );
+
+        keyRegexList.stream()
+                .forEach(
+                        r -> verify(cache, times(300)).evict(matches(r))
+                );
+
+        verify(cache, times(1200)).evict(anyString());
+    }
+
+    @Test
+    void evict_userId_asc_ShouldEvictUserASCPagination_WhenASC() {
+        Identity userId = TestUserDomainGenerator.randomUserId();
+
+        paginationInfoCache.evict(userId, true);
+
+        List<String> keyRegexList = List.of(
+                getKey(userId.getValue(), SizeInfo.Open, true, null) + "\\d+",
+                getKey(userId.getValue(), SizeInfo.Close, true, null) + "\\d+"
+        );
+
+        keyRegexList.stream()
+                .forEach(
+                        r -> verify(cache, times(300)).evict(matches(r))
+                );
+
+        verify(cache, times(600)).evict(anyString());
+    }
+
+    @Test
+    void evict_userId_asc_ShouldEvictUserDESCPagination_WhenDESC() {
+        Identity userId = TestUserDomainGenerator.randomUserId();
+
+        paginationInfoCache.evict(userId, false);
+
+        List<String> keyRegexList = List.of(
+                getKey(userId.getValue(), SizeInfo.Open, false, null) + "\\d+",
+                getKey(userId.getValue(), SizeInfo.Close, false, null) + "\\d+"
+                );
+
+        keyRegexList.stream()
+                .forEach(
+                        r -> verify(cache, times(300)).evict(matches(r))
+                );
+
+        verify(cache, times(600)).evict(anyString());
+    }
+
+    @Test
+    void evict_userId_postId_ShouldEvictAfterPostIdUserPagination() {
+        Identity userId = TestUserDomainGenerator.randomUserId();
+        Identity postId = Identity.from(59);
+
+        when(cache.getNativeCache())
+                .thenReturn(caffeinCache);
+
+        when(caffeinCache.getAllPresent(any()))
+                .thenAnswer( a -> {
+                    List<String> arg = a.getArgument(0, List.class);
+                    List<Long> idList = LongStream.range(0, 300).collect(
+                            ArrayList::new,
+                            ArrayList::add,
+                            (zz, xx) -> new NotSupportedException()
+                    );
+
+                    Map<String, Long> result = new HashMap<>();
+                    for (int i = 0; i < arg.size(); i++)
+                        result.put(arg.get(i), idList.get(i));
+
+                    return result;
+                });
+
+        paginationInfoCache.evict(userId, postId);
+
+        verify(cache, times(241)).evict(matches(getKey(userId.getValue(), SizeInfo.Open, true, null) + "\\d+"));
+        verify(cache, times(241)).evict(matches(getKey(userId.getValue(), SizeInfo.Close, true, null) + "\\d+"));
+        verify(cache, times(60)).evict(matches(getKey(userId.getValue(), SizeInfo.Open, false, null) + "\\d+"));
+        verify(cache, times(60)).evict(matches(getKey(userId.getValue(), SizeInfo.Close, false, null) + "\\d+"));
+
+        verify(cache, times(602)).evict(anyString());
+    }
+
     private List<Long> getIdList(int count, boolean asc){
         List<Long> idList = LongStream.range(0, count)
                  .collect(
@@ -171,12 +306,12 @@ class UserPostPaginationCacheTest {
         return idList;
     }
 
-    private String getKey(long userId, SizeInfo sizeInfo, boolean asc, int index){
+    private String getKey(long userId, SizeInfo sizeInfo, boolean asc, Integer index){
         return new StringBuilder()
                 .append(userId)
                 .append(sizeInfo.getSymbol())
                 .append(asc ? "A" : "D")
-                .append(index)
+                .append(Objects.nonNull(index) ? index : "")
                 .toString();
     }
 

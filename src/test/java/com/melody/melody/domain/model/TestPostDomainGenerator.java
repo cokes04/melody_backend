@@ -11,8 +11,14 @@ public class TestPostDomainGenerator {
         return getPostBuilder().open(true).deleted(false).build();
 
     }
+
     public static Post randomOpenPost(Identity userId){
         return getPostBuilder().userId(userId).open(true).deleted(false).build();
+
+    }
+
+    public static Post randomOpenPost(Identity postId, Identity userId){
+        return getPostBuilder().id(postId).userId(userId).open(true).deleted(false).build();
 
     }
 

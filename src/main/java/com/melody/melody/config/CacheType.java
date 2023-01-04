@@ -19,17 +19,17 @@ public enum CacheType {
     UserPostSize(
             Provider.Caffeine,
             "userPostSize",
-            10 * 60,
+            15 * 60,
             null,
-            4000
+            2000
     ),
 
     UserPostPage(
             Provider.Caffeine,
             "userPostPage",
             10 * 60,
-            null,
-            12000
+            30 * 60,
+            10000
     ),;
 
     private final Provider provider;
@@ -37,7 +37,6 @@ public enum CacheType {
     private final Integer expireAfterAccess; // SECONDS
     private final Integer expireAfterWrite; // SECONDS
     private final int maximumSize;
-
 
     public enum Provider{
       Caffeine;

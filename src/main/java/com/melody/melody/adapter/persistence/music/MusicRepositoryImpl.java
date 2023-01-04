@@ -72,7 +72,6 @@ public class MusicRepositoryImpl implements MusicRepository {
                 query.leftJoin(musicEntity.postEntity, postEntity);
                 where.and(
                         musicEntity.postEntity.id.isNull()
-                                .or(musicEntity.postEntity.deleted.eq(true))
                 );
                 break;
         }
