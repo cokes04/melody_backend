@@ -1,9 +1,10 @@
 package com.melody.melody.application.service.permissioncheck.user;
 
-import com.melody.melody.adapter.security.WithMockRequester;
+import com.melody.melody.adapter.security.*;
 import com.melody.melody.application.port.out.PasswordEncrypter;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.application.service.user.ChangePasswordService;
+import com.melody.melody.application.service.user.UpdateUserService;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.TestUserDomainGenerator;
 import com.melody.melody.domain.model.User;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
@@ -18,7 +20,13 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@SpringBootTest(classes = {
+        ChangePasswordService.class,
+        CustomMethodSecurityConfig.class,
+        CustomMethodSecurityExpressionHandler.class,
+        UserSecurityExpression.class
+})
 public class ChangePasswordServicePermissionCheckTest {
 
     @Autowired
@@ -29,6 +37,12 @@ public class ChangePasswordServicePermissionCheckTest {
 
     @MockBean
     private PasswordEncrypter passwordEncrypter;
+
+    @MockBean
+    private MusicSecurityExpression musicSecurityExpression;
+
+    @MockBean
+    private PostSecurityExpression postSecurityExpression;
 
     private final long requesterId = 53245;
 

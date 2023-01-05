@@ -1,8 +1,9 @@
 package com.melody.melody.application.service.permissioncheck.music;
 
-import com.melody.melody.adapter.security.WithMockRequester;
+import com.melody.melody.adapter.security.*;
 import com.melody.melody.application.port.out.*;
 import com.melody.melody.application.service.music.GenerateMusicService;
+import com.melody.melody.application.service.music.GetUserMusicService;
 import com.melody.melody.application.service.music.TestMusicServiceGenerator;
 import com.melody.melody.domain.model.Identity;
 import com.melody.melody.domain.model.Music;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.net.MalformedURLException;
@@ -19,7 +21,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@SpringBootTest(classes = {
+        GenerateMusicService.class,
+        CustomMethodSecurityConfig.class,
+        CustomMethodSecurityExpressionHandler.class,
+        UserSecurityExpression.class
+})
 public class GenerateMusicServicePermissionCheckTest {
 
     @Autowired
@@ -35,6 +44,12 @@ public class GenerateMusicServicePermissionCheckTest {
     private MusicGenerator musicGenerator;
     @MockBean
     private MusicRepository musicRepository;
+
+    @MockBean
+    private MusicSecurityExpression musicSecurityExpression;
+
+    @MockBean
+    private PostSecurityExpression postSecurityExpression;
 
     private final long requesterId = 53245;
 

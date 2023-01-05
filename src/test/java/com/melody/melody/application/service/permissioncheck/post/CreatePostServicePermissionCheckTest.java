@@ -1,15 +1,17 @@
 package com.melody.melody.application.service.permissioncheck.post;
 
-import com.melody.melody.adapter.security.WithMockRequester;
+import com.melody.melody.adapter.security.*;
 import com.melody.melody.application.port.out.MusicRepository;
 import com.melody.melody.application.port.out.PostRepository;
 import com.melody.melody.application.service.post.CreatePostService;
 import com.melody.melody.application.service.post.TestPostServiceGenerator;
+import com.melody.melody.application.service.user.UpdateUserService;
 import com.melody.melody.domain.model.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.access.AccessDeniedException;
 
 import java.util.Optional;
@@ -18,7 +20,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@SpringBootTest(classes = {
+        CreatePostService.class,
+        CustomMethodSecurityConfig.class,
+        CustomMethodSecurityExpressionHandler.class,
+        UserSecurityExpression.class,
+        MusicSecurityExpression.class
+})
 public class CreatePostServicePermissionCheckTest {
 
     @Autowired
@@ -30,6 +39,8 @@ public class CreatePostServicePermissionCheckTest {
     @MockBean
     private MusicRepository musicRepository;
 
+    @MockBean
+    private PostSecurityExpression notNeeded;
 
     private final long requesterId = 53245;
 

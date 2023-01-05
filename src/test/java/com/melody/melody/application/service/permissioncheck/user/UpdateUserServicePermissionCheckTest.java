@@ -1,6 +1,6 @@
 package com.melody.melody.application.service.permissioncheck.user;
 
-import com.melody.melody.adapter.security.WithMockRequester;
+import com.melody.melody.adapter.security.*;
 import com.melody.melody.application.port.out.UserRepository;
 import com.melody.melody.application.service.user.UpdateUserService;
 import com.melody.melody.domain.model.Identity;
@@ -10,14 +10,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@SpringBootTest(classes = {
+        UpdateUserService.class,
+        CustomMethodSecurityConfig.class,
+        CustomMethodSecurityExpressionHandler.class,
+        UserSecurityExpression.class
+})
 public class UpdateUserServicePermissionCheckTest {
 
     @Autowired
@@ -25,6 +33,12 @@ public class UpdateUserServicePermissionCheckTest {
 
     @MockBean
     private UserRepository repository;
+
+    @MockBean
+    private MusicSecurityExpression musicSecurityExpression;
+
+    @MockBean
+    private PostSecurityExpression postSecurityExpression;
 
     private final long requesterId = 53245;
 
