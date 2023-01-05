@@ -35,7 +35,7 @@ class UserPostPaginationCachceEvictAspectTest {
         aspect.evictWhenSave(joinPoint);
 
         verify(cache, times(1))
-                .evict(userId, false);
+                .evict(userId, true);
     }
 
     @Test

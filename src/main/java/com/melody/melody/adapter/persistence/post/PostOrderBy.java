@@ -6,8 +6,8 @@ import com.melody.melody.domain.exception.InvalidArgumentException;
 import com.melody.melody.domain.exception.type.PostErrorType;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,8 +16,8 @@ import java.util.Optional;
 @Getter
 @RequiredArgsConstructor
 public enum  PostOrderBy {
-    ASC_createdDate(PostSort.newest, new OrderSpecifier(Order.ASC, Expressions.path(DateTimePath.class, QPostEntity.postEntity, "createdDate"))),
-    DESC_createdDate(PostSort.oldest, new OrderSpecifier(Order.DESC, Expressions.path(DateTimePath.class, QPostEntity.postEntity, "createdDate")));
+    ASC_createdDate(PostSort.newest, new OrderSpecifier(Order.ASC, Expressions.path(NumberPath.class, QPostEntity.postEntity, "id"))),
+    DESC_createdDate(PostSort.oldest, new OrderSpecifier(Order.DESC, Expressions.path(NumberPath.class, QPostEntity.postEntity, "id")));
 
     private final PostSort postSort;
     private final OrderSpecifier orderSpecifier;

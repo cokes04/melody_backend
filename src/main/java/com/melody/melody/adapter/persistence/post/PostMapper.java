@@ -25,7 +25,6 @@ public class PostMapper {
     }
 
     PostEntity toEntity(Post post){
-
         return PostEntity.builder()
                 .id(post.getId().isEmpty() ? null : post.getId().getValue())
                 .title(post.getTitle().getValue())

@@ -23,8 +23,8 @@ public class UserPostPaginationCachceEvictAspect {
 
         //create
         if (isInsert(inputPost)) {
-            // user의 내림차순 페이지 정보 제거
-            cache.evict(userId, false);
+            // user의 오름차순 페이지 정보 제거
+            cache.evict(userId, true);
 
         }
         // do nothing, delete, open -> close, close -> open

@@ -20,14 +20,14 @@ import java.util.stream.IntStream;
 @Component
 @RequiredArgsConstructor
 public class UserPostPaginationCache {
+    public static final int initialUnit = 20;
+    public static final int initialIndexCount = 20;
+    public static final int maxIndex = 2539;
+
     private final CacheManager cacheManager;
 
     // key : userId_sizeInfo_(asc||desc)_index  // 333O(pen)A(sc)4 -> 333번 유저의 id 오름차순 100((4 + 1) * 20)번째 공개 게시물
     // value : postId
-
-    private final int initialUnit = 20;
-    private final int initialIndexCount = 20;
-    private final int maxIndex = 299;
 
     public Result get(Identity userId, SizeInfo sizeInfo, boolean asc, int offset) {
         long userIdValue = userId.getValue();
@@ -36,31 +36,44 @@ public class UserPostPaginationCache {
 
         Integer initialIndex = getIndexFromPostNum(offset);
         if (Objects.isNull(initialIndex))
-            return Result.empty(offset, 0);
+            return Result.builder()
+                    .postPagination(getOnlyOffsetPostPagination(offset, asc))
+                    .neededIndexs(0)
+                    .countPerIndex(initialUnit)
+                    .build();
 
         initialIndex = Math.min(initialIndex, maxIndex);
         int index = initialIndex;
+
+        int postNum;
         while (index >= 0){
             key = getKey(userIdValue, sizeInfo, asc, index);
             value = getValue(key);
 
             if (value != null){
+                postNum = getPostNumFromIndex(index);
+
                 return Result.builder()
                         .postPagination(
                                 PostPagination.builder()
                                         .startPostId(value)
                                         .startInclude(false)
-                                        .offset(offset - getPostNumFromIndex(index))
+                                        .offset(offset - postNum)
                                         .build()
                         )
-                        .neededPages(initialIndex - index)
+                        .neededIndexs(initialIndex - index)
+                        .countPerIndex(getUnit(getPartFromIndex(initialIndex)))
                         .build();
             }
 
             index -= 1;
         }
 
-        return Result.empty(offset, initialIndex);
+        return Result.builder()
+                .postPagination(getOnlyOffsetPostPagination(offset, asc))
+                .neededIndexs(initialIndex)
+                .countPerIndex(getUnit(getPartFromIndex(initialIndex)))
+                .build();
     }
 
     public void put(Identity userId, SizeInfo sizeInfo, boolean asc, long offset, List<Long> idList){
@@ -229,39 +242,45 @@ public class UserPostPaginationCache {
     }
 
     private int getPostNumFromIndex(int index){
-        int part = 0, postCount = 0, lastIndex;
+        int part = 0, postCount = 0, indexCount;
+
         while (true){
-            lastIndex = getLastIndex(part);
-            if (index > lastIndex) {
+            indexCount = getIndexCount(part);
+
+            if (index >= indexCount) {
                 postCount += getPostCount(part);
-                index -= getIndexCount(part);
+                index -= indexCount;
                 part += 1;
                 continue;
             }
 
-            return postCount + (index + 1) * getUnit(part);
+            return postCount  + ((index + 1) * getUnit(part));
         }
     }
 
+    private int getPartFromIndex(int index){
+        int part = 0;
+
+        while (index > getLastIndex(part))
+            part += 1;
+
+        return part;
+    }
+
+    private PostPagination getOnlyOffsetPostPagination(int offset, boolean asc){
+        return PostPagination.builder()
+                .startPostId(asc ? 0L : Long.MAX_VALUE)
+                .startInclude(true)
+                .offset(offset)
+                .build();
+    }
 
     @Value
     @Builder
     public static class Result{
         PostPagination postPagination;
-        int neededPages;
-
-        public static Result empty(int offset, int neededPages){
-            return Result.builder()
-                    .postPagination(
-                            PostPagination.builder()
-                                    .startPostId(null)
-                                    .startInclude(false)
-                                    .offset(offset)
-                                    .build()
-                    )
-                    .neededPages(neededPages)
-                    .build();
-        }
+        int neededIndexs;
+        int countPerIndex;
     }
 
     /*
@@ -292,5 +311,10 @@ public class UserPostPaginationCache {
           index range = 140 ~ 299
           post count = 25600
           post range = 8400 ~ 33999
+
+        // part 4 = post 102,400개 / 총 136,400 개 / index 320 / last index 619
+        // part 5 = post 409,600개 / 총 546,000 개 / index 640 / last index 1259
+        // part 6 = post 1,638,400개 / 총 2,184,400 개 / index 1280 / last index 2539
+
     */
 }

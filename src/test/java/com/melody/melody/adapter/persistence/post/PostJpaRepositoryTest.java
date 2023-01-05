@@ -5,17 +5,13 @@ import com.melody.melody.adapter.persistence.music.MusicEntity;
 import com.melody.melody.adapter.persistence.music.TestMusicEntityGenerator;
 import com.melody.melody.adapter.persistence.user.TestUserEntityGenerator;
 import com.melody.melody.adapter.persistence.user.UserEntity;
-import com.melody.melody.adapter.persistence.user.UserJpaRepository;
-import com.melody.melody.application.dto.PostDetail;
 import com.melody.melody.domain.model.Music;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -24,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(PersistenceTestConfig.class)
+@ActiveProfiles("dbtest")
 class PostJpaRepositoryTest {
     @Autowired
     private PostJpaRepository repository;

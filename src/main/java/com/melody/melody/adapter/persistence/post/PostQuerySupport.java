@@ -5,11 +5,17 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.lang.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 
 import static com.melody.melody.adapter.persistence.post.QPostEntity.postEntity;
 
 public class PostQuerySupport {
+
+    @Nullable
+    public static BooleanExpression inId(@Nullable List<Long> userId){
+        return Objects.isNull(userId) ? null : postEntity.id.in(userId);
+    }
 
     @Nullable
     public static BooleanExpression eqDeleted(@Nullable Boolean deleted){

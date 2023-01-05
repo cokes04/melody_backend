@@ -36,12 +36,16 @@ spring:
     active : dev
 
 ---
-spring.config.activate.on-profile: dev
+spring.config.activate.on-profile: dbtest
 
 logging.level.root: debug
 logging.level.com.melody.melody: debug
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
+
+
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:melody-db
@@ -55,6 +59,32 @@ spring:
   jpa :
     hibernate:
       ddl_auto: create
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+---
+spring.config.activate.on-profile: dev
+
+logging.level.root: debug
+logging.level.com.melody.melody: debug
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ENC(11PJ9nTAf7ChB+CWYuGPSTwZmitmhxBX4Tp7nshdmdTftirj1XSrD9iw7gTzGwiclVFVwNaqxzDAuUiZkYVbLUh9ZT/nFs42w9JtiODK1d2HztQ8ePkL/yoPJBIpeQFOJEZ8rv9Me3vWdQYC55AS9qtMspVRQBbLWKmeO+2jLtgsADDjb4ds6mck05ZKjOpW6vEEQ3JJAdYRiv1acPSGbbCvksiGtOhizQ2qYQqWRx1fSguz4q1oMAdOgXrIoZ2i)
+    username: ENC(K8d9+8YGzQF3OAGJ5vkJ7Q==)
+    password: ENC(q2whLvcjfMIlsjZd1hVora0BqXbak3TVx0g9PHfOfmIlNIFWrcoBILsyCBzQOpNb)
+
+  jpa :
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    hibernate:
+      ddl_auto: validate
 
     properties:
       hibernate:

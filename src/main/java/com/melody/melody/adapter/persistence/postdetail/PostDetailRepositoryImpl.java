@@ -10,6 +10,7 @@ import com.melody.melody.application.port.out.PostDetailRepository;
 import com.melody.melody.domain.model.Identity;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,14 +44,22 @@ public class PostDetailRepositoryImpl implements PostDetailRepository {
     private List<PostDetail> getPage(Identity userId, Open open, PagingInfo<PostSort> postPaging){
         PostPagination postPagination = postPaginationDao.find(userId, open, postPaging);
 
-        return postDetailDao.findByUserId(
-                userId,
-                open,
-                postPagination.getStartPostId(),
-                postPagination.isStartInclude(),
-                postPagination.getOffset(),
-                postPaging.getSize(), postPaging.getSorting()
-        );
+        if (postPagination.isNoResult()) return new ArrayList<>();
+
+        if (postPagination.emptyInIdList())
+            return postDetailDao.findByUserId(
+                    userId,
+                    open,
+                    postPagination.getStartPostId(),
+                    postPagination.isStartInclude(),
+                    postPagination.getOffset(),
+                    postPaging.getSize(), postPaging.getSorting()
+            );
+        else
+            return postDetailDao.findBy(
+                    postPagination.getInIdList(),
+                    postPaging.getSorting()
+            );
     }
 
     private int getTotalPage(long totalSize, long pageSize){

@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @DataJpaTest
 @Import(PersistenceTestConfig.class)
+@ActiveProfiles("dbtest")
 class MusicRepositoryImplTest {
     private MusicRepositoryImpl musicRepository;
     private MusicJpaRepository jpaRepository;
@@ -224,6 +226,7 @@ class MusicRepositoryImplTest {
         em.clear();
 
         PagingResult<Music> actual = musicRepository.findByUserId(Identity.from(userEntity.getId()), MusicPublish.Unpublished, new PagingInfo<MusicSort>(0, 11, MusicSort.newest));
+
         assertEquals(8, actual.getCount());
         assertEquals(8, unPublishedIdSet.size());
         assertEquals(8, actual.getList().stream()

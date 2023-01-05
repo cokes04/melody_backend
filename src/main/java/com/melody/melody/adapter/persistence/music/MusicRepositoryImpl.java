@@ -70,19 +70,13 @@ public class MusicRepositoryImpl implements MusicRepository {
                 break;
             case Unpublished:
                 query.leftJoin(musicEntity.postEntity, postEntity);
-                where.and(
-                        musicEntity.postEntity.id.isNull()
-                );
+                where.and(musicEntity.postEntity.id.isNull());
                 break;
         }
 
         List<Music> result = query
                 .where(where)
-                .orderBy(MusicOrderBy
-                        .get(musicPaging.getSorting())
-                        .map(MusicOrderBy::getOrderSpecifier)
-                        .orElseThrow(() -> new InvalidArgumentException(DomainError.of(MusicErrorType.Invalid_Music_Sort)))
-                )
+                .orderBy(MusicOrderBy.getOrElseThrow(musicPaging.getSorting()).getOrderSpecifier())
                 .offset(musicPaging.getPage() * musicPaging.getSize())
                 .limit(musicPaging.getSize())
                 .fetch()
@@ -114,7 +108,6 @@ public class MusicRepositoryImpl implements MusicRepository {
                         musicEntity.status
                 )
         )
-                .from(musicEntity)
-                .leftJoin(musicEntity.userEntity, userEntity);
+                .from(musicEntity);
     }
 }

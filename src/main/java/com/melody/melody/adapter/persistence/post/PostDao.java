@@ -36,7 +36,6 @@ public class PostDao {
         return entity.filter(e -> !e.isDeleted()).map(mapper::toModel);
     }
 
-
     @Caching(evict = {
             @CacheEvict(cacheNames = "userPostSize", key = "#userId.value + 'O'", condition = "#userId != null"),
             @CacheEvict(cacheNames = "userPostSize", key = "#userId.value + 'C'", condition = "#userId != null"),

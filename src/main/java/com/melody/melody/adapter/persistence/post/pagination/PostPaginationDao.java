@@ -8,7 +8,6 @@ import com.melody.melody.application.dto.PagingInfo;
 import com.melody.melody.application.dto.PostSort;
 import com.melody.melody.domain.model.Identity;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.melody.melody.adapter.persistence.post.QPostEntity.postEntity;
 
@@ -31,102 +29,79 @@ public class PostPaginationDao {
     private final int selectCriteria = 3;
 
     public PostPagination find(Identity userId, Open open, PagingInfo<PostSort> pagingInfo){
-        if (isFirstPage(pagingInfo))
-            return new PostPagination(null, false, 0);
-
-        if (Open.Everything.equals(open))
-            return findEverything(userId, pagingInfo);
+        if (Open.Everything.equals(open)) return findEverything(userId, pagingInfo);
 
         SizeInfo sizeInfo = SizeInfo.getOrElseThrow(open);
         boolean asc = PostOrderBy.getOrElseThrow(pagingInfo.getSorting()).getOrderSpecifier().isAscending();
-        int offset = pagingInfo.getPage() * pagingInfo.getSize();
-        UserPostPaginationCache.Result cachceResult = userCache.get(userId, sizeInfo, asc, offset);
+        int existingOffset = pagingInfo.getPage() * pagingInfo.getSize();
 
-        if (cachceResult.getNeededPages() < selectCriteria)
-            return cachceResult.getPostPagination();
-
+        UserPostPaginationCache.Result cachceResult = userCache.get(userId, sizeInfo, asc, existingOffset);
         Long startId = cachceResult.getPostPagination().getStartPostId();
         long cacheOffset = cachceResult.getPostPagination().getOffset();
 
-        List<Long> list = findInternal(userId, open, startId, cachceResult.getPostPagination().isStartInclude(),cacheOffset + 1, pagingInfo.getSorting());
-        userCache.put(userId, sizeInfo, asc, offset - cacheOffset, list);
+        if (cachceResult.getNeededIndexs() < selectCriteria)
+            return cachceResult.getPostPagination();
 
-        long resultOffset = (cacheOffset + 1) - list.size();
+        long offset = Math.max(0, cacheOffset - selectCriteria * cachceResult.getCountPerIndex());
+        long limit =  pagingInfo.getSize() + (selectCriteria * cachceResult.getCountPerIndex() * 2);
+        List<Long> list = findInternal(userId, open, startId, cachceResult.getPostPagination().isStartInclude(), offset, limit, pagingInfo.getSorting());
+
+        userCache.put(userId, sizeInfo, asc, offset + existingOffset - cacheOffset, list);
+
+        List<Long> resultIdList = getIdList(list, selectCriteria * cachceResult.getCountPerIndex(), pagingInfo.getSize());
+
         return PostPagination.builder()
-                .startPostId(list.get(list.size()-1))
+                .startPostId(resultIdList.size() == 0 ? (asc ? 0L : Long.MAX_VALUE): resultIdList.get(0))
                 .startInclude(true)
-                .offset(resultOffset)
+                .offset(resultIdList.size() == 0 ? existingOffset : 0)
+                .inIdList(resultIdList)
+                .noResult(resultIdList.size() == 0)
                 .build();
     }
 
     private PostPagination findEverything(Identity userId, PagingInfo<PostSort> pagingInfo){
-        boolean asc = PostOrderBy.getOrElseThrow(pagingInfo.getSorting()).getOrderSpecifier().isAscending();
-        long limit = pagingInfo.getPage() * pagingInfo.getSize() + 1;
-        List<PostInfo> postInfoList = findInternal(userId, null, false, limit, pagingInfo.getSorting());
-
-        int listCapacity = Math.max(postInfoList.size()/2, 16);
-        List<Long> closeIdList = new ArrayList<>(listCapacity), openIdList = new ArrayList<>(listCapacity);
-        for (PostInfo postInfo : postInfoList){
-            if (postInfo.open)
-                openIdList.add(postInfo.postId);
-            else
-                closeIdList.add(postInfo.postId);
-        }
-
-        userCache.put(userId, SizeInfo.Open, asc, 0, openIdList);
-        userCache.put(userId, SizeInfo.Close, asc, 0, closeIdList);
+        long offset = pagingInfo.getPage() * pagingInfo.getSize();
+        List<Long> list = findInternal(userId, Open.Everything, null,false, offset, pagingInfo.getSize(), pagingInfo.getSorting());
 
         return PostPagination.builder()
-                .startPostId(postInfoList.get(postInfoList.size()-1).postId)
-                .startInclude(true)
-                .offset(limit - postInfoList.size())
+                .startPostId(list.get(0))
+                .startInclude(false)
+                .offset(0)
+                .inIdList(list)
                 .build();
     }
 
-    private List<Long> findInternal(Identity userId, Open open, Long startId, boolean startIdInclude, long limit, PostSort postSort){
-        return findInternal(postEntity.id, userId, open, startId, startIdInclude, limit, postSort)
+    private List<Long> findInternal(Identity userId, Open open, Long startId, boolean startIdInclude, long offset, long limit, PostSort postSort){
+        return findInternal(postEntity.id, userId, open, startId, startIdInclude, offset, limit, postSort)
                 .fetch();
     }
 
-    private List<PostInfo> findInternal(Identity userId, Long startId, boolean startIdInclude, long limit, PostSort postSort){
-        return findInternal(
-                new QPostPaginationDao_PostInfo(
-                        postEntity.id,
-                        postEntity.open
-                ), userId, null, startId, startIdInclude, limit, postSort)
-                .fetch();
-    }
-
-    private <T> JPAQuery<T> findInternal(Expression<T> select, Identity userId, Open open, Long startId, boolean startIdInclude, long limit, PostSort postSort){
+    private <T> JPAQuery<T> findInternal(Expression<T> select, Identity userId, Open open, Long startId, boolean startIdInclude, long offset, long limit, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.getOrElseThrow(postSort).getOrderSpecifier();
 
         BooleanBuilder where = new BooleanBuilder();
-        where.and(PostQuerySupport.eqDeleted(false));
-        where.and(PostQuerySupport.eqUserId(userId.getValue()));
-        where.and(PostQuerySupport.eqOpen(open));
         where.and(startIdInclude ? PostQuerySupport.startPostId(startId, orderSpecifier) : PostQuerySupport.nextPostId(startId, orderSpecifier));
+        where.and(PostQuerySupport.eqUserId(userId.getValue()));
+        where.and(PostQuerySupport.eqDeleted(false));
+        where.and(PostQuerySupport.eqOpen(open));
 
         return factory
                 .select(select)
                 .from(postEntity)
                 .where(where)
+                .offset(offset)
                 .limit(limit)
                 .orderBy(orderSpecifier);
     }
 
-    private boolean isFirstPage(PagingInfo<PostSort> pagingInfo){
-        return pagingInfo.getPage() == 0;
+    private List<Long> getIdList(List<Long> idList, int offset, int size){
+        List<Long> newList = new ArrayList<Long>(size);
+        if (idList.size() < offset) return newList;
+
+        size = Math.min(idList.size() - offset, size);
+        for (int i = offset; i < offset + size; i++)
+            newList.add(idList.get(i));
+
+        return newList;
     }
-
-    public static class PostInfo {
-        private long postId;
-        private boolean open;
-
-        @QueryProjection
-        public PostInfo(long postId, boolean open) {
-            this.postId = postId;
-            this.open = open;
-        }
-    }
-
 }

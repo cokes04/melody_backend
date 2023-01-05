@@ -11,6 +11,7 @@ import com.melody.melody.domain.model.Music;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +42,29 @@ public class PostDetailDao {
         return Optional.ofNullable(postDetail);
     }
 
+    public List<PostDetail> findBy(List<Long> inIdList, PostSort postSort){
+        OrderSpecifier orderSpecifier = PostOrderBy.getOrElseThrow(postSort).getOrderSpecifier();
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(PostQuerySupport.inId(inIdList));
+
+        List<? extends PostDetail> result = select()
+                .where(where)
+                .orderBy(orderSpecifier)
+                .fetch();
+
+        return (List<PostDetail>) result;
+
+    }
 
     public List<PostDetail> findByUserId(Identity userId, Open open, Long startId, boolean startIdInclude, long offset, int size, PostSort postSort){
         OrderSpecifier orderSpecifier = PostOrderBy.getOrElseThrow(postSort).getOrderSpecifier();
 
         BooleanBuilder where = new BooleanBuilder();
+        where.and(startIdInclude ? PostQuerySupport.startPostId(startId, orderSpecifier) : PostQuerySupport.nextPostId(startId, orderSpecifier));
+        where.and(PostQuerySupport.eqUserId(userId.getValue()));
         where.and(PostQuerySupport.eqDeleted(false));
         where.and(PostQuerySupport.eqOpen(open));
-        where.and(PostQuerySupport.eqUserId(userId.getValue()));
-        where.and(startIdInclude ? PostQuerySupport.startPostId(startId, orderSpecifier) : PostQuerySupport.nextPostId(startId, orderSpecifier));
 
         List<? extends PostDetail> result = select()
                 .where(where)
@@ -63,7 +78,8 @@ public class PostDetailDao {
     }
 
     public List<PostDetail> findByUserId(Identity userId, Open open, PagingInfo<PostSort> postPaging) {
-        return findByUserId(userId, open, null, false, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
+        Long startId = PostOrderBy.getOrElseThrow(postPaging.getSorting()).getOrderSpecifier().isAscending() ? 0L : Long.MAX_VALUE;
+        return findByUserId(userId, open, startId, true, postPaging.getPage() * postPaging.getSize(), postPaging.getSize(), postPaging.getSorting());
     }
 
     private JPAQuery<PostDetailData> select(){
